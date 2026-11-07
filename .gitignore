@@ -31,3 +31,6 @@ coverage.xml
 .ruff_cache/
 .hypothesis/
 *.DS_Store
+uv.lock
+
+
