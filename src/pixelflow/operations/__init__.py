@@ -1,3 +1,11 @@
+from pixelflow.operations.color import (
+    BrightnessContrastOperation,
+    BrightnessContrastParams,
+    GammaOperation,
+    GammaParams,
+    GrayscaleOperation,
+    GrayscaleParams,
+)
 from pixelflow.operations.geometry import (
     CropOperation,
     CropParams,
@@ -10,10 +18,16 @@ from pixelflow.operations.geometry import (
 )
 
 __all__ = [
+    "BrightnessContrastOperation",
+    "BrightnessContrastParams",
     "CropOperation",
     "CropParams",
     "FlipOperation",
     "FlipParams",
+    "GammaOperation",
+    "GammaParams",
+    "GrayscaleOperation",
+    "GrayscaleParams",
     "ResizeOperation",
     "ResizeParams",
     "RotateOperation",

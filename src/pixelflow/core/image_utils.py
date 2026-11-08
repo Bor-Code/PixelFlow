@@ -18,7 +18,7 @@ def to_uint8(image: ImageArray) -> npt.NDArray[np.uint8]:
 
 def restore_dtype(
     image_u8: npt.NDArray[np.uint8],
-    original_dtype: np.dtype[np.uint8] | np.dtype[np.uint16],
+    original_dtype: np.dtype[np.uint8 | np.uint16] | np.dtype[np.uint8] | np.dtype[np.uint16],
 ) -> ImageArray:
     if original_dtype == np.uint16:
         return cast(ImageArray, image_u8.astype(np.uint16) * np.uint16(257))
