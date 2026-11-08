@@ -6,6 +6,12 @@ from pixelflow.operations.color import (
     GrayscaleOperation,
     GrayscaleParams,
 )
+from pixelflow.operations.edges import (
+    CannyOperation,
+    CannyParams,
+    SobelOperation,
+    SobelParams,
+)
 from pixelflow.operations.filters import (
     BilateralFilterOperation,
     BilateralFilterParams,
@@ -30,6 +36,8 @@ __all__ = [
     "BilateralFilterParams",
     "BrightnessContrastOperation",
     "BrightnessContrastParams",
+    "CannyOperation",
+    "CannyParams",
     "CropOperation",
     "CropParams",
     "FlipOperation",
@@ -46,4 +54,6 @@ __all__ = [
     "ResizeParams",
     "RotateOperation",
     "RotateParams",
+    "SobelOperation",
+    "SobelParams",
 ]
