@@ -20,6 +20,7 @@ from pixelflow.exceptions import (
     PixelflowError,
     UnknownOperationError,
 )
+from pixelflow.pipeline import load_pipeline_from_file, load_pipeline_from_string
 
 __all__ = [
     "ImageArray",
@@ -38,6 +39,8 @@ __all__ = [
     "default_registry",
     "encode_image_bytes",
     "load_image",
+    "load_pipeline_from_file",
+    "load_pipeline_from_string",
     "operations",
     "register_operation",
     "save_image",
