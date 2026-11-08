@@ -17,12 +17,13 @@ def to_uint8(image: ImageArray) -> npt.NDArray[np.uint8]:
 
 
 def restore_dtype(
-    image_u8: npt.NDArray[np.uint8],
+    image_u8: cv2.typing.MatLike,
     original_dtype: np.dtype[np.uint8 | np.uint16] | np.dtype[np.uint8] | np.dtype[np.uint16],
 ) -> ImageArray:
+    arr = np.asarray(image_u8, dtype=np.uint8)
     if original_dtype == np.uint16:
-        return cast(ImageArray, image_u8.astype(np.uint16) * np.uint16(257))
-    return cast(ImageArray, image_u8.copy())
+        return cast(ImageArray, arr.astype(np.uint16) * np.uint16(257))
+    return cast(ImageArray, arr.copy())
 
 
 def squeeze_single_channel(image: ImageArray) -> ImageArray:
