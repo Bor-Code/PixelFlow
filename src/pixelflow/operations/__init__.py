@@ -6,6 +6,10 @@ from pixelflow.operations.color import (
     GrayscaleOperation,
     GrayscaleParams,
 )
+from pixelflow.operations.detection import (
+    FaceBlurOperation,
+    FaceBlurParams,
+)
 from pixelflow.operations.edges import (
     CannyOperation,
     CannyParams,
@@ -58,6 +62,8 @@ __all__ = [
     "CannyParams",
     "CropOperation",
     "CropParams",
+    "FaceBlurOperation",
+    "FaceBlurParams",
     "FlipOperation",
     "FlipParams",
     "GammaOperation",
