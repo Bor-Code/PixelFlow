@@ -30,6 +30,10 @@ from pixelflow.operations.geometry import (
     RotateOperation,
     RotateParams,
 )
+from pixelflow.operations.morphology import (
+    MorphologyOperation,
+    MorphologyParams,
+)
 from pixelflow.operations.threshold import (
     AdaptiveThresholdOperation,
     AdaptiveThresholdParams,
@@ -58,6 +62,8 @@ __all__ = [
     "GrayscaleParams",
     "MedianBlurOperation",
     "MedianBlurParams",
+    "MorphologyOperation",
+    "MorphologyParams",
     "OtsuThresholdOperation",
     "OtsuThresholdParams",
     "ResizeOperation",
