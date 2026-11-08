@@ -1,3 +1,4 @@
+from pixelflow import operations
 from pixelflow.core import (
     ImageArray,
     ImageOperation,
@@ -37,6 +38,7 @@ __all__ = [
     "default_registry",
     "encode_image_bytes",
     "load_image",
+    "operations",
     "register_operation",
     "save_image",
 ]
