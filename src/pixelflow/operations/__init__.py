@@ -12,6 +12,12 @@ from pixelflow.operations.edges import (
     SobelOperation,
     SobelParams,
 )
+from pixelflow.operations.enhancement import (
+    HistogramEqualizationOperation,
+    HistogramEqualizationParams,
+    SharpenOperation,
+    SharpenParams,
+)
 from pixelflow.operations.filters import (
     BilateralFilterOperation,
     BilateralFilterParams,
@@ -60,6 +66,8 @@ __all__ = [
     "GaussianBlurParams",
     "GrayscaleOperation",
     "GrayscaleParams",
+    "HistogramEqualizationOperation",
+    "HistogramEqualizationParams",
     "MedianBlurOperation",
     "MedianBlurParams",
     "MorphologyOperation",
@@ -70,6 +78,8 @@ __all__ = [
     "ResizeParams",
     "RotateOperation",
     "RotateParams",
+    "SharpenOperation",
+    "SharpenParams",
     "SobelOperation",
     "SobelParams",
 ]
