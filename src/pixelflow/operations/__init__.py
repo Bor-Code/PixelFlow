@@ -30,8 +30,16 @@ from pixelflow.operations.geometry import (
     RotateOperation,
     RotateParams,
 )
+from pixelflow.operations.threshold import (
+    AdaptiveThresholdOperation,
+    AdaptiveThresholdParams,
+    OtsuThresholdOperation,
+    OtsuThresholdParams,
+)
 
 __all__ = [
+    "AdaptiveThresholdOperation",
+    "AdaptiveThresholdParams",
     "BilateralFilterOperation",
     "BilateralFilterParams",
     "BrightnessContrastOperation",
@@ -50,6 +58,8 @@ __all__ = [
     "GrayscaleParams",
     "MedianBlurOperation",
     "MedianBlurParams",
+    "OtsuThresholdOperation",
+    "OtsuThresholdParams",
     "ResizeOperation",
     "ResizeParams",
     "RotateOperation",
