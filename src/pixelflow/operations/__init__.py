@@ -44,6 +44,10 @@ from pixelflow.operations.morphology import (
     MorphologyOperation,
     MorphologyParams,
 )
+from pixelflow.operations.overlay import (
+    WatermarkOperation,
+    WatermarkParams,
+)
 from pixelflow.operations.threshold import (
     AdaptiveThresholdOperation,
     AdaptiveThresholdParams,
@@ -88,4 +92,6 @@ __all__ = [
     "SharpenParams",
     "SobelOperation",
     "SobelParams",
+    "WatermarkOperation",
+    "WatermarkParams",
 ]
