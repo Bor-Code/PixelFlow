@@ -3,552 +3,1191 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pixelflow Studio — Composable Image Pipeline</title>
+  <title>PixelFlow — Visual Image Studio</title>
   <style>
     :root {
-      --bg: #0b0f19;
-      --panel: #131b2e;
-      --panel-alt: #19233c;
-      --border: #263457;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
+      --bg: #090b10;
+      --surface: #11151f;
+      --surface-2: #171c29;
+      --surface-3: #1e2536;
+      --border: #262f45;
+      --border-light: #33415c;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
       --accent: #38bdf8;
-      --accent-hover: #0ea5e9;
-      --success: #22c55e;
-      --danger: #ef4444;
-      --code-bg: #090d16;
+      --success: #10b981;
+      --danger: #f43f5e;
+      --radius: 14px;
+      --radius-sm: 9px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
+      height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
-    header {
-      padding: 16px 28px;
-      background: var(--panel);
+    /* Top Navbar */
+    .navbar {
+      height: 62px;
+      padding: 0 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      user-select: none;
+    }
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+    }
+    .brand-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: #ffffff;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn {
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 15px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.16s ease;
+      text-decoration: none;
+    }
+    .btn:hover {
+      background: var(--surface-3);
+      border-color: var(--border-light);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      border-color: #6366f1;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+      border-color: #4f46e5;
+    }
+    .btn-success {
+      background: rgba(16, 185, 129, 0.14);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+    .btn-success:hover {
+      background: rgba(16, 185, 129, 0.24);
+    }
+
+    /* Main Workspace Layout */
+    .workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 310px 1fr 370px;
+      overflow: hidden;
+    }
+    @media (max-width: 1200px) {
+      body { height: auto; overflow: auto; }
+      .workspace { grid-template-columns: 1fr; }
+    }
+
+    /* Left Sidebar: Photo & Effects Library */
+    .sidebar-left {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 18px;
+      gap: 20px;
+    }
+    .section-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .upload-card {
+      border: 1.5px dashed var(--border-light);
+      border-radius: var(--radius);
+      padding: 16px 14px;
+      text-align: center;
+      background: rgba(23, 28, 41, 0.65);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .upload-card:hover, .upload-card.dragover {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.07);
+    }
+    .upload-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .upload-sub {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .sample-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .sample-row .btn {
+      justify-content: center;
+      font-size: 0.78rem;
+      padding: 7px 10px;
+    }
+
+    /* Presets */
+    .preset-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .preset-btn {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 11px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: var(--text);
+    }
+    .preset-btn:hover {
+      border-color: var(--primary);
+      background: var(--surface-3);
+      transform: translateY(-1px);
+    }
+    .preset-btn strong {
+      display: block;
+      font-size: 0.82rem;
+      margin-bottom: 3px;
+    }
+    .preset-btn span {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Effects Catalog */
+    .category-group {
+      margin-bottom: 14px;
+    }
+    .category-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 7px;
+    }
+    .effect-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .effect-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+    .effect-item:hover {
+      border-color: var(--primary);
+      background: var(--surface-3);
+    }
+    .effect-info strong {
+      display: block;
+      font-size: 0.83rem;
+      font-weight: 600;
+    }
+    .effect-info span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+    .effect-add {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: rgba(99, 102, 241, 0.16);
+      color: #818cf8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    /* Center Stage: Image Preview */
+    .stage {
+      display: flex;
+      flex-direction: column;
+      background: #07090e;
+      overflow: hidden;
+    }
+    .stage-toolbar {
+      height: 50px;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(17, 21, 31, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .view-tabs {
+      display: inline-flex;
+      background: var(--surface-2);
+      padding: 3px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+    }
+    .view-tab {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .view-tab.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .stage-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+    }
+    .status-pill.ok {
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.35);
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .status-pill.err {
+      color: #fb7185;
+      border-color: rgba(244, 63, 94, 0.4);
+      background: rgba(244, 63, 94, 0.12);
+    }
+
+    .stage-canvas {
+      flex: 1;
+      display: grid;
+      gap: 16px;
+      padding: 20px;
+      overflow: auto;
+      background-image: radial-gradient(#192132 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .stage-canvas.mode-split {
+      grid-template-columns: 1fr 1fr;
+    }
+    .stage-canvas.mode-single {
+      grid-template-columns: 1fr;
+    }
+    .frame {
+      background: rgba(17, 21, 31, 0.85);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 320px;
+    }
+    .frame-bar {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: var(--surface);
+    }
+    .frame-bar strong { color: var(--text); }
+    .frame-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow: hidden;
+    }
+    .frame-body img {
+      max-width: 100%;
+      max-height: calc(100vh - 230px);
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+    }
+
+    /* Right Sidebar: Visual Pipeline Stack */
+    .sidebar-right {
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .right-header {
+      padding: 16px 18px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 1.25rem;
+    .right-header h2 {
+      font-size: 0.95rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
     }
-    .badge {
-      font-size: 0.75rem;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--accent);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      font-weight: 600;
-    }
-    .header-links {
-      display: flex;
-      gap: 14px;
-      font-size: 0.875rem;
-    }
-    .header-links a {
-      color: var(--muted);
-      text-decoration: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--panel-alt);
-      transition: all 0.15s;
-    }
-    .header-links a:hover {
-      color: var(--text);
-      border-color: var(--accent);
-    }
-    main {
+    .steps-container {
       flex: 1;
-      display: grid;
-      grid-template-columns: 440px 1fr;
-      gap: 20px;
-      padding: 20px 28px;
-      max-width: 1680px;
-      width: 100%;
-      margin: 0 auto;
+      overflow-y: auto;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    @media (max-width: 1080px) {
-      main { grid-template-columns: 1fr; }
+    .empty-steps {
+      text-align: center;
+      padding: 36px 18px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      line-height: 1.5;
     }
-    .card {
-      background: var(--panel);
+    .step-card {
+      background: var(--surface-2);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 18px;
+      padding: 13px 14px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
+      transition: border-color 0.15s;
     }
-    .card-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text);
+    .step-card:hover {
+      border-color: var(--border-light);
+    }
+    .step-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .dropzone {
-      border: 2px dashed var(--border);
-      border-radius: 10px;
-      padding: 18px;
-      text-align: center;
-      background: var(--code-bg);
-      cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
-    }
-    .dropzone:hover, .dropzone.dragover {
-      border-color: var(--accent);
-      background: rgba(56, 189, 248, 0.06);
-    }
-    .dropzone p {
-      font-size: 0.875rem;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-    .sample-btns {
+    .step-title {
       display: flex;
+      align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
+      font-size: 0.86rem;
+      font-weight: 700;
     }
-    button, select {
-      font-family: inherit;
-      font-size: 0.85rem;
-      border-radius: 8px;
-      padding: 8px 13px;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--panel-alt);
-      color: var(--text);
-      transition: all 0.15s;
-    }
-    button:hover, select:hover {
-      border-color: var(--accent);
-    }
-    .btn-primary {
-      background: var(--accent);
-      color: #08101d;
-      font-weight: 600;
-      border-color: var(--accent);
-    }
-    .btn-primary:hover {
-      background: var(--accent-hover);
-    }
-    .btn-row {
-      display: flex;
-      gap: 10px;
-    }
-    .btn-row button { flex: 1; }
-    textarea {
-      width: 100%;
-      min-height: 250px;
-      background: var(--code-bg);
-      color: #a5f3fc;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
-      font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
-      font-size: 0.84rem;
-      line-height: 1.45;
-      resize: vertical;
-    }
-    textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    .status-box {
-      font-size: 0.83rem;
-      padding: 10px 12px;
-      border-radius: 8px;
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      font-family: Consolas, monospace;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .status-box.ok {
-      border-color: rgba(34, 197, 94, 0.5);
-      color: #86efac;
-    }
-    .status-box.err {
-      border-color: rgba(239, 68, 68, 0.5);
-      color: #fca5a5;
-    }
-    .preview-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      flex: 1;
-    }
-    @media (max-width: 760px) {
-      .preview-grid { grid-template-columns: 1fr; }
-    }
-    .viewport {
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 360px;
-    }
-    .viewport-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.84rem;
-      color: var(--muted);
-    }
-    .canvas-wrap {
-      flex: 1;
-      display: flex;
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
-      background-image: radial-gradient(#1e293b 1px, transparent 1px);
-      background-size: 16px 16px;
-      border-radius: 6px;
-      padding: 8px;
-    }
-    .canvas-wrap img {
-      max-width: 100%;
-      max-height: 430px;
-      object-fit: contain;
-      border-radius: 4px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-    }
-    .ops-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      max-height: 115px;
-      overflow-y: auto;
-      padding: 4px 0;
-    }
-    .op-pill {
       font-size: 0.75rem;
-      padding: 4px 9px;
+    }
+    .step-controls {
+      display: flex;
+      gap: 4px;
+    }
+    .icon-btn {
+      width: 26px;
+      height: 26px;
       border-radius: 6px;
-      background: var(--code-bg);
       border: 1px solid var(--border);
-      color: var(--muted);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+    .icon-btn:hover {
+      color: var(--text);
+      border-color: var(--border-light);
+    }
+    .icon-btn.danger:hover {
+      color: #fb7185;
+      border-color: rgba(244, 63, 94, 0.5);
+    }
+    .param-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .param-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+    .param-label strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
       cursor: pointer;
     }
-    .op-pill:hover {
-      color: var(--accent);
-      border-color: var(--accent);
+    input[type="text"], input[type="number"], select.param-select {
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-family: inherit;
+    }
+    .right-footer {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .auto-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
     }
   </style>
 </head>
 <body>
-  <header>
+  <header class="navbar">
     <div class="brand">
-      <span>Pixelflow Studio</span>
-      <span class="badge">v0.1.0</span>
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+      </div>
+      <span>PixelFlow</span>
     </div>
-    <div class="header-links">
-      <a href="/v1/operations" target="_blank">Operations JSON</a>
-      <a href="/health" target="_blank">Health</a>
-      <a href="/docs" target="_blank">OpenAPI / Swagger</a>
+
+    <div class="nav-actions">
+      <button type="button" class="btn" id="btnResetSteps">Clear Effects</button>
+      <a id="downloadBtn" class="btn btn-success" style="display:none" download="pixelflow_edited.png">
+        Download Image
+      </a>
     </div>
   </header>
 
-  <main>
-    <section class="card">
-      <div class="card-title">
-        <span>1. Source Image</span>
-        <span id="fileInfo" style="font-size:0.78rem;color:var(--muted)">No image loaded</span>
-      </div>
-      <div class="dropzone" id="dropzone">
-        <p>Click to select an image or drag &amp; drop here (PNG, JPEG, WEBP, BMP, TIFF)</p>
-        <input type="file" id="fileInput" accept="image/*" style="display:none" />
-        <div class="sample-btns">
-          <button type="button" id="btnSamplePhoto">Load Sample Photo</button>
-          <button type="button" id="btnSampleDoc">Load Sample Document</button>
+  <div class="workspace">
+    <!-- Left Sidebar -->
+    <aside class="sidebar-left">
+      <div>
+        <div class="section-label"><span>1. Choose Photo</span></div>
+        <div class="upload-card" id="dropzone">
+          <div class="upload-title">Upload or Drop a Photo</div>
+          <div class="upload-sub" id="fileLabel">PNG, JPG, WEBP, BMP or TIFF</div>
+          <input type="file" id="fileInput" accept="image/*" style="display:none" />
+          <div class="sample-row">
+            <button type="button" class="btn" id="btnSamplePhoto">Sample Landscape</button>
+            <button type="button" class="btn" id="btnSampleDoc">Sample Receipt</button>
+          </div>
         </div>
-      </div>
-
-      <div class="card-title">
-        <span>2. Pipeline YAML / JSON</span>
-        <select id="presetSelect">
-          <option value="watermark">Preset: Thumbnail + Watermark</option>
-          <option value="document">Preset: Document Cleanup</option>
-          <option value="edges">Preset: Canny Edge Detection</option>
-          <option value="enhance">Preset: CLAHE + Unsharp Mask</option>
-        </select>
       </div>
 
       <div>
-        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px">
-          Click an operation below to append a step template:
+        <div class="section-label"><span>2. Quick Templates</span></div>
+        <div class="preset-grid">
+          <button type="button" class="preset-btn" data-preset="social">
+            <strong>Social Ready</strong>
+            <span>Resize, contrast &amp; watermark</span>
+          </button>
+          <button type="button" class="preset-btn" data-preset="scanner">
+            <strong>Doc Scanner</strong>
+            <span>Clean B&amp;W text scan</span>
+          </button>
+          <button type="button" class="preset-btn" data-preset="vivid">
+            <strong>HDR Pop</strong>
+            <span>CLAHE &amp; crisp sharpen</span>
+          </button>
+          <button type="button" class="preset-btn" data-preset="sketch">
+            <strong>Line Sketch</strong>
+            <span>Smooth edge outlines</span>
+          </button>
         </div>
-        <div class="ops-pills" id="opsPills"></div>
       </div>
 
-      <textarea id="pipelineEditor" spellcheck="false"></textarea>
+      <div>
+        <div class="section-label"><span>3. Add Effects</span></div>
+        <div id="catalogContainer"></div>
+      </div>
+    </aside>
 
-      <div class="btn-row">
-        <button type="button" id="btnValidate">Validate Pipeline</button>
-        <button type="button" class="btn-primary" id="btnRun">Run Pipeline</button>
+    <!-- Center Preview Stage -->
+    <section class="stage">
+      <div class="stage-toolbar">
+        <div class="view-tabs">
+          <button type="button" class="view-tab active" data-view="split">Before &amp; After</button>
+          <button type="button" class="view-tab" data-view="after">Edited Only</button>
+          <button type="button" class="view-tab" data-view="before">Original Only</button>
+        </div>
+        <div class="stage-meta">
+          <span id="statusPill" class="status-pill ok">Ready</span>
+        </div>
       </div>
 
-      <div class="status-box" id="statusBox">Ready. Load a sample image and click "Run Pipeline".</div>
+      <div class="stage-canvas mode-split" id="stageCanvas">
+        <div class="frame" id="frameBefore">
+          <div class="frame-bar">
+            <strong>Original Photo</strong>
+            <span id="metaBefore">—</span>
+          </div>
+          <div class="frame-body">
+            <img id="imgBefore" alt="Original photo" style="display:none" />
+          </div>
+        </div>
+
+        <div class="frame" id="frameAfter">
+          <div class="frame-bar">
+            <strong>Edited Result</strong>
+            <span id="metaAfter">—</span>
+          </div>
+          <div class="frame-body">
+            <img id="imgAfter" alt="Edited photo" style="display:none" />
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section class="card">
-      <div class="card-title">
-        <span>Live Preview (Before &amp; After)</span>
-        <a id="downloadLink" style="display:none;color:var(--accent);font-size:0.85rem;text-decoration:none;font-weight:600" download="pixelflow_output.png">Download Processed Image</a>
+    <!-- Right Sidebar: Visual Active Steps -->
+    <aside class="sidebar-right">
+      <div class="right-header">
+        <h2>Applied Effects</h2>
+        <span id="stepCountBadge" style="font-size:0.78rem;color:var(--text-muted)">0 steps</span>
       </div>
 
-      <div class="preview-grid">
-        <div class="viewport">
-          <div class="viewport-header">
-            <strong>Original Input</strong>
-            <span id="inputMeta">—</span>
-          </div>
-          <div class="canvas-wrap">
-            <img id="inputPreview" alt="Input preview" style="display:none" />
-          </div>
-        </div>
+      <div class="steps-container" id="stepsContainer"></div>
 
-        <div class="viewport">
-          <div class="viewport-header">
-            <strong>Processed Output</strong>
-            <span id="outputMeta">—</span>
-          </div>
-          <div class="canvas-wrap">
-            <img id="outputPreview" alt="Output preview" style="display:none" />
-          </div>
-        </div>
+      <div class="right-footer">
+        <label class="auto-row">
+          <span>Update preview automatically</span>
+          <input type="checkbox" id="autoApplyToggle" checked />
+        </label>
+        <button type="button" class="btn btn-primary" id="btnApply" style="width:100%;justify-content:center;padding:11px">
+          Apply Effects Now
+        </button>
       </div>
-    </section>
-  </main>
+    </aside>
+  </div>
 
   <script>
-    const PRESETS = {
-      watermark: `name: thumbnail-with-watermark
-version: "1.0"
-steps:
-  - op: resize
-    name: create_thumbnail
-    params:
-      width: 420
-      height: 300
-      keep_aspect_ratio: true
-      interpolation: area
-  - op: brightness_contrast
-    name: boost_contrast
-    params:
-      brightness: 0.04
-      contrast: 1.15
-  - op: sharpen
-    name: enhance_edges
-    params:
-      kernel_size: 3
-      sigma: 1.0
-      amount: 0.8
-  - op: watermark
-    name: apply_brand_watermark
-    params:
-      text: "Pixelflow"
-      position: bottom-right
-      opacity: 0.75
-      scale: 0.25
-      margin: 14`,
-      document: `name: document-cleanup
-version: "1.0"
-steps:
-  - op: grayscale
-    name: convert_to_grayscale
-  - op: gaussian_blur
-    name: denoise_background
-    params:
-      kernel_size: 3
-      sigma_x: 0.8
-  - op: adaptive_threshold
-    name: binarize_text
-    params:
-      method: gaussian
-      threshold_type: binary
-      block_size: 15
-      constant: 4.0
-  - op: morphology
-    name: close_character_gaps
-    params:
-      action: close
-      kernel_size: 3
-      kernel_shape: rect
-      iterations: 1`,
-      edges: `name: edge-detector
-version: "1.0"
-steps:
-  - op: gaussian_blur
-    params:
-      kernel_size: 5
-      sigma_x: 1.2
-  - op: canny
-    params:
-      threshold1: 60.0
-      threshold2: 160.0`,
-      enhance: `name: clahe-sharpen
-version: "1.0"
-steps:
-  - op: histogram_equalization
-    params:
-      use_clahe: true
-      clip_limit: 2.5
-      tile_grid_size: 8
-  - op: gamma
-    params:
-      gamma: 1.15
-  - op: sharpen
-    params:
-      kernel_size: 3
-      sigma: 1.0
-      amount: 1.0`
-    };
+    const EFFECT_CATALOG = [
+      {
+        category: "Color & Lighting",
+        items: [
+          {
+            op: "brightness_contrast",
+            title: "Brightness & Contrast",
+            desc: "Adjust light and tonal pop",
+            defaults: { brightness: 0.05, contrast: 1.15 },
+            controls: [
+              { key: "brightness", label: "Brightness", type: "range", min: -0.8, max: 0.8, step: 0.05 },
+              { key: "contrast", label: "Contrast", type: "range", min: 0.4, max: 2.5, step: 0.05 }
+            ]
+          },
+          {
+            op: "gamma",
+            title: "Gamma Warmth",
+            desc: "Fine-tune midtone luminance",
+            defaults: { gamma: 1.2 },
+            controls: [
+              { key: "gamma", label: "Gamma", type: "range", min: 0.3, max: 3.0, step: 0.05 }
+            ]
+          },
+          {
+            op: "histogram_equalization",
+            title: "Auto HDR (CLAHE)",
+            desc: "Balance shadows and highlights",
+            defaults: { use_clahe: true, clip_limit: 2.2, tile_grid_size: 8 },
+            controls: [
+              { key: "clip_limit", label: "Strength", type: "range", min: 1.0, max: 6.0, step: 0.2 },
+              { key: "tile_grid_size", label: "Detail Grid", type: "range", min: 4, max: 16, step: 2 }
+            ]
+          },
+          {
+            op: "grayscale",
+            title: "Black & White",
+            desc: "Classic monochrome look",
+            defaults: { keep_channels: false },
+            controls: []
+          }
+        ]
+      },
+      {
+        category: "Detail & Blur",
+        items: [
+          {
+            op: "sharpen",
+            title: "Crisp Sharpen",
+            desc: "Enhance fine edge details",
+            defaults: { kernel_size: 3, sigma: 1.0, amount: 0.9 },
+            controls: [
+              { key: "amount", label: "Sharpness", type: "range", min: 0.2, max: 2.5, step: 0.1 },
+              { key: "kernel_size", label: "Radius (Odd)", type: "range", min: 3, max: 11, step: 2 }
+            ]
+          },
+          {
+            op: "gaussian_blur",
+            title: "Soft Blur",
+            desc: "Smooth Gaussian lens blur",
+            defaults: { kernel_size: 7, sigma_x: 1.5 },
+            controls: [
+              { key: "kernel_size", label: "Blur Size", type: "range", min: 3, max: 25, step: 2 },
+              { key: "sigma_x", label: "Spread", type: "range", min: 0.5, max: 6.0, step: 0.5 }
+            ]
+          },
+          {
+            op: "bilateral_filter",
+            title: "Surface Smooth",
+            desc: "Smooth textures while keeping edges",
+            defaults: { diameter: 7, sigma_color: 60.0, sigma_space: 60.0 },
+            controls: [
+              { key: "diameter", label: "Diameter", type: "range", min: 3, max: 15, step: 2 },
+              { key: "sigma_color", label: "Smoothing", type: "range", min: 15, max: 120, step: 5 }
+            ]
+          },
+          {
+            op: "face_blur",
+            title: "Privacy Face Blur",
+            desc: "Automatically blur detected faces",
+            defaults: { blur_kernel_size: 31 },
+            controls: [
+              { key: "blur_kernel_size", label: "Blur Strength", type: "range", min: 11, max: 61, step: 4 }
+            ]
+          }
+        ]
+      },
+      {
+        category: "Size & Orientation",
+        items: [
+          {
+            op: "resize",
+            title: "Resize Image",
+            desc: "Scale dimensions smoothly",
+            defaults: { width: 480, height: 340, keep_aspect_ratio: true, interpolation: "area" },
+            controls: [
+              { key: "width", label: "Max Width (px)", type: "range", min: 120, max: 1200, step: 20 },
+              { key: "height", label: "Max Height (px)", type: "range", min: 120, max: 1200, step: 20 }
+            ]
+          },
+          {
+            op: "rotate",
+            title: "Rotate Photo",
+            desc: "Turn image by angle",
+            defaults: { angle: 15.0, expand: true },
+            controls: [
+              { key: "angle", label: "Angle (°)", type: "range", min: -180, max: 180, step: 5 }
+            ]
+          },
+          {
+            op: "flip",
+            title: "Mirror / Flip",
+            desc: "Flip horizontally or vertically",
+            defaults: { mode: "horizontal" },
+            controls: [
+              { key: "mode", label: "Direction", type: "select", options: ["horizontal", "vertical", "both"] }
+            ]
+          }
+        ]
+      },
+      {
+        category: "Branding & Document",
+        items: [
+          {
+            op: "watermark",
+            title: "Text Watermark",
+            desc: "Add custom signature overlay",
+            defaults: { text: "PixelFlow", position: "bottom-right", opacity: 0.75, scale: 0.25, margin: 14 },
+            controls: [
+              { key: "text", label: "Watermark Text", type: "text" },
+              { key: "position", label: "Corner", type: "select", options: ["bottom-right", "bottom-left", "top-right", "top-left", "center"] },
+              { key: "opacity", label: "Opacity", type: "range", min: 0.15, max: 1.0, step: 0.05 }
+            ]
+          },
+          {
+            op: "adaptive_threshold",
+            title: "Document B&W Scan",
+            desc: "Crisp black text on white page",
+            defaults: { method: "gaussian", threshold_type: "binary", block_size: 15, constant: 4.0 },
+            controls: [
+              { key: "block_size", label: "Detail Window", type: "range", min: 7, max: 31, step: 2 },
+              { key: "constant", label: "Cleanliness", type: "range", min: 0.0, max: 12.0, step: 1.0 }
+            ]
+          },
+          {
+            op: "canny",
+            title: "Line Art Sketch",
+            desc: "Extract clean edge contours",
+            defaults: { threshold1: 60.0, threshold2: 160.0 },
+            controls: [
+              { key: "threshold1", label: "Fine Lines", type: "range", min: 20, max: 150, step: 10 },
+              { key: "threshold2", label: "Strong Edges", type: "range", min: 80, max: 260, step: 10 }
+            ]
+          }
+        ]
+      }
+    ];
 
-    const STEP_SNIPPETS = {
-      resize: "  - op: resize\n    params:\n      width: 320\n      height: 240\n      keep_aspect_ratio: true",
-      crop: "  - op: crop\n    params:\n      x: 10\n      y: 10\n      width: 200\n      height: 200",
-      rotate: "  - op: rotate\n    params:\n      angle: 15.0\n      expand: true",
-      flip: "  - op: flip\n    params:\n      mode: horizontal",
-      grayscale: "  - op: grayscale\n    params:\n      keep_channels: false",
-      brightness_contrast: "  - op: brightness_contrast\n    params:\n      brightness: 0.05\n      contrast: 1.2",
-      gamma: "  - op: gamma\n    params:\n      gamma: 1.2",
-      gaussian_blur: "  - op: gaussian_blur\n    params:\n      kernel_size: 5\n      sigma_x: 1.0",
-      median_blur: "  - op: median_blur\n    params:\n      kernel_size: 5",
-      bilateral_filter: "  - op: bilateral_filter\n    params:\n      diameter: 7\n      sigma_color: 50.0\n      sigma_space: 50.0",
-      canny: "  - op: canny\n    params:\n      threshold1: 80.0\n      threshold2: 180.0",
-      sobel: "  - op: sobel\n    params:\n      dx: 1\n      dy: 0\n      kernel_size: 3",
-      adaptive_threshold: "  - op: adaptive_threshold\n    params:\n      method: gaussian\n      block_size: 11\n      constant: 2.0",
-      otsu_threshold: "  - op: otsu_threshold\n    params:\n      max_value: 255",
-      morphology: "  - op: morphology\n    params:\n      action: open\n      kernel_size: 3",
-      histogram_equalization: "  - op: histogram_equalization\n    params:\n      use_clahe: true\n      clip_limit: 2.0",
-      sharpen: "  - op: sharpen\n    params:\n      kernel_size: 3\n      sigma: 1.0\n      amount: 1.0",
-      face_blur: "  - op: face_blur\n    params:\n      blur_kernel_size: 31",
-      watermark: "  - op: watermark\n    params:\n      text: \"Pixelflow\"\n      position: bottom-right\n      opacity: 0.7"
-    };
-
-    let currentBlob = null;
-    let currentFileName = "sample.png";
-
-    const editor = document.getElementById("pipelineEditor");
-    const statusBox = document.getElementById("statusBox");
-    const inputPreview = document.getElementById("inputPreview");
-    const outputPreview = document.getElementById("outputPreview");
-    const inputMeta = document.getElementById("inputMeta");
-    const outputMeta = document.getElementById("outputMeta");
-    const fileInfo = document.getElementById("fileInfo");
-    const downloadLink = document.getElementById("downloadLink");
-
-    editor.value = PRESETS.watermark;
-
-    document.getElementById("presetSelect").addEventListener("change", (e) => {
-      editor.value = PRESETS[e.target.value] || PRESETS.watermark;
+    const EFFECT_LOOKUP = {};
+    EFFECT_CATALOG.forEach((group) => {
+      group.items.forEach((item) => {
+        EFFECT_LOOKUP[item.op] = item;
+      });
     });
 
+    const PRESET_PIPELINES = {
+      social: [
+        { op: "resize", params: { width: 460, height: 320, keep_aspect_ratio: true, interpolation: "area" } },
+        { op: "brightness_contrast", params: { brightness: 0.05, contrast: 1.15 } },
+        { op: "sharpen", params: { kernel_size: 3, sigma: 1.0, amount: 0.8 } },
+        { op: "watermark", params: { text: "PixelFlow", position: "bottom-right", opacity: 0.8, scale: 0.25, margin: 14 } }
+      ],
+      scanner: [
+        { op: "grayscale", params: { keep_channels: false } },
+        { op: "gaussian_blur", params: { kernel_size: 3, sigma_x: 0.8 } },
+        { op: "adaptive_threshold", params: { method: "gaussian", threshold_type: "binary", block_size: 15, constant: 4.0 } }
+      ],
+      vivid: [
+        { op: "histogram_equalization", params: { use_clahe: true, clip_limit: 2.4, tile_grid_size: 8 } },
+        { op: "gamma", params: { gamma: 1.1 } },
+        { op: "sharpen", params: { kernel_size: 3, sigma: 1.0, amount: 1.0 } }
+      ],
+      sketch: [
+        { op: "gaussian_blur", params: { kernel_size: 5, sigma_x: 1.2 } },
+        { op: "canny", params: { threshold1: 60.0, threshold2: 160.0 } }
+      ]
+    };
+
+    let activeSteps = [];
+    let stepSeq = 1;
+    let currentBlob = null;
+    let currentFileName = "photo.png";
+    let debounceTimer = null;
+
+    const catalogContainer = document.getElementById("catalogContainer");
+    const stepsContainer = document.getElementById("stepsContainer");
+    const stepCountBadge = document.getElementById("stepCountBadge");
+    const statusPill = document.getElementById("statusPill");
+    const imgBefore = document.getElementById("imgBefore");
+    const imgAfter = document.getElementById("imgAfter");
+    const metaBefore = document.getElementById("metaBefore");
+    const metaAfter = document.getElementById("metaAfter");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const autoApplyToggle = document.getElementById("autoApplyToggle");
+
+    function renderCatalog() {
+      catalogContainer.innerHTML = "";
+      EFFECT_CATALOG.forEach((group) => {
+        const wrap = document.createElement("div");
+        wrap.className = "category-group";
+        const title = document.createElement("div");
+        title.className = "category-title";
+        title.textContent = group.category;
+        wrap.appendChild(title);
+
+        const list = document.createElement("div");
+        list.className = "effect-list";
+        group.items.forEach((item) => {
+          const btn = document.createElement("div");
+          btn.className = "effect-item";
+          btn.innerHTML = `
+            <div class="effect-info">
+              <strong>${item.title}</strong>
+              <span>${item.desc}</span>
+            </div>
+            <div class="effect-add">+</div>
+          `;
+          btn.addEventListener("click", () => {
+            addStep(item.op, { ...item.defaults });
+          });
+          list.appendChild(btn);
+        });
+        wrap.appendChild(list);
+        catalogContainer.appendChild(wrap);
+      });
+    }
+
+    function addStep(op, params) {
+      const id = stepSeq++;
+      activeSteps.push({
+        id,
+        op,
+        name: `step_${id}_${op}`,
+        params: { ...params }
+      });
+      renderSteps();
+      scheduleExecution();
+    }
+
+    function renderSteps() {
+      stepsContainer.innerHTML = "";
+      stepCountBadge.textContent = `${activeSteps.length} ${activeSteps.length === 1 ? "effect" : "effects"}`;
+      if (activeSteps.length === 0) {
+        stepsContainer.innerHTML = `
+          <div class="empty-steps">
+            No effects added yet.<br/>
+            Pick a Quick Template or click any effect on the left to start editing.
+          </div>
+        `;
+        return;
+      }
+
+      activeSteps.forEach((step, idx) => {
+        const meta = EFFECT_LOOKUP[step.op] || { title: step.op, controls: [] };
+        const card = document.createElement("div");
+        card.className = "step-card";
+
+        const header = document.createElement("div");
+        header.className = "step-header";
+        header.innerHTML = `
+          <div class="step-title">
+            <span class="step-num">${idx + 1}</span>
+            <span>${meta.title}</span>
+          </div>
+          <div class="step-controls">
+            <button type="button" class="icon-btn" title="Move Up" data-dir="-1">↑</button>
+            <button type="button" class="icon-btn" title="Move Down" data-dir="1">↓</button>
+            <button type="button" class="icon-btn danger" title="Remove Effect" data-del="1">×</button>
+          </div>
+        `;
+
+        header.querySelector('[data-dir="-1"]').addEventListener("click", () => moveStep(idx, -1));
+        header.querySelector('[data-dir="1"]').addEventListener("click", () => moveStep(idx, 1));
+        header.querySelector('[data-del="1"]').addEventListener("click", () => removeStep(idx));
+        card.appendChild(header);
+
+        (meta.controls || []).forEach((ctrl) => {
+          const row = document.createElement("div");
+          row.className = "param-row";
+          const val = step.params[ctrl.key];
+          const label = document.createElement("div");
+          label.className = "param-label";
+          const valSpan = document.createElement("strong");
+          valSpan.textContent = val;
+          const nameSpan = document.createElement("span");
+          nameSpan.textContent = ctrl.label;
+          label.appendChild(nameSpan);
+          label.appendChild(valSpan);
+          row.appendChild(label);
+
+          if (ctrl.type === "range") {
+            const input = document.createElement("input");
+            input.type = "range";
+            input.min = ctrl.min;
+            input.max = ctrl.max;
+            input.step = ctrl.step;
+            input.value = val;
+            input.addEventListener("input", () => {
+              const parsed = Number(input.value);
+              step.params[ctrl.key] = parsed;
+              valSpan.textContent = parsed;
+              scheduleExecution();
+            });
+            row.appendChild(input);
+          } else if (ctrl.type === "select") {
+            const sel = document.createElement("select");
+            sel.className = "param-select";
+            ctrl.options.forEach((opt) => {
+              const o = document.createElement("option");
+              o.value = opt;
+              o.textContent = opt;
+              if (opt === val) o.selected = true;
+              sel.appendChild(o);
+            });
+            sel.addEventListener("change", () => {
+              step.params[ctrl.key] = sel.value;
+              valSpan.textContent = sel.value;
+              scheduleExecution();
+            });
+            row.appendChild(sel);
+          } else {
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = val;
+            input.addEventListener("input", () => {
+              step.params[ctrl.key] = input.value || "PixelFlow";
+              valSpan.textContent = step.params[ctrl.key];
+              scheduleExecution();
+            });
+            row.appendChild(input);
+          }
+          card.appendChild(row);
+        });
+
+        stepsContainer.appendChild(card);
+      });
+    }
+
+    function moveStep(index, delta) {
+      const target = index + delta;
+      if (target < 0 || target >= activeSteps.length) return;
+      const temp = activeSteps[index];
+      activeSteps[index] = activeSteps[target];
+      activeSteps[target] = temp;
+      renderSteps();
+      scheduleExecution();
+    }
+
+    function removeStep(index) {
+      activeSteps.splice(index, 1);
+      renderSteps();
+      scheduleExecution();
+    }
+
+    function loadPreset(presetKey) {
+      const template = PRESET_PIPELINES[presetKey] || PRESET_PIPELINES.social;
+      activeSteps = template.map((item) => {
+        const id = stepSeq++;
+        return {
+          id,
+          op: item.op,
+          name: `step_${id}_${item.op}`,
+          params: { ...item.params }
+        };
+      });
+      renderSteps();
+      executePipelineNow();
+    }
+
+    function scheduleExecution() {
+      if (!autoApplyToggle.checked) return;
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        executePipelineNow();
+      }, 180);
+    }
+
     function setStatus(text, kind) {
-      statusBox.textContent = text;
-      statusBox.className = "status-box" + (kind ? " " + kind : "");
+      statusPill.textContent = text;
+      statusPill.className = "status-pill " + (kind || "ok");
     }
 
-    function setInputBlob(blob, name) {
-      currentBlob = blob;
-      currentFileName = name;
-      fileInfo.textContent = `${name} (${(blob.size / 1024).toFixed(1)} KB)`;
-      const url = URL.createObjectURL(blob);
-      inputPreview.onload = () => {
-        inputMeta.textContent = `${inputPreview.naturalWidth} × ${inputPreview.naturalHeight} px`;
+    async function executePipelineNow() {
+      if (!currentBlob) return;
+      if (activeSteps.length === 0) {
+        const url = URL.createObjectURL(currentBlob);
+        imgAfter.src = url;
+        imgAfter.style.display = "block";
+        metaAfter.textContent = metaBefore.textContent + " (Original)";
+        downloadBtn.href = url;
+        downloadBtn.style.display = "inline-flex";
+        setStatus("Original shown", "ok");
+        return;
+      }
+
+      setStatus("Processing...", "");
+      const payload = {
+        name: "pixelflow-studio",
+        version: "1.0",
+        steps: activeSteps.map((s) => ({
+          op: s.op,
+          name: s.name,
+          params: s.params
+        }))
       };
-      inputPreview.src = url;
-      inputPreview.style.display = "block";
+
+      const form = new FormData();
+      form.append("image", currentBlob, currentFileName);
+      form.append("pipeline", JSON.stringify(payload));
+
+      const t0 = performance.now();
+      try {
+        const resp = await fetch("/v1/process", { method: "POST", body: form });
+        const ms = Math.round(performance.now() - t0);
+        if (!resp.ok) {
+          const err = await resp.json();
+          setStatus(err.message || "Could not apply effect", "err");
+          return;
+        }
+        const outBlob = await resp.blob();
+        const outUrl = URL.createObjectURL(outBlob);
+        imgAfter.onload = () => {
+          metaAfter.textContent = `${imgAfter.naturalWidth} × ${imgAfter.naturalHeight} px • ${ms} ms`;
+        };
+        imgAfter.src = outUrl;
+        imgAfter.style.display = "block";
+        downloadBtn.href = outUrl;
+        downloadBtn.style.display = "inline-flex";
+        setStatus(`Updated in ${ms} ms`, "ok");
+      } catch (e) {
+        setStatus("Connection error", "err");
+      }
     }
 
-    function generateSamplePhoto() {
+    function setSourceBlob(blob, fileName) {
+      currentBlob = blob;
+      currentFileName = fileName;
+      document.getElementById("fileLabel").textContent = `${fileName} (${(blob.size / 1024).toFixed(1)} KB)`;
+      const url = URL.createObjectURL(blob);
+      imgBefore.onload = () => {
+        metaBefore.textContent = `${imgBefore.naturalWidth} × ${imgBefore.naturalHeight} px`;
+      };
+      imgBefore.src = url;
+      imgBefore.style.display = "block";
+      executePipelineNow();
+    }
+
+    function createSampleLandscape() {
       const canvas = document.createElement("canvas");
-      canvas.width = 480;
-      canvas.height = 340;
+      canvas.width = 560;
+      canvas.height = 380;
       const ctx = canvas.getContext("2d");
-      const grad = ctx.createLinearGradient(0, 0, 480, 340);
-      grad.addColorStop(0, "#1e3a8a");
-      grad.addColorStop(0.5, "#0284c7");
-      grad.addColorStop(1, "#0f172a");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 480, 340);
-      ctx.fillStyle = "#facc15";
+      const sky = ctx.createLinearGradient(0, 0, 0, 260);
+      sky.addColorStop(0, "#0f172a");
+      sky.addColorStop(0.55, "#1d4ed8");
+      sky.addColorStop(1, "#38bdf8");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, 560, 380);
+
+      ctx.fillStyle = "#fde047";
       ctx.beginPath();
-      ctx.arc(350, 95, 48, 0, Math.PI * 2);
+      ctx.arc(420, 95, 44, 0, Math.PI * 2);
       ctx.fill();
+
       ctx.fillStyle = "#1e293b";
       ctx.beginPath();
-      ctx.moveTo(0, 340);
-      ctx.lineTo(150, 170);
-      ctx.lineTo(310, 340);
+      ctx.moveTo(0, 380);
+      ctx.lineTo(170, 175);
+      ctx.lineTo(360, 380);
       ctx.fill();
+
       ctx.fillStyle = "#334155";
       ctx.beginPath();
-      ctx.moveTo(180, 340);
-      ctx.lineTo(340, 150);
-      ctx.lineTo(480, 340);
+      ctx.moveTo(210, 380);
+      ctx.lineTo(395, 155);
+      ctx.lineTo(560, 380);
       ctx.fill();
+
       canvas.toBlob((blob) => {
-        if (blob) setInputBlob(blob, "sample_photo.png");
+        if (blob) setSourceBlob(blob, "sample_landscape.png");
       }, "image/png");
     }
 
-    function generateSampleDocument() {
+    function createSampleReceipt() {
       const canvas = document.createElement("canvas");
-      canvas.width = 460;
-      canvas.height = 320;
+      canvas.width = 480;
+      canvas.height = 360;
       const ctx = canvas.getContext("2d");
-      ctx.fillStyle = "#e5e7eb";
-      ctx.fillRect(0, 0, 460, 320);
-      for (let i = 0; i < 1800; i++) {
-        ctx.fillStyle = i % 2 === 0 ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.25)";
-        ctx.fillRect(Math.random() * 460, Math.random() * 320, 2, 2);
+      ctx.fillStyle = "#e2e8f0";
+      ctx.fillRect(0, 0, 480, 360);
+      for (let i = 0; i < 1500; i++) {
+        ctx.fillStyle = i % 2 === 0 ? "rgba(15,23,42,0.06)" : "rgba(255,255,255,0.25)";
+        ctx.fillRect(Math.random() * 480, Math.random() * 360, 2, 2);
       }
-      ctx.fillStyle = "#1f2937";
+      ctx.fillStyle = "#0f172a";
       ctx.font = "bold 26px sans-serif";
-      ctx.fillText("INVOICE #2026-089", 32, 58);
+      ctx.fillText("PIXELFLOW RECEIPT", 36, 62);
       ctx.font = "18px monospace";
-      ctx.fillText("Customer: Pixelflow Labs", 32, 105);
-      ctx.fillText("Pipeline Service: $128.00", 32, 140);
-      ctx.strokeStyle = "#374151";
+      ctx.fillText("Order #PF-2026", 36, 110);
+      ctx.fillText("Studio Pro Plan: $49.00", 36, 146);
+      ctx.strokeStyle = "#334155";
       ctx.lineWidth = 2;
-      ctx.strokeRect(30, 175, 400, 105);
-      ctx.font = "16px sans-serif";
-      ctx.fillText("APPROVED & VERIFIED", 52, 235);
+      ctx.strokeRect(34, 185, 410, 120);
+      ctx.font = "bold 18px sans-serif";
+      ctx.fillText("PAID & VERIFIED", 58, 252);
+
       canvas.toBlob((blob) => {
         if (blob) {
-          setInputBlob(blob, "sample_document.png");
-          document.getElementById("presetSelect").value = "document";
-          editor.value = PRESETS.document;
+          setSourceBlob(blob, "sample_receipt.png");
+          loadPreset("scanner");
         }
       }, "image/png");
     }
 
+    // Event bindings
+    document.querySelectorAll("[data-preset]").forEach((btn) => {
+      btn.addEventListener("click", () => loadPreset(btn.dataset.preset));
+    });
+
+    document.getElementById("btnResetSteps").addEventListener("click", () => {
+      activeSteps = [];
+      renderSteps();
+      executePipelineNow();
+    });
+
+    document.getElementById("btnApply").addEventListener("click", () => executePipelineNow());
+
     document.getElementById("btnSamplePhoto").addEventListener("click", (e) => {
       e.stopPropagation();
-      generateSamplePhoto();
+      createSampleLandscape();
     });
+
     document.getElementById("btnSampleDoc").addEventListener("click", (e) => {
       e.stopPropagation();
-      generateSampleDocument();
+      createSampleReceipt();
     });
 
     const dropzone = document.getElementById("dropzone");
@@ -556,7 +1195,7 @@ steps:
     dropzone.addEventListener("click", () => fileInput.click());
     fileInput.addEventListener("change", () => {
       if (fileInput.files && fileInput.files[0]) {
-        setInputBlob(fileInput.files[0], fileInput.files[0].name);
+        setSourceBlob(fileInput.files[0], fileInput.files[0].name);
       }
     });
     dropzone.addEventListener("dragover", (e) => {
@@ -568,84 +1207,38 @@ steps:
       e.preventDefault();
       dropzone.classList.remove("dragover");
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        setInputBlob(e.dataTransfer.files[0], e.dataTransfer.files[0].name);
+        setSourceBlob(e.dataTransfer.files[0], e.dataTransfer.files[0].name);
       }
     });
 
-    document.getElementById("btnValidate").addEventListener("click", async () => {
-      setStatus("Validating pipeline...", "");
-      try {
-        const resp = await fetch("/v1/validate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ pipeline: editor.value })
-        });
-        const data = await resp.json();
-        if (resp.ok) {
-          setStatus(`Valid pipeline '${data.name}' (v${data.version}) — ${data.step_count} steps: [${data.steps.join(" -> ")}]`, "ok");
+    // View mode switcher
+    const stageCanvas = document.getElementById("stageCanvas");
+    const frameBefore = document.getElementById("frameBefore");
+    const frameAfter = document.getElementById("frameAfter");
+    document.querySelectorAll("[data-view]").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll("[data-view]").forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        const mode = tab.dataset.view;
+        if (mode === "split") {
+          stageCanvas.className = "stage-canvas mode-split";
+          frameBefore.style.display = "flex";
+          frameAfter.style.display = "flex";
+        } else if (mode === "after") {
+          stageCanvas.className = "stage-canvas mode-single";
+          frameBefore.style.display = "none";
+          frameAfter.style.display = "flex";
         } else {
-          setStatus(`Validation Error (${data.error_code}): ${data.message}`, "err");
+          stageCanvas.className = "stage-canvas mode-single";
+          frameBefore.style.display = "flex";
+          frameAfter.style.display = "none";
         }
-      } catch (err) {
-        setStatus(`Network error: ${err}`, "err");
-      }
+      });
     });
 
-    document.getElementById("btnRun").addEventListener("click", async () => {
-      if (!currentBlob) {
-        setStatus("Please select or load a sample image first.", "err");
-        return;
-      }
-      setStatus("Executing pipeline via POST /v1/process...", "");
-      const t0 = performance.now();
-      const form = new FormData();
-      form.append("image", currentBlob, currentFileName);
-      form.append("pipeline", editor.value);
-      try {
-        const resp = await fetch("/v1/process", { method: "POST", body: form });
-        const elapsed = (performance.now() - t0).toFixed(1);
-        const reqId = resp.headers.get("X-Request-ID") || "-";
-        if (!resp.ok) {
-          const errData = await resp.json();
-          setStatus(`Execution Failed (${errData.error_code}): ${errData.message}\nRequest-ID: ${reqId}`, "err");
-          return;
-        }
-        const outBlob = await resp.blob();
-        const outUrl = URL.createObjectURL(outBlob);
-        outputPreview.onload = () => {
-          outputMeta.textContent = `${outputPreview.naturalWidth} × ${outputPreview.naturalHeight} px (${elapsed} ms)`;
-        };
-        outputPreview.src = outUrl;
-        outputPreview.style.display = "block";
-        downloadLink.href = outUrl;
-        downloadLink.style.display = "inline";
-        setStatus(`Completed in ${elapsed} ms | Output: ${(outBlob.size / 1024).toFixed(1)} KB | Request-ID: ${reqId}`, "ok");
-      } catch (err) {
-        setStatus(`Request failed: ${err}`, "err");
-      }
-    });
-
-    async function loadOperationsPills() {
-      const container = document.getElementById("opsPills");
-      try {
-        const resp = await fetch("/v1/operations");
-        const data = await resp.json();
-        (data.operations || []).forEach((op) => {
-          const pill = document.createElement("span");
-          pill.className = "op-pill";
-          pill.textContent = "+ " + op.name;
-          pill.title = "Click to append step to YAML";
-          pill.addEventListener("click", () => {
-            const snippet = STEP_SNIPPETS[op.name] || `  - op: ${op.name}`;
-            editor.value = editor.value.replace(/\s*$/, "") + "\n" + snippet + "\n";
-          });
-          container.appendChild(pill);
-        });
-      } catch (_) {}
-    }
-
-    loadOperationsPills();
-    generateSamplePhoto();
+    renderCatalog();
+    loadPreset("social");
+    createSampleLandscape();
   </script>
 </body>
 </html>
