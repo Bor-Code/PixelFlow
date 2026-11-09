@@ -54,6 +54,12 @@ from pixelflow.operations.overlay import (
     WatermarkOperation,
     WatermarkParams,
 )
+from pixelflow.operations.redact import (
+    RedactOperation,
+    RedactParams,
+    StampOperation,
+    StampParams,
+)
 from pixelflow.operations.threshold import (
     AdaptiveThresholdOperation,
     AdaptiveThresholdParams,
@@ -92,6 +98,8 @@ __all__ = [
     "MorphologyParams",
     "OtsuThresholdOperation",
     "OtsuThresholdParams",
+    "RedactOperation",
+    "RedactParams",
     "ResizeOperation",
     "ResizeParams",
     "RotateOperation",
@@ -102,6 +110,8 @@ __all__ = [
     "SharpenParams",
     "SobelOperation",
     "SobelParams",
+    "StampOperation",
+    "StampParams",
     "WatermarkOperation",
     "WatermarkParams",
 ]
