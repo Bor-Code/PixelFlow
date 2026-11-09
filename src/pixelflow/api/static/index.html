@@ -1,1244 +1,1163 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PixelFlow — Visual Image Studio</title>
+  <title>PixelFlow — Web Fotoğraf Editörü</title>
   <style>
     :root {
-      --bg: #090b10;
-      --surface: #11151f;
-      --surface-2: #171c29;
-      --surface-3: #1e2536;
-      --border: #262f45;
-      --border-light: #33415c;
-      --text: #f1f5f9;
-      --text-muted: #94a3b8;
-      --primary: #6366f1;
-      --primary-hover: #4f46e5;
-      --accent: #38bdf8;
-      --success: #10b981;
-      --danger: #f43f5e;
-      --radius: 14px;
-      --radius-sm: 9px;
+      --ps-bg: #1e1e1e;
+      --ps-dark: #141414;
+      --ps-panel: #252526;
+      --ps-panel-light: #2d2d30;
+      --ps-border: #383838;
+      --ps-accent: #0078d4;
+      --ps-accent-hover: #106ebe;
+      --ps-text: #cccccc;
+      --ps-text-bright: #ffffff;
+      --ps-text-muted: #8c8c8c;
+      --ps-danger: #e81123;
+      --ps-success: #107c41;
+      --ps-active-tool: #094771;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     body {
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: var(--ps-dark);
+      color: var(--ps-text);
       height: 100vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-    }
-    /* Top Navbar */
-    .navbar {
-      height: 62px;
-      padding: 0 24px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      font-size: 1.25rem;
-      font-weight: 800;
-      letter-spacing: -0.025em;
-      color: var(--text);
-      user-select: none;
-    }
-    .brand-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 9px;
-      background: linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
-    }
-    .brand-icon svg {
-      width: 20px;
-      height: 20px;
-      stroke: #ffffff;
-    }
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .btn {
-      font-family: inherit;
-      font-size: 0.85rem;
-      font-weight: 600;
-      padding: 8px 15px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: var(--surface-2);
-      color: var(--text);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      transition: all 0.16s ease;
-      text-decoration: none;
-    }
-    .btn:hover {
-      background: var(--surface-3);
-      border-color: var(--border-light);
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-      border-color: #6366f1;
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-    }
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-      border-color: #4f46e5;
-    }
-    .btn-success {
-      background: rgba(16, 185, 129, 0.14);
-      border-color: rgba(16, 185, 129, 0.4);
-      color: #34d399;
-    }
-    .btn-success:hover {
-      background: rgba(16, 185, 129, 0.24);
+      font-size: 12px;
     }
 
-    /* Main Workspace Layout */
+    /* Üst Menü Çubuğu */
+    .menu-bar {
+      height: 30px;
+      background: var(--ps-panel);
+      border-bottom: 1px solid var(--ps-border);
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 4px;
+      z-index: 100;
+    }
+    .brand-logo {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--ps-text-bright);
+      padding: 0 12px 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-right: 1px solid var(--ps-border);
+      margin-right: 4px;
+    }
+    .brand-logo svg {
+      width: 15px;
+      height: 15px;
+      fill: var(--ps-accent);
+    }
+    .menu-item {
+      position: relative;
+      padding: 4px 10px;
+      cursor: pointer;
+      border-radius: 3px;
+      color: var(--ps-text);
+    }
+    .menu-item:hover {
+      background: var(--ps-panel-light);
+      color: var(--ps-text-bright);
+    }
+    .menu-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--ps-panel);
+      border: 1px solid var(--ps-border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      border-radius: 3px;
+      min-width: 170px;
+      padding: 4px 0;
+      z-index: 200;
+    }
+    .menu-item:hover .menu-dropdown {
+      display: block;
+    }
+    .dropdown-action {
+      padding: 6px 14px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      color: var(--ps-text);
+    }
+    .dropdown-action:hover {
+      background: var(--ps-accent);
+      color: #fff;
+    }
+    .dropdown-divider {
+      height: 1px;
+      background: var(--ps-border);
+      margin: 4px 0;
+    }
+
+    /* Üst Seçenekler / Kontrol Şeridi */
+    .options-bar {
+      height: 34px;
+      background: var(--ps-panel);
+      border-bottom: 1px solid var(--ps-border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      justify-content: space-between;
+    }
+    .options-left, .options-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn {
+      background: var(--ps-panel-light);
+      border: 1px solid var(--ps-border);
+      color: var(--ps-text);
+      padding: 4px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn:hover {
+      background: #3e3e42;
+      color: var(--ps-text-bright);
+    }
+    .btn-primary {
+      background: var(--ps-accent);
+      border-color: var(--ps-accent);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--ps-accent-hover);
+    }
+    .view-toggle {
+      display: flex;
+      border: 1px solid var(--ps-border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .view-btn {
+      border: none;
+      background: var(--ps-panel-light);
+      color: var(--ps-text);
+      padding: 4px 10px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .view-btn.active {
+      background: var(--ps-active-tool);
+      color: #fff;
+    }
+
+    /* Ana Çalışma Alanı */
     .workspace {
       flex: 1;
       display: grid;
-      grid-template-columns: 310px 1fr 370px;
+      grid-template-columns: 46px 1fr 320px;
       overflow: hidden;
-    }
-    @media (max-width: 1200px) {
-      body { height: auto; overflow: auto; }
-      .workspace { grid-template-columns: 1fr; }
+      background: var(--ps-dark);
     }
 
-    /* Left Sidebar: Photo & Effects Library */
-    .sidebar-left {
-      background: var(--surface);
-      border-right: 1px solid var(--border);
+    /* Sol Araç Çubuğu (Photoshop Tool Dock) */
+    .tool-dock {
+      background: var(--ps-panel);
+      border-right: 1px solid var(--ps-border);
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
-      padding: 18px;
-      gap: 20px;
+      align-items: center;
+      padding: 6px 0;
+      gap: 4px;
     }
-    .section-label {
-      font-size: 0.74rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-      margin-bottom: 10px;
+    .tool-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 4px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-    }
-    .upload-card {
-      border: 1.5px dashed var(--border-light);
-      border-radius: var(--radius);
-      padding: 16px 14px;
-      text-align: center;
-      background: rgba(23, 28, 41, 0.65);
-      cursor: pointer;
-      transition: all 0.18s ease;
-    }
-    .upload-card:hover, .upload-card.dragover {
-      border-color: var(--accent);
-      background: rgba(56, 189, 248, 0.07);
-    }
-    .upload-title {
-      font-size: 0.88rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .upload-sub {
-      font-size: 0.76rem;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-    }
-    .sample-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .sample-row .btn {
       justify-content: center;
-      font-size: 0.78rem;
-      padding: 7px 10px;
-    }
-
-    /* Presets */
-    .preset-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .preset-btn {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 10px 11px;
-      text-align: left;
       cursor: pointer;
-      transition: all 0.15s ease;
-      color: var(--text);
+      color: var(--ps-text);
+      position: relative;
     }
-    .preset-btn:hover {
-      border-color: var(--primary);
-      background: var(--surface-3);
-      transform: translateY(-1px);
+    .tool-btn svg {
+      width: 17px;
+      height: 17px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
     }
-    .preset-btn strong {
-      display: block;
-      font-size: 0.82rem;
-      margin-bottom: 3px;
+    .tool-btn:hover {
+      background: var(--ps-panel-light);
+      color: var(--ps-text-bright);
     }
-    .preset-btn span {
-      display: block;
-      font-size: 0.72rem;
-      color: var(--text-muted);
+    .tool-btn.active {
+      background: var(--ps-active-tool);
+      color: #fff;
     }
-
-    /* Effects Catalog */
-    .category-group {
-      margin-bottom: 14px;
-    }
-    .category-title {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--accent);
-      margin-bottom: 7px;
-    }
-    .effect-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .effect-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 9px 12px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all 0.14s ease;
-    }
-    .effect-item:hover {
-      border-color: var(--primary);
-      background: var(--surface-3);
-    }
-    .effect-info strong {
-      display: block;
-      font-size: 0.83rem;
-      font-weight: 600;
-    }
-    .effect-info span {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-    }
-    .effect-add {
+    .tool-divider {
       width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      background: rgba(99, 102, 241, 0.16);
-      color: #818cf8;
+      height: 1px;
+      background: var(--ps-border);
+      margin: 4px 0;
+    }
+
+    /* Orta Kanvas */
+    .canvas-container {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 1rem;
-    }
-
-    /* Center Stage: Image Preview */
-    .stage {
-      display: flex;
-      flex-direction: column;
-      background: #07090e;
-      overflow: hidden;
-    }
-    .stage-toolbar {
-      height: 50px;
-      padding: 0 20px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(17, 21, 31, 0.75);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .view-tabs {
-      display: inline-flex;
-      background: var(--surface-2);
-      padding: 3px;
-      border-radius: 9px;
-      border: 1px solid var(--border);
-    }
-    .view-tab {
-      font-size: 0.78rem;
-      font-weight: 600;
-      padding: 5px 12px;
-      border-radius: 6px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-    .view-tab.active {
-      background: var(--primary);
-      color: #ffffff;
-    }
-    .stage-meta {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .status-pill {
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-    }
-    .status-pill.ok {
-      color: #34d399;
-      border-color: rgba(16, 185, 129, 0.35);
-      background: rgba(16, 185, 129, 0.1);
-    }
-    .status-pill.err {
-      color: #fb7185;
-      border-color: rgba(244, 63, 94, 0.4);
-      background: rgba(244, 63, 94, 0.12);
-    }
-
-    .stage-canvas {
-      flex: 1;
-      display: grid;
-      gap: 16px;
-      padding: 20px;
       overflow: auto;
-      background-image: radial-gradient(#192132 1px, transparent 1px);
+      background: #111111;
+      background-image: 
+        linear-gradient(45deg, #181818 25%, transparent 25%), 
+        linear-gradient(-45deg, #181818 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #181818 75%), 
+        linear-gradient(-45deg, transparent 75%, #181818 75%);
       background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      padding: 24px;
     }
-    .stage-canvas.mode-split {
-      grid-template-columns: 1fr 1fr;
+    .canvas-viewport {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+      max-height: 100%;
     }
-    .stage-canvas.mode-single {
-      grid-template-columns: 1fr;
-    }
-    .frame {
-      background: rgba(17, 21, 31, 0.85);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+    .canvas-box {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      border-radius: 3px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      min-height: 320px;
+      max-width: calc(50vw - 60px);
     }
-    .frame-bar {
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
+    .canvas-box.single {
+      max-width: calc(100vw - 420px);
+    }
+    .canvas-title {
+      background: #202020;
+      padding: 5px 10px;
+      font-size: 11px;
+      border-bottom: 1px solid var(--ps-border);
+      color: var(--ps-text-muted);
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      background: var(--surface);
     }
-    .frame-bar strong { color: var(--text); }
-    .frame-body {
-      flex: 1;
+    .canvas-title strong {
+      color: var(--ps-text-bright);
+    }
+    .canvas-view-inner {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
-      overflow: hidden;
+      padding: 10px;
+      background: #0d0d0d;
+      min-width: 200px;
+      min-height: 200px;
     }
-    .frame-body img {
+    .canvas-view-inner img {
       max-width: 100%;
-      max-height: calc(100vh - 230px);
+      max-height: calc(100vh - 160px);
       object-fit: contain;
-      border-radius: 6px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
     }
 
-    /* Right Sidebar: Visual Pipeline Stack */
-    .sidebar-right {
-      background: var(--surface);
-      border-left: 1px solid var(--border);
+    /* Sağ Panel (Photoshop Katmanlar & Ayarlamalar) */
+    .sidebar-panels {
+      background: var(--ps-panel);
+      border-left: 1px solid var(--ps-border);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
-    .right-header {
-      padding: 16px 18px;
-      border-bottom: 1px solid var(--border);
+    .panel-tabs {
+      height: 32px;
+      background: #1c1c1c;
+      border-bottom: 1px solid var(--ps-border);
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      padding: 0 4px;
+      gap: 2px;
     }
-    .right-header h2 {
-      font-size: 0.95rem;
-      font-weight: 700;
+    .panel-tab {
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 3px 3px 0 0;
+      color: var(--ps-text-muted);
+      font-size: 11px;
     }
-    .steps-container {
+    .panel-tab:hover {
+      color: var(--ps-text);
+    }
+    .panel-tab.active {
+      background: var(--ps-panel);
+      color: var(--ps-text-bright);
+      font-weight: 600;
+    }
+    .panel-content {
       flex: 1;
       overflow-y: auto;
-      padding: 14px 16px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-    .empty-steps {
-      text-align: center;
-      padding: 36px 18px;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      border: 1px dashed var(--border);
-      border-radius: var(--radius);
-      line-height: 1.5;
-    }
+
+    /* Efekt Katman Kartı */
     .step-card {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 13px 14px;
+      background: var(--ps-panel-light);
+      border: 1px solid var(--ps-border);
+      border-radius: 4px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      transition: border-color 0.15s;
+      gap: 8px;
     }
     .step-card:hover {
-      border-color: var(--border-light);
+      border-color: #4f4f4f;
     }
     .step-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
     }
-    .step-title {
+    .step-name {
+      font-weight: 600;
+      color: var(--ps-text-bright);
+      font-size: 11.5px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.86rem;
-      font-weight: 700;
+      gap: 6px;
     }
-    .step-num {
+    .step-tag {
+      font-size: 9.5px;
+      background: #1e1e1e;
+      padding: 2px 6px;
+      border-radius: 2px;
+      color: var(--ps-accent);
+    }
+    .step-actions {
+      display: flex;
+      gap: 3px;
+    }
+    .mini-btn {
       width: 22px;
       height: 22px;
-      border-radius: 6px;
-      background: rgba(99, 102, 241, 0.2);
-      color: #a5b4fc;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-    }
-    .step-controls {
-      display: flex;
-      gap: 4px;
-    }
-    .icon-btn {
-      width: 26px;
-      height: 26px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text-muted);
+      background: #202020;
+      border: 1px solid var(--ps-border);
+      border-radius: 3px;
+      color: var(--ps-text);
       cursor: pointer;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.8rem;
+      font-size: 11px;
     }
-    .icon-btn:hover {
-      color: var(--text);
-      border-color: var(--border-light);
+    .mini-btn:hover {
+      background: #333;
+      color: #fff;
     }
-    .icon-btn.danger:hover {
-      color: #fb7185;
-      border-color: rgba(244, 63, 94, 0.5);
+    .mini-btn.del:hover {
+      background: var(--ps-danger);
+      border-color: var(--ps-danger);
+      color: #fff;
     }
-    .param-row {
+
+    .slider-row {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
-    .param-label {
+    .slider-header {
       display: flex;
       justify-content: space-between;
-      font-size: 0.76rem;
-      color: var(--text-muted);
+      color: var(--ps-text-muted);
+      font-size: 10.5px;
     }
-    .param-label strong {
-      color: var(--text);
-      font-weight: 600;
+    .slider-header span:last-child {
+      color: var(--ps-text-bright);
+      font-family: monospace;
     }
     input[type="range"] {
       width: 100%;
-      accent-color: var(--primary);
+      height: 4px;
+      accent-color: var(--ps-accent);
       cursor: pointer;
     }
-    input[type="text"], input[type="number"], select.param-select {
+    input[type="text"], select.ps-select {
       width: 100%;
-      padding: 7px 10px;
-      border-radius: 7px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      font-size: 0.82rem;
-      font-family: inherit;
+      background: #181818;
+      border: 1px solid var(--ps-border);
+      color: var(--ps-text-bright);
+      padding: 5px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      outline: none;
     }
-    .right-footer {
-      padding: 14px 16px;
-      border-top: 1px solid var(--border);
-      background: var(--surface);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    input[type="text"]:focus, select.ps-select:focus {
+      border-color: var(--ps-accent);
     }
-    .auto-row {
+
+    /* Alt Durum Çubuğu */
+    .status-bar {
+      height: 22px;
+      background: #181818;
+      border-top: 1px solid var(--ps-border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      padding: 0 12px;
+      font-size: 10.5px;
+      color: var(--ps-text-muted);
+    }
+    .status-msg {
+      color: #4ec9b0;
+    }
+    .quick-preset-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .chip {
+      background: var(--ps-panel-light);
+      border: 1px solid var(--ps-border);
+      padding: 4px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 10.5px;
+      color: var(--ps-text);
+    }
+    .chip:hover {
+      background: var(--ps-active-tool);
+      border-color: var(--ps-accent);
+      color: #fff;
     }
   </style>
 </head>
 <body>
-  <header class="navbar">
-    <div class="brand">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-          <polyline points="2 17 12 22 22 17"></polyline>
-          <polyline points="2 12 12 17 22 12"></polyline>
-        </svg>
-      </div>
-      <span>PixelFlow</span>
+  <!-- Üst Menü -->
+  <header class="menu-bar">
+    <div class="brand-logo">
+      <svg viewBox="0 0 24 24">
+        <path d="M4 4h7a4 4 0 0 1 4 4 4 4 0 0 1-4 4H4V4zm0 8h6a4 4 0 0 1 4 4 4 4 0 0 1-4 4H4v-8z" />
+      </svg>
+      PixelFlow
     </div>
 
-    <div class="nav-actions">
-      <button type="button" class="btn" id="btnResetSteps">Clear Effects</button>
-      <a id="downloadBtn" class="btn btn-success" style="display:none" download="pixelflow_edited.png">
-        Download Image
-      </a>
+    <div class="menu-item">
+      Dosya
+      <div class="menu-dropdown">
+        <div class="dropdown-action" id="menuOpen">Resim Aç (Ctrl+O)</div>
+        <div class="dropdown-action" id="menuSampleLand">Örnek Manzara Aç</div>
+        <div class="dropdown-action" id="menuSampleDoc">Örnek Belge Aç</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-action" id="menuExport">Dışa Aktar (PNG Olarak İndir)</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-action" id="menuReset">Tüm Efektleri Sıfırla</div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      Görüntü
+      <div class="menu-dropdown">
+        <div class="dropdown-action" onclick="quickAdd('resize')">Boyutlandır...</div>
+        <div class="dropdown-action" onclick="quickAdd('rotate')">Döndür...</div>
+        <div class="dropdown-action" onclick="quickAdd('flip')">Yatay/Dikey Çevir</div>
+        <div class="dropdown-action" onclick="quickAdd('crop')">Kırp</div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      Ayarlamalar
+      <div class="menu-dropdown">
+        <div class="dropdown-action" onclick="quickAdd('brightness_contrast')">Parlaklık / Kontrast...</div>
+        <div class="dropdown-action" onclick="quickAdd('gamma')">Gama Tonu...</div>
+        <div class="dropdown-action" onclick="quickAdd('histogram_equalization')">Otomatik HDR / Histogram...</div>
+        <div class="dropdown-action" onclick="quickAdd('grayscale')">Siyah &amp; Beyaz Yap</div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      Filtreler
+      <div class="menu-dropdown">
+        <div class="dropdown-action" onclick="quickAdd('sharpen')">Keskinleştir (Unsharp Mask)</div>
+        <div class="dropdown-action" onclick="quickAdd('gaussian_blur')">Gauss Bulanıklığı...</div>
+        <div class="dropdown-action" onclick="quickAdd('bilateral_filter')">Doku Pürüzsüzleştirme...</div>
+        <div class="dropdown-action" onclick="quickAdd('face_blur')">Yüzleri Otomatik Sansürle/Bulanıklaştır</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-action" onclick="quickAdd('canny')">Çizim / Kenar Tespiti (Canny)</div>
+        <div class="dropdown-action" onclick="quickAdd('adaptive_threshold')">Belge Tarayıcı / Metin Temizleme</div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      Katman
+      <div class="menu-dropdown">
+        <div class="dropdown-action" onclick="quickAdd('watermark')">Filigran / Yazı Ekle...</div>
+      </div>
     </div>
   </header>
 
-  <div class="workspace">
-    <!-- Left Sidebar -->
-    <aside class="sidebar-left">
-      <div>
-        <div class="section-label"><span>1. Choose Photo</span></div>
-        <div class="upload-card" id="dropzone">
-          <div class="upload-title">Upload or Drop a Photo</div>
-          <div class="upload-sub" id="fileLabel">PNG, JPG, WEBP, BMP or TIFF</div>
-          <input type="file" id="fileInput" accept="image/*" style="display:none" />
-          <div class="sample-row">
-            <button type="button" class="btn" id="btnSamplePhoto">Sample Landscape</button>
-            <button type="button" class="btn" id="btnSampleDoc">Sample Receipt</button>
-          </div>
-        </div>
+  <!-- Üst Seçenekler Şeridi -->
+  <section class="options-bar">
+    <div class="options-left">
+      <input type="file" id="filePicker" accept="image/*" style="display:none" />
+      <button type="button" class="btn" id="btnUpload">Görsel Yükle</button>
+      <button type="button" class="btn" id="btnSamplePhoto">Örnek Fotoğraf</button>
+      <button type="button" class="btn" id="btnSampleDoc">Örnek Makbuz</button>
+      <div style="width:1px;height:18px;background:var(--ps-border);margin:0 4px"></div>
+      <div class="view-toggle">
+        <button type="button" class="view-btn active" data-view="split">Öncesi / Sonrası</button>
+        <button type="button" class="view-btn" data-view="after">Yalnızca İşlenen</button>
+        <button type="button" class="view-btn" data-view="before">Yalnızca Orijinal</button>
       </div>
+    </div>
 
-      <div>
-        <div class="section-label"><span>2. Quick Templates</span></div>
-        <div class="preset-grid">
-          <button type="button" class="preset-btn" data-preset="social">
-            <strong>Social Ready</strong>
-            <span>Resize, contrast &amp; watermark</span>
-          </button>
-          <button type="button" class="preset-btn" data-preset="scanner">
-            <strong>Doc Scanner</strong>
-            <span>Clean B&amp;W text scan</span>
-          </button>
-          <button type="button" class="preset-btn" data-preset="vivid">
-            <strong>HDR Pop</strong>
-            <span>CLAHE &amp; crisp sharpen</span>
-          </button>
-          <button type="button" class="preset-btn" data-preset="sketch">
-            <strong>Line Sketch</strong>
-            <span>Smooth edge outlines</span>
-          </button>
-        </div>
+    <div class="options-right">
+      <span id="timingBadge" style="color:var(--ps-text-muted);font-size:11px">Hazır</span>
+      <button type="button" class="btn btn-primary" id="btnDownload">PNG Olarak İndir</button>
+    </div>
+  </section>
+
+  <!-- Ana Çalışma Masası -->
+  <main class="workspace">
+    <!-- Sol Photoshop Araç Kutusu -->
+    <aside class="tool-dock">
+      <div class="tool-btn active" title="Parlaklık / Kontrast" onclick="quickAdd('brightness_contrast')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </div>
-
-      <div>
-        <div class="section-label"><span>3. Add Effects</span></div>
-        <div id="catalogContainer"></div>
+      <div class="tool-btn" title="Keskinleştir" onclick="quickAdd('sharpen')">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>
+      </div>
+      <div class="tool-btn" title="Bulanıklaştır" onclick="quickAdd('gaussian_blur')">
+        <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+      </div>
+      <div class="tool-btn" title="Otomatik Yüz Sansürü" onclick="quickAdd('face_blur')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      </div>
+      <div class="tool-divider"></div>
+      <div class="tool-btn" title="Boyutlandır" onclick="quickAdd('resize')">
+        <svg viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+      </div>
+      <div class="tool-btn" title="Döndür" onclick="quickAdd('rotate')">
+        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      </div>
+      <div class="tool-btn" title="Ayna / Çevir" onclick="quickAdd('flip')">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><polyline points="20 16 16 12 20 8"/><polyline points="4 8 8 12 4 16"/></svg>
+      </div>
+      <div class="tool-divider"></div>
+      <div class="tool-btn" title="Yazı / Filigran Ekle" onclick="quickAdd('watermark')">
+        <svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+      </div>
+      <div class="tool-btn" title="Belge / Metin Taraması" onclick="quickAdd('adaptive_threshold')">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      <div class="tool-btn" title="Çizgi / Kenar Çıkar" onclick="quickAdd('canny')">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       </div>
     </aside>
 
-    <!-- Center Preview Stage -->
-    <section class="stage">
-      <div class="stage-toolbar">
-        <div class="view-tabs">
-          <button type="button" class="view-tab active" data-view="split">Before &amp; After</button>
-          <button type="button" class="view-tab" data-view="after">Edited Only</button>
-          <button type="button" class="view-tab" data-view="before">Original Only</button>
-        </div>
-        <div class="stage-meta">
-          <span id="statusPill" class="status-pill ok">Ready</span>
-        </div>
-      </div>
-
-      <div class="stage-canvas mode-split" id="stageCanvas">
-        <div class="frame" id="frameBefore">
-          <div class="frame-bar">
-            <strong>Original Photo</strong>
+    <!-- Orta Kanvas Önizleme -->
+    <div class="canvas-container">
+      <div class="canvas-viewport" id="viewport">
+        <div class="canvas-box" id="boxBefore">
+          <div class="canvas-title">
+            <strong>Orijinal Görüntü</strong>
             <span id="metaBefore">—</span>
           </div>
-          <div class="frame-body">
-            <img id="imgBefore" alt="Original photo" style="display:none" />
+          <div class="canvas-view-inner">
+            <img id="imgBefore" alt="Orijinal" style="display:none" />
           </div>
         </div>
 
-        <div class="frame" id="frameAfter">
-          <div class="frame-bar">
-            <strong>Edited Result</strong>
+        <div class="canvas-box" id="boxAfter">
+          <div class="canvas-title">
+            <strong>İşlenmiş Sonuç</strong>
             <span id="metaAfter">—</span>
           </div>
-          <div class="frame-body">
-            <img id="imgAfter" alt="Edited photo" style="display:none" />
+          <div class="canvas-view-inner">
+            <img id="imgAfter" alt="Sonuç" style="display:none" />
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Right Sidebar: Visual Active Steps -->
-    <aside class="sidebar-right">
-      <div class="right-header">
-        <h2>Applied Effects</h2>
-        <span id="stepCountBadge" style="font-size:0.78rem;color:var(--text-muted)">0 steps</span>
+    <!-- Sağ Photoshop Panelleri (Katmanlar, Ayarlar) -->
+    <aside class="sidebar-panels">
+      <div class="panel-tabs">
+        <div class="panel-tab active" id="tabLayers">Katmanlar &amp; Efektler</div>
+        <div class="panel-tab" id="tabPresets">Hazır Şablonlar</div>
       </div>
 
-      <div class="steps-container" id="stepsContainer"></div>
+      <div class="panel-content" id="panelLayers">
+        <div class="quick-preset-chips">
+          <div class="chip" onclick="applyPreset('social')">+ Sosyal Medya</div>
+          <div class="chip" onclick="applyPreset('document')">+ Belge Tara</div>
+          <div class="chip" onclick="applyPreset('vivid')">+ Canlı HDR</div>
+          <div class="chip" onclick="applyPreset('sketch')">+ Karakalem</div>
+        </div>
 
-      <div class="right-footer">
-        <label class="auto-row">
-          <span>Update preview automatically</span>
-          <input type="checkbox" id="autoApplyToggle" checked />
-        </label>
-        <button type="button" class="btn btn-primary" id="btnApply" style="width:100%;justify-content:center;padding:11px">
-          Apply Effects Now
+        <div id="stepsList" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <div class="panel-content" id="panelPresets" style="display:none;">
+        <p style="color:var(--ps-text-muted);font-size:11px;margin-bottom:8px;">
+          Sık kullanılan profesyonel pipeline şablonları:
+        </p>
+        <button type="button" class="btn" style="width:100%;text-align:left;margin-bottom:6px" onclick="applyPreset('social')">
+          📸 <strong>Sosyal Medya Paketi:</strong> Boyutlandırma, Kontrast, Keskinlik ve Filigran
+        </button>
+        <button type="button" class="btn" style="width:100%;text-align:left;margin-bottom:6px" onclick="applyPreset('document')">
+          📄 <strong>Temiz Belge / Makbuz:</strong> Arka plan temizleme ve net siyah-beyaz binarize
+        </button>
+        <button type="button" class="btn" style="width:100%;text-align:left;margin-bottom:6px" onclick="applyPreset('vivid')">
+          🌅 <strong>HDR Canlılık:</strong> CLAHE gölge/ışık dengeleme, gama ve unsharp mask
+        </button>
+        <button type="button" class="btn" style="width:100%;text-align:left" onclick="applyPreset('sketch')">
+          ✏️ <strong>Karakalem Kenar:</strong> Gauss yumuşatma sonrası Canny çizgi tespiti
         </button>
       </div>
     </aside>
-  </div>
+  </main>
+
+  <!-- Alt Durum Çubuğu -->
+  <footer class="status-bar">
+    <span class="status-msg" id="statusMessage">PixelFlow Motoru Hazır • 127.0.0.1:8000</span>
+    <span id="canvasDims">— px</span>
+  </footer>
 
   <script>
-    const EFFECT_CATALOG = [
-      {
-        category: "Color & Lighting",
-        items: [
-          {
-            op: "brightness_contrast",
-            title: "Brightness & Contrast",
-            desc: "Adjust light and tonal pop",
-            defaults: { brightness: 0.05, contrast: 1.15 },
-            controls: [
-              { key: "brightness", label: "Brightness", type: "range", min: -0.8, max: 0.8, step: 0.05 },
-              { key: "contrast", label: "Contrast", type: "range", min: 0.4, max: 2.5, step: 0.05 }
-            ]
-          },
-          {
-            op: "gamma",
-            title: "Gamma Warmth",
-            desc: "Fine-tune midtone luminance",
-            defaults: { gamma: 1.2 },
-            controls: [
-              { key: "gamma", label: "Gamma", type: "range", min: 0.3, max: 3.0, step: 0.05 }
-            ]
-          },
-          {
-            op: "histogram_equalization",
-            title: "Auto HDR (CLAHE)",
-            desc: "Balance shadows and highlights",
-            defaults: { use_clahe: true, clip_limit: 2.2, tile_grid_size: 8 },
-            controls: [
-              { key: "clip_limit", label: "Strength", type: "range", min: 1.0, max: 6.0, step: 0.2 },
-              { key: "tile_grid_size", label: "Detail Grid", type: "range", min: 4, max: 16, step: 2 }
-            ]
-          },
-          {
-            op: "grayscale",
-            title: "Black & White",
-            desc: "Classic monochrome look",
-            defaults: { keep_channels: false },
-            controls: []
-          }
+    const EFFECT_DEFS = {
+      brightness_contrast: {
+        title: "Parlaklık & Kontrast",
+        tag: "Renk",
+        defaults: { brightness: 0.05, contrast: 1.15 },
+        fields: [
+          { key: "brightness", label: "Parlaklık", min: -0.8, max: 0.8, step: 0.05 },
+          { key: "contrast", label: "Kontrast", min: 0.4, max: 2.5, step: 0.05 }
         ]
       },
-      {
-        category: "Detail & Blur",
-        items: [
-          {
-            op: "sharpen",
-            title: "Crisp Sharpen",
-            desc: "Enhance fine edge details",
-            defaults: { kernel_size: 3, sigma: 1.0, amount: 0.9 },
-            controls: [
-              { key: "amount", label: "Sharpness", type: "range", min: 0.2, max: 2.5, step: 0.1 },
-              { key: "kernel_size", label: "Radius (Odd)", type: "range", min: 3, max: 11, step: 2 }
-            ]
-          },
-          {
-            op: "gaussian_blur",
-            title: "Soft Blur",
-            desc: "Smooth Gaussian lens blur",
-            defaults: { kernel_size: 7, sigma_x: 1.5 },
-            controls: [
-              { key: "kernel_size", label: "Blur Size", type: "range", min: 3, max: 25, step: 2 },
-              { key: "sigma_x", label: "Spread", type: "range", min: 0.5, max: 6.0, step: 0.5 }
-            ]
-          },
-          {
-            op: "bilateral_filter",
-            title: "Surface Smooth",
-            desc: "Smooth textures while keeping edges",
-            defaults: { diameter: 7, sigma_color: 60.0, sigma_space: 60.0 },
-            controls: [
-              { key: "diameter", label: "Diameter", type: "range", min: 3, max: 15, step: 2 },
-              { key: "sigma_color", label: "Smoothing", type: "range", min: 15, max: 120, step: 5 }
-            ]
-          },
-          {
-            op: "face_blur",
-            title: "Privacy Face Blur",
-            desc: "Automatically blur detected faces",
-            defaults: { blur_kernel_size: 31 },
-            controls: [
-              { key: "blur_kernel_size", label: "Blur Strength", type: "range", min: 11, max: 61, step: 4 }
-            ]
-          }
+      gamma: {
+        title: "Gama Ton Eğrisi",
+        tag: "Ton",
+        defaults: { gamma: 1.2 },
+        fields: [
+          { key: "gamma", label: "Gama", min: 0.3, max: 3.0, step: 0.05 }
         ]
       },
-      {
-        category: "Size & Orientation",
-        items: [
-          {
-            op: "resize",
-            title: "Resize Image",
-            desc: "Scale dimensions smoothly",
-            defaults: { width: 480, height: 340, keep_aspect_ratio: true, interpolation: "area" },
-            controls: [
-              { key: "width", label: "Max Width (px)", type: "range", min: 120, max: 1200, step: 20 },
-              { key: "height", label: "Max Height (px)", type: "range", min: 120, max: 1200, step: 20 }
-            ]
-          },
-          {
-            op: "rotate",
-            title: "Rotate Photo",
-            desc: "Turn image by angle",
-            defaults: { angle: 15.0, expand: true },
-            controls: [
-              { key: "angle", label: "Angle (°)", type: "range", min: -180, max: 180, step: 5 }
-            ]
-          },
-          {
-            op: "flip",
-            title: "Mirror / Flip",
-            desc: "Flip horizontally or vertically",
-            defaults: { mode: "horizontal" },
-            controls: [
-              { key: "mode", label: "Direction", type: "select", options: ["horizontal", "vertical", "both"] }
-            ]
-          }
+      histogram_equalization: {
+        title: "Otomatik HDR (CLAHE)",
+        tag: "Denge",
+        defaults: { use_clahe: true, clip_limit: 2.2, tile_grid_size: 8 },
+        fields: [
+          { key: "clip_limit", label: "HDR Gücü", min: 1.0, max: 6.0, step: 0.2 },
+          { key: "tile_grid_size", label: "Hücre Boyutu", min: 4, max: 16, step: 2 }
         ]
       },
-      {
-        category: "Branding & Document",
-        items: [
-          {
-            op: "watermark",
-            title: "Text Watermark",
-            desc: "Add custom signature overlay",
-            defaults: { text: "PixelFlow", position: "bottom-right", opacity: 0.75, scale: 0.25, margin: 14 },
-            controls: [
-              { key: "text", label: "Watermark Text", type: "text" },
-              { key: "position", label: "Corner", type: "select", options: ["bottom-right", "bottom-left", "top-right", "top-left", "center"] },
-              { key: "opacity", label: "Opacity", type: "range", min: 0.15, max: 1.0, step: 0.05 }
-            ]
-          },
-          {
-            op: "adaptive_threshold",
-            title: "Document B&W Scan",
-            desc: "Crisp black text on white page",
-            defaults: { method: "gaussian", threshold_type: "binary", block_size: 15, constant: 4.0 },
-            controls: [
-              { key: "block_size", label: "Detail Window", type: "range", min: 7, max: 31, step: 2 },
-              { key: "constant", label: "Cleanliness", type: "range", min: 0.0, max: 12.0, step: 1.0 }
-            ]
-          },
-          {
-            op: "canny",
-            title: "Line Art Sketch",
-            desc: "Extract clean edge contours",
-            defaults: { threshold1: 60.0, threshold2: 160.0 },
-            controls: [
-              { key: "threshold1", label: "Fine Lines", type: "range", min: 20, max: 150, step: 10 },
-              { key: "threshold2", label: "Strong Edges", type: "range", min: 80, max: 260, step: 10 }
-            ]
-          }
+      grayscale: {
+        title: "Siyah & Beyaz Dönüşümü",
+        tag: "Monokrom",
+        defaults: { keep_channels: false },
+        fields: []
+      },
+      sharpen: {
+        title: "Keskinleştirme (Unsharp)",
+        tag: "Filtre",
+        defaults: { kernel_size: 3, sigma: 1.0, amount: 0.9 },
+        fields: [
+          { key: "amount", label: "Keskinlik Miktarı", min: 0.2, max: 2.5, step: 0.1 },
+          { key: "kernel_size", label: "Yarıçap (Tek Sayı)", min: 3, max: 11, step: 2 }
+        ]
+      },
+      gaussian_blur: {
+        title: "Gauss Bulanıklığı",
+        tag: "Filtre",
+        defaults: { kernel_size: 7, sigma_x: 1.5 },
+        fields: [
+          { key: "kernel_size", label: "Bulanıklık Çapı", min: 3, max: 25, step: 2 },
+          { key: "sigma_x", label: "Dağılım Gücü", min: 0.5, max: 6.0, step: 0.5 }
+        ]
+      },
+      bilateral_filter: {
+        title: "Doku Pürüzsüzleştirme",
+        tag: "Filtre",
+        defaults: { diameter: 7, sigma_color: 60.0, sigma_space: 60.0 },
+        fields: [
+          { key: "diameter", label: "Çap", min: 3, max: 15, step: 2 },
+          { key: "sigma_color", label: "Pürüzsüzleştirme", min: 15, max: 120, step: 5 }
+        ]
+      },
+      face_blur: {
+        title: "Otomatik Yüz Sansürü",
+        tag: "Güvenlik",
+        defaults: { blur_kernel_size: 31 },
+        fields: [
+          { key: "blur_kernel_size", label: "Mozaik Yoğunluğu", min: 11, max: 61, step: 4 }
+        ]
+      },
+      resize: {
+        title: "Boyutlandırma",
+        tag: "Geometri",
+        defaults: { width: 480, height: 340, keep_aspect_ratio: true, interpolation: "area" },
+        fields: [
+          { key: "width", label: "Genişlik (px)", min: 120, max: 1600, step: 20 },
+          { key: "height", label: "Yükseklik (px)", min: 120, max: 1600, step: 20 }
+        ]
+      },
+      rotate: {
+        title: "Döndürme",
+        tag: "Geometri",
+        defaults: { angle: 15.0, expand: true },
+        fields: [
+          { key: "angle", label: "Açı (°)", min: -180, max: 180, step: 5 }
+        ]
+      },
+      flip: {
+        title: "Çevir / Ayna",
+        tag: "Geometri",
+        defaults: { mode: "horizontal" },
+        selectFields: [
+          { key: "mode", label: "Yön", options: [["horizontal", "Yatay"], ["vertical", "Dikey"], ["both", "Her İkisi"]] }
+        ]
+      },
+      watermark: {
+        title: "Yazı / Filigran",
+        tag: "Katman",
+        defaults: { text: "PixelFlow", position: "bottom-right", opacity: 0.8, scale: 0.25, margin: 14 },
+        textFields: [
+          { key: "text", label: "Filigran Metni" }
+        ],
+        selectFields: [
+          { key: "position", label: "Konum", options: [["bottom-right", "Sağ Alt"], ["bottom-left", "Sol Alt"], ["top-right", "Sağ Üst"], ["top-left", "Sol Üst"], ["center", "Ortala"]] }
+        ],
+        fields: [
+          { key: "opacity", label: "Opaklık", min: 0.1, max: 1.0, step: 0.05 }
+        ]
+      },
+      adaptive_threshold: {
+        title: "Belge Tarama & Metin Çıkarımı",
+        tag: "Binarize",
+        defaults: { method: "gaussian", threshold_type: "binary", block_size: 15, constant: 4.0 },
+        fields: [
+          { key: "block_size", label: "Pencere Çapı", min: 7, max: 31, step: 2 },
+          { key: "constant", label: "Arka Plan Temizliği", min: 0.0, max: 12.0, step: 1.0 }
+        ]
+      },
+      canny: {
+        title: "Çizgi / Kenar Tespiti",
+        tag: "Kenar",
+        defaults: { threshold1: 60.0, threshold2: 160.0 },
+        fields: [
+          { key: "threshold1", label: "İnce Kenar Eşiği", min: 20, max: 150, step: 10 },
+          { key: "threshold2", label: "Güçlü Kenar Eşiği", min: 80, max: 260, step: 10 }
         ]
       }
-    ];
-
-    const EFFECT_LOOKUP = {};
-    EFFECT_CATALOG.forEach((group) => {
-      group.items.forEach((item) => {
-        EFFECT_LOOKUP[item.op] = item;
-      });
-    });
-
-    const PRESET_PIPELINES = {
-      social: [
-        { op: "resize", params: { width: 460, height: 320, keep_aspect_ratio: true, interpolation: "area" } },
-        { op: "brightness_contrast", params: { brightness: 0.05, contrast: 1.15 } },
-        { op: "sharpen", params: { kernel_size: 3, sigma: 1.0, amount: 0.8 } },
-        { op: "watermark", params: { text: "PixelFlow", position: "bottom-right", opacity: 0.8, scale: 0.25, margin: 14 } }
-      ],
-      scanner: [
-        { op: "grayscale", params: { keep_channels: false } },
-        { op: "gaussian_blur", params: { kernel_size: 3, sigma_x: 0.8 } },
-        { op: "adaptive_threshold", params: { method: "gaussian", threshold_type: "binary", block_size: 15, constant: 4.0 } }
-      ],
-      vivid: [
-        { op: "histogram_equalization", params: { use_clahe: true, clip_limit: 2.4, tile_grid_size: 8 } },
-        { op: "gamma", params: { gamma: 1.1 } },
-        { op: "sharpen", params: { kernel_size: 3, sigma: 1.0, amount: 1.0 } }
-      ],
-      sketch: [
-        { op: "gaussian_blur", params: { kernel_size: 5, sigma_x: 1.2 } },
-        { op: "canny", params: { threshold1: 60.0, threshold2: 160.0 } }
-      ]
     };
 
     let activeSteps = [];
-    let stepSeq = 1;
+    let stepCounter = 1;
     let currentBlob = null;
-    let currentFileName = "photo.png";
-    let debounceTimer = null;
+    let currentFileName = "resim.png";
+    let renderTimer = null;
 
-    const catalogContainer = document.getElementById("catalogContainer");
-    const stepsContainer = document.getElementById("stepsContainer");
-    const stepCountBadge = document.getElementById("stepCountBadge");
-    const statusPill = document.getElementById("statusPill");
     const imgBefore = document.getElementById("imgBefore");
     const imgAfter = document.getElementById("imgAfter");
     const metaBefore = document.getElementById("metaBefore");
     const metaAfter = document.getElementById("metaAfter");
-    const downloadBtn = document.getElementById("downloadBtn");
-    const autoApplyToggle = document.getElementById("autoApplyToggle");
+    const timingBadge = document.getElementById("timingBadge");
+    const statusMessage = document.getElementById("statusMessage");
+    const stepsList = document.getElementById("stepsList");
+    const canvasDims = document.getElementById("canvasDims");
+    const btnDownload = document.getElementById("btnDownload");
+    const filePicker = document.getElementById("filePicker");
 
-    function renderCatalog() {
-      catalogContainer.innerHTML = "";
-      EFFECT_CATALOG.forEach((group) => {
-        const wrap = document.createElement("div");
-        wrap.className = "category-group";
-        const title = document.createElement("div");
-        title.className = "category-title";
-        title.textContent = group.category;
-        wrap.appendChild(title);
-
-        const list = document.createElement("div");
-        list.className = "effect-list";
-        group.items.forEach((item) => {
-          const btn = document.createElement("div");
-          btn.className = "effect-item";
-          btn.innerHTML = `
-            <div class="effect-info">
-              <strong>${item.title}</strong>
-              <span>${item.desc}</span>
-            </div>
-            <div class="effect-add">+</div>
-          `;
-          btn.addEventListener("click", () => {
-            addStep(item.op, { ...item.defaults });
-          });
-          list.appendChild(btn);
-        });
-        wrap.appendChild(list);
-        catalogContainer.appendChild(wrap);
-      });
-    }
-
-    function addStep(op, params) {
-      const id = stepSeq++;
+    function quickAdd(opKey) {
+      const def = EFFECT_DEFS[opKey];
+      if (!def) return;
+      const id = stepCounter++;
       activeSteps.push({
         id,
-        op,
-        name: `step_${id}_${op}`,
-        params: { ...params }
+        op: opKey,
+        name: `katman_${id}_${opKey}`,
+        params: JSON.parse(JSON.stringify(def.defaults))
       });
-      renderSteps();
-      scheduleExecution();
+      renderStepsUI();
+      scheduleRender();
     }
 
-    function renderSteps() {
-      stepsContainer.innerHTML = "";
-      stepCountBadge.textContent = `${activeSteps.length} ${activeSteps.length === 1 ? "effect" : "effects"}`;
+    function renderStepsUI() {
+      stepsList.innerHTML = "";
       if (activeSteps.length === 0) {
-        stepsContainer.innerHTML = `
-          <div class="empty-steps">
-            No effects added yet.<br/>
-            Pick a Quick Template or click any effect on the left to start editing.
+        stepsList.innerHTML = `
+          <div style="text-align:center;padding:30px 10px;color:var(--ps-text-muted);border:1px dashed var(--ps-border);border-radius:4px;">
+            Henüz efekt katmanı eklenmedi.<br/>
+            Soldaki araç kutusundan veya üst menüden bir efekt seçin.
           </div>
         `;
         return;
       }
 
       activeSteps.forEach((step, idx) => {
-        const meta = EFFECT_LOOKUP[step.op] || { title: step.op, controls: [] };
+        const def = EFFECT_DEFS[step.op] || { title: step.op, tag: "Özel", fields: [] };
         const card = document.createElement("div");
         card.className = "step-card";
 
         const header = document.createElement("div");
         header.className = "step-header";
         header.innerHTML = `
-          <div class="step-title">
-            <span class="step-num">${idx + 1}</span>
-            <span>${meta.title}</span>
+          <div class="step-name">
+            <span>${idx + 1}. ${def.title}</span>
+            <span class="step-tag">${def.tag}</span>
           </div>
-          <div class="step-controls">
-            <button type="button" class="icon-btn" title="Move Up" data-dir="-1">↑</button>
-            <button type="button" class="icon-btn" title="Move Down" data-dir="1">↓</button>
-            <button type="button" class="icon-btn danger" title="Remove Effect" data-del="1">×</button>
+          <div class="step-actions">
+            <button type="button" class="mini-btn" title="Yukarı Taşı" onclick="moveStep(${idx}, -1)">↑</button>
+            <button type="button" class="mini-btn" title="Aşağı Taşı" onclick="moveStep(${idx}, 1)">↓</button>
+            <button type="button" class="mini-btn del" title="Katmanı Kaldır" onclick="deleteStep(${idx})">×</button>
           </div>
         `;
-
-        header.querySelector('[data-dir="-1"]').addEventListener("click", () => moveStep(idx, -1));
-        header.querySelector('[data-dir="1"]').addEventListener("click", () => moveStep(idx, 1));
-        header.querySelector('[data-del="1"]').addEventListener("click", () => removeStep(idx));
         card.appendChild(header);
 
-        (meta.controls || []).forEach((ctrl) => {
+        (def.textFields || []).forEach(f => {
           const row = document.createElement("div");
-          row.className = "param-row";
-          const val = step.params[ctrl.key];
-          const label = document.createElement("div");
-          label.className = "param-label";
-          const valSpan = document.createElement("strong");
-          valSpan.textContent = val;
-          const nameSpan = document.createElement("span");
-          nameSpan.textContent = ctrl.label;
-          label.appendChild(nameSpan);
-          label.appendChild(valSpan);
-          row.appendChild(label);
-
-          if (ctrl.type === "range") {
-            const input = document.createElement("input");
-            input.type = "range";
-            input.min = ctrl.min;
-            input.max = ctrl.max;
-            input.step = ctrl.step;
-            input.value = val;
-            input.addEventListener("input", () => {
-              const parsed = Number(input.value);
-              step.params[ctrl.key] = parsed;
-              valSpan.textContent = parsed;
-              scheduleExecution();
-            });
-            row.appendChild(input);
-          } else if (ctrl.type === "select") {
-            const sel = document.createElement("select");
-            sel.className = "param-select";
-            ctrl.options.forEach((opt) => {
-              const o = document.createElement("option");
-              o.value = opt;
-              o.textContent = opt;
-              if (opt === val) o.selected = true;
-              sel.appendChild(o);
-            });
-            sel.addEventListener("change", () => {
-              step.params[ctrl.key] = sel.value;
-              valSpan.textContent = sel.value;
-              scheduleExecution();
-            });
-            row.appendChild(sel);
-          } else {
-            const input = document.createElement("input");
-            input.type = "text";
-            input.value = val;
-            input.addEventListener("input", () => {
-              step.params[ctrl.key] = input.value || "PixelFlow";
-              valSpan.textContent = step.params[ctrl.key];
-              scheduleExecution();
-            });
-            row.appendChild(input);
-          }
+          row.style.display = "flex";
+          row.style.flexDirection = "column";
+          row.style.gap = "3px";
+          row.innerHTML = `<span style="font-size:10.5px;color:var(--ps-text-muted)">${f.label}</span>`;
+          const input = document.createElement("input");
+          input.type = "text";
+          input.value = step.params[f.key] || "";
+          input.addEventListener("input", (e) => {
+            step.params[f.key] = e.target.value;
+            scheduleRender();
+          });
+          row.appendChild(input);
           card.appendChild(row);
         });
 
-        stepsContainer.appendChild(card);
+        (def.selectFields || []).forEach(f => {
+          const row = document.createElement("div");
+          row.style.display = "flex";
+          row.style.flexDirection = "column";
+          row.style.gap = "3px";
+          row.innerHTML = `<span style="font-size:10.5px;color:var(--ps-text-muted)">${f.label}</span>`;
+          const sel = document.createElement("select");
+          sel.className = "ps-select";
+          f.options.forEach(([optVal, optLabel]) => {
+            const opt = document.createElement("option");
+            opt.value = optVal;
+            opt.textContent = optLabel;
+            if (step.params[f.key] === optVal) opt.selected = true;
+            sel.appendChild(opt);
+          });
+          sel.addEventListener("change", (e) => {
+            step.params[f.key] = e.target.value;
+            scheduleRender();
+          });
+          row.appendChild(sel);
+          card.appendChild(row);
+        });
+
+        (def.fields || []).forEach(f => {
+          const row = document.createElement("div");
+          row.className = "slider-row";
+          const currentVal = step.params[f.key];
+          row.innerHTML = `
+            <div class="slider-header">
+              <span>${f.label}</span>
+              <span id="lbl_${step.id}_${f.key}">${currentVal}</span>
+            </div>
+          `;
+          const range = document.createElement("input");
+          range.type = "range";
+          range.min = f.min;
+          range.max = f.max;
+          range.step = f.step;
+          range.value = currentVal;
+          range.addEventListener("input", (e) => {
+            const val = Number(e.target.value);
+            step.params[f.key] = val;
+            const lbl = document.getElementById(`lbl_${step.id}_${f.key}`);
+            if (lbl) lbl.textContent = val;
+            scheduleRender();
+          });
+          row.appendChild(range);
+          card.appendChild(row);
+        });
+
+        stepsList.appendChild(card);
       });
     }
 
-    function moveStep(index, delta) {
-      const target = index + delta;
+    function moveStep(idx, dir) {
+      const target = idx + dir;
       if (target < 0 || target >= activeSteps.length) return;
-      const temp = activeSteps[index];
-      activeSteps[index] = activeSteps[target];
-      activeSteps[target] = temp;
-      renderSteps();
-      scheduleExecution();
+      const tmp = activeSteps[idx];
+      activeSteps[idx] = activeSteps[target];
+      activeSteps[target] = tmp;
+      renderStepsUI();
+      scheduleRender();
     }
 
-    function removeStep(index) {
-      activeSteps.splice(index, 1);
-      renderSteps();
-      scheduleExecution();
+    function deleteStep(idx) {
+      activeSteps.splice(idx, 1);
+      renderStepsUI();
+      scheduleRender();
     }
 
-    function loadPreset(presetKey) {
-      const template = PRESET_PIPELINES[presetKey] || PRESET_PIPELINES.social;
-      activeSteps = template.map((item) => {
-        const id = stepSeq++;
-        return {
-          id,
-          op: item.op,
-          name: `step_${id}_${item.op}`,
-          params: { ...item.params }
-        };
-      });
-      renderSteps();
-      executePipelineNow();
+    function scheduleRender() {
+      clearTimeout(renderTimer);
+      renderTimer = setTimeout(executePipeline, 150);
     }
 
-    function scheduleExecution() {
-      if (!autoApplyToggle.checked) return;
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        executePipelineNow();
-      }, 180);
-    }
-
-    function setStatus(text, kind) {
-      statusPill.textContent = text;
-      statusPill.className = "status-pill " + (kind || "ok");
-    }
-
-    async function executePipelineNow() {
+    async function executePipeline() {
       if (!currentBlob) return;
       if (activeSteps.length === 0) {
         const url = URL.createObjectURL(currentBlob);
         imgAfter.src = url;
         imgAfter.style.display = "block";
-        metaAfter.textContent = metaBefore.textContent + " (Original)";
-        downloadBtn.href = url;
-        downloadBtn.style.display = "inline-flex";
-        setStatus("Original shown", "ok");
+        metaAfter.textContent = metaBefore.textContent + " (Orijinal)";
+        timingBadge.textContent = "Efekt yok";
+        statusMessage.textContent = "Orijinal resim görüntüleniyor";
         return;
       }
 
-      setStatus("Processing...", "");
+      statusMessage.textContent = "PixelFlow işleniyor...";
+      const t0 = performance.now();
       const payload = {
-        name: "pixelflow-studio",
+        name: "pixelflow-photoshop-run",
         version: "1.0",
-        steps: activeSteps.map((s) => ({
+        steps: activeSteps.map(s => ({
           op: s.op,
           name: s.name,
           params: s.params
         }))
       };
 
-      const form = new FormData();
-      form.append("image", currentBlob, currentFileName);
-      form.append("pipeline", JSON.stringify(payload));
+      const formData = new FormData();
+      formData.append("image", currentBlob, currentFileName);
+      formData.append("pipeline", JSON.stringify(payload));
 
-      const t0 = performance.now();
       try {
-        const resp = await fetch("/v1/process", { method: "POST", body: form });
+        const resp = await fetch("/v1/process", { method: "POST", body: formData });
         const ms = Math.round(performance.now() - t0);
         if (!resp.ok) {
           const err = await resp.json();
-          setStatus(err.message || "Could not apply effect", "err");
+          statusMessage.textContent = "Hata: " + (err.message || "İşlem uygulanamadı");
           return;
         }
         const outBlob = await resp.blob();
         const outUrl = URL.createObjectURL(outBlob);
         imgAfter.onload = () => {
-          metaAfter.textContent = `${imgAfter.naturalWidth} × ${imgAfter.naturalHeight} px • ${ms} ms`;
+          metaAfter.textContent = `${imgAfter.naturalWidth} × ${imgAfter.naturalHeight} px`;
+          canvasDims.textContent = `${imgAfter.naturalWidth} × ${imgAfter.naturalHeight} piksel`;
         };
         imgAfter.src = outUrl;
         imgAfter.style.display = "block";
-        downloadBtn.href = outUrl;
-        downloadBtn.style.display = "inline-flex";
-        setStatus(`Updated in ${ms} ms`, "ok");
-      } catch (e) {
-        setStatus("Connection error", "err");
+        timingBadge.textContent = `Tamamlandı: ${ms} ms`;
+        statusMessage.textContent = `Başarılı • ${activeSteps.length} efekt uygulandı (${ms} ms)`;
+      } catch (err) {
+        statusMessage.textContent = "Bağlantı hatası: " + err;
       }
     }
 
-    function setSourceBlob(blob, fileName) {
+    function setSourceImage(blob, filename) {
       currentBlob = blob;
-      currentFileName = fileName;
-      document.getElementById("fileLabel").textContent = `${fileName} (${(blob.size / 1024).toFixed(1)} KB)`;
+      currentFileName = filename;
       const url = URL.createObjectURL(blob);
       imgBefore.onload = () => {
         metaBefore.textContent = `${imgBefore.naturalWidth} × ${imgBefore.naturalHeight} px`;
+        canvasDims.textContent = `${imgBefore.naturalWidth} × ${imgBefore.naturalHeight} piksel`;
       };
       imgBefore.src = url;
       imgBefore.style.display = "block";
-      executePipelineNow();
+      executePipeline();
     }
 
-    function createSampleLandscape() {
-      const canvas = document.createElement("canvas");
-      canvas.width = 560;
-      canvas.height = 380;
-      const ctx = canvas.getContext("2d");
-      const sky = ctx.createLinearGradient(0, 0, 0, 260);
-      sky.addColorStop(0, "#0f172a");
-      sky.addColorStop(0.55, "#1d4ed8");
-      sky.addColorStop(1, "#38bdf8");
-      ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, 560, 380);
+    function generateSampleLandscape() {
+      const c = document.createElement("canvas");
+      c.width = 640;
+      c.height = 420;
+      const ctx = c.getContext("2d");
+      const grad = ctx.createLinearGradient(0, 0, 0, 300);
+      grad.addColorStop(0, "#0c1b33");
+      grad.addColorStop(0.6, "#1e3a8a");
+      grad.addColorStop(1, "#38bdf8");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 640, 420);
 
       ctx.fillStyle = "#fde047";
       ctx.beginPath();
-      ctx.arc(420, 95, 44, 0, Math.PI * 2);
+      ctx.arc(490, 110, 48, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = "#1e293b";
       ctx.beginPath();
-      ctx.moveTo(0, 380);
-      ctx.lineTo(170, 175);
-      ctx.lineTo(360, 380);
+      ctx.moveTo(0, 420);
+      ctx.lineTo(210, 200);
+      ctx.lineTo(440, 420);
       ctx.fill();
 
       ctx.fillStyle = "#334155";
       ctx.beginPath();
-      ctx.moveTo(210, 380);
-      ctx.lineTo(395, 155);
-      ctx.lineTo(560, 380);
+      ctx.moveTo(260, 420);
+      ctx.lineTo(460, 180);
+      ctx.lineTo(640, 420);
       ctx.fill();
 
-      canvas.toBlob((blob) => {
-        if (blob) setSourceBlob(blob, "sample_landscape.png");
+      c.toBlob(blob => {
+        if (blob) setSourceImage(blob, "ornek_manzara.png");
       }, "image/png");
     }
 
-    function createSampleReceipt() {
-      const canvas = document.createElement("canvas");
-      canvas.width = 480;
-      canvas.height = 360;
-      const ctx = canvas.getContext("2d");
-      ctx.fillStyle = "#e2e8f0";
-      ctx.fillRect(0, 0, 480, 360);
-      for (let i = 0; i < 1500; i++) {
-        ctx.fillStyle = i % 2 === 0 ? "rgba(15,23,42,0.06)" : "rgba(255,255,255,0.25)";
-        ctx.fillRect(Math.random() * 480, Math.random() * 360, 2, 2);
-      }
-      ctx.fillStyle = "#0f172a";
-      ctx.font = "bold 26px sans-serif";
-      ctx.fillText("PIXELFLOW RECEIPT", 36, 62);
-      ctx.font = "18px monospace";
-      ctx.fillText("Order #PF-2026", 36, 110);
-      ctx.fillText("Studio Pro Plan: $49.00", 36, 146);
-      ctx.strokeStyle = "#334155";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(34, 185, 410, 120);
-      ctx.font = "bold 18px sans-serif";
-      ctx.fillText("PAID & VERIFIED", 58, 252);
+    function generateSampleDocument() {
+      const c = document.createElement("canvas");
+      c.width = 520;
+      c.height = 400;
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "#f3f4f6";
+      ctx.fillRect(0, 0, 520, 400);
 
-      canvas.toBlob((blob) => {
+      for (let i = 0; i < 1600; i++) {
+        ctx.fillStyle = i % 2 === 0 ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.25)";
+        ctx.fillRect(Math.random() * 520, Math.random() * 400, 2, 2);
+      }
+      ctx.fillStyle = "#111827";
+      ctx.font = "bold 26px sans-serif";
+      ctx.fillText("PIXELFLOW MAKBUZ #2026", 38, 64);
+      ctx.font = "18px monospace";
+      ctx.fillText("Müşteri: Photoshop Studio", 38, 115);
+      ctx.fillText("Toplam Tutar: 450.00 TL", 38, 155);
+      ctx.strokeStyle = "#374151";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(36, 195, 440, 130);
+      ctx.font = "bold 20px sans-serif";
+      ctx.fillText("ONAYLANDI & ÖDENDİ", 65, 270);
+
+      c.toBlob(blob => {
         if (blob) {
-          setSourceBlob(blob, "sample_receipt.png");
-          loadPreset("scanner");
+          setSourceImage(blob, "ornek_makbuz.png");
+          applyPreset("document");
         }
       }, "image/png");
     }
 
-    // Event bindings
-    document.querySelectorAll("[data-preset]").forEach((btn) => {
-      btn.addEventListener("click", () => loadPreset(btn.dataset.preset));
-    });
-
-    document.getElementById("btnResetSteps").addEventListener("click", () => {
+    function applyPreset(name) {
       activeSteps = [];
-      renderSteps();
-      executePipelineNow();
-    });
-
-    document.getElementById("btnApply").addEventListener("click", () => executePipelineNow());
-
-    document.getElementById("btnSamplePhoto").addEventListener("click", (e) => {
-      e.stopPropagation();
-      createSampleLandscape();
-    });
-
-    document.getElementById("btnSampleDoc").addEventListener("click", (e) => {
-      e.stopPropagation();
-      createSampleReceipt();
-    });
-
-    const dropzone = document.getElementById("dropzone");
-    const fileInput = document.getElementById("fileInput");
-    dropzone.addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", () => {
-      if (fileInput.files && fileInput.files[0]) {
-        setSourceBlob(fileInput.files[0], fileInput.files[0].name);
+      if (name === "social") {
+        quickAdd("resize");
+        quickAdd("brightness_contrast");
+        quickAdd("sharpen");
+        quickAdd("watermark");
+      } else if (name === "document") {
+        quickAdd("grayscale");
+        quickAdd("gaussian_blur");
+        quickAdd("adaptive_threshold");
+      } else if (name === "vivid") {
+        quickAdd("histogram_equalization");
+        quickAdd("gamma");
+        quickAdd("sharpen");
+      } else if (name === "sketch") {
+        quickAdd("gaussian_blur");
+        quickAdd("canny");
       }
-    });
-    dropzone.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      dropzone.classList.add("dragover");
-    });
-    dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
-    dropzone.addEventListener("drop", (e) => {
-      e.preventDefault();
-      dropzone.classList.remove("dragover");
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        setSourceBlob(e.dataTransfer.files[0], e.dataTransfer.files[0].name);
+    }
+
+    // Olay Dinleyicileri
+    document.getElementById("btnUpload").addEventListener("click", () => filePicker.click());
+    document.getElementById("menuOpen").addEventListener("click", () => filePicker.click());
+    filePicker.addEventListener("change", (e) => {
+      if (e.target.files && e.target.files[0]) {
+        setSourceImage(e.target.files[0], e.target.files[0].name);
       }
     });
 
-    // View mode switcher
-    const stageCanvas = document.getElementById("stageCanvas");
-    const frameBefore = document.getElementById("frameBefore");
-    const frameAfter = document.getElementById("frameAfter");
-    document.querySelectorAll("[data-view]").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll("[data-view]").forEach((t) => t.classList.remove("active"));
-        tab.classList.add("active");
-        const mode = tab.dataset.view;
+    document.getElementById("btnSamplePhoto").addEventListener("click", generateSampleLandscape);
+    document.getElementById("menuSampleLand").addEventListener("click", generateSampleLandscape);
+    document.getElementById("btnSampleDoc").addEventListener("click", generateSampleDocument);
+    document.getElementById("menuSampleDoc").addEventListener("click", generateSampleDocument);
+
+    document.getElementById("menuReset").addEventListener("click", () => {
+      activeSteps = [];
+      renderStepsUI();
+      executePipeline();
+    });
+
+    document.getElementById("btnDownload").addEventListener("click", () => {
+      if (!imgAfter.src) return;
+      const a = document.createElement("a");
+      a.href = imgAfter.src;
+      a.download = "pixelflow_duzenlenen.png";
+      a.click();
+    });
+    document.getElementById("menuExport").addEventListener("click", () => {
+      document.getElementById("btnDownload").click();
+    });
+
+    // Sekmeler
+    const tabLayers = document.getElementById("tabLayers");
+    const tabPresets = document.getElementById("tabPresets");
+    const panelLayers = document.getElementById("panelLayers");
+    const panelPresets = document.getElementById("panelPresets");
+    tabLayers.addEventListener("click", () => {
+      tabLayers.classList.add("active");
+      tabPresets.classList.remove("active");
+      panelLayers.style.display = "flex";
+      panelPresets.style.display = "none";
+    });
+    tabPresets.addEventListener("click", () => {
+      tabPresets.classList.add("active");
+      tabLayers.classList.remove("active");
+      panelPresets.style.display = "flex";
+      panelLayers.style.display = "none";
+    });
+
+    // Görünüm Değiştirici
+    const boxBefore = document.getElementById("boxBefore");
+    const boxAfter = document.getElementById("boxAfter");
+    document.querySelectorAll(".view-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const mode = btn.dataset.view;
         if (mode === "split") {
-          stageCanvas.className = "stage-canvas mode-split";
-          frameBefore.style.display = "flex";
-          frameAfter.style.display = "flex";
+          boxBefore.style.display = "flex";
+          boxAfter.style.display = "flex";
+          boxBefore.className = "canvas-box";
+          boxAfter.className = "canvas-box";
         } else if (mode === "after") {
-          stageCanvas.className = "stage-canvas mode-single";
-          frameBefore.style.display = "none";
-          frameAfter.style.display = "flex";
+          boxBefore.style.display = "none";
+          boxAfter.style.display = "flex";
+          boxAfter.className = "canvas-box single";
         } else {
-          stageCanvas.className = "stage-canvas mode-single";
-          frameBefore.style.display = "flex";
-          frameAfter.style.display = "none";
+          boxBefore.style.display = "flex";
+          boxAfter.style.display = "none";
+          boxBefore.className = "canvas-box single";
         }
       });
     });
 
-    renderCatalog();
-    loadPreset("social");
-    createSampleLandscape();
+    // Başlangıç Yüklemesi
+    generateSampleLandscape();
+    applyPreset("social");
   </script>
 </body>
 </html>
