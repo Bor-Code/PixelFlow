@@ -1,0 +1,29 @@
+name: thumbnail-with-watermark
+version: "1.0"
+steps:
+  - op: resize
+    name: create_thumbnail
+    params:
+      width: 320
+      height: 240
+      keep_aspect_ratio: true
+      interpolation: area
+  - op: brightness_contrast
+    name: boost_contrast
+    params:
+      brightness: 0.03
+      contrast: 1.1
+  - op: sharpen
+    name: enhance_edges
+    params:
+      kernel_size: 3
+      sigma: 1.0
+      amount: 0.8
+  - op: watermark
+    name: apply_brand_watermark
+    params:
+      text: "Pixelflow"
+      position: bottom-right
+      opacity: 0.65
+      scale: 0.25
+      margin: 12
