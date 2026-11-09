@@ -21,6 +21,9 @@ async def test_health_ready_and_operations() -> None:
     app = create_app()
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        ui_resp = await client.get("/")
+        assert ui_resp.status_code == 200
+        assert "Pixelflow Studio" in ui_resp.text
         h_resp = await client.get("/health", headers={"X-Request-ID": "req-123"})
         assert h_resp.status_code == 200
         assert h_resp.headers["X-Request-ID"] == "req-123"
