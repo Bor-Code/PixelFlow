@@ -737,7 +737,15 @@
     </aside>
 
     <!-- Orta Kanvas Önizleme -->
-    <div class="canvas-container">
+    <div class="canvas-container" style="flex-direction:column;gap:12px;">
+      <div id="pdfPaginationBar" style="display:none;align-items:center;justify-content:center;gap:10px;padding:6px 16px;background:var(--ps-panel);border:1px solid var(--ps-border);border-radius:var(--radius-sm);z-index:20;">
+        <button type="button" class="btn" id="btnPrevPage" style="padding:5px 12px;font-size:12px;">◀ Önceki</button>
+        <span id="pdfPageIndicator" style="font-weight:700;font-size:12.5px;color:var(--ps-text-bright);">Sayfa 1 / 1</span>
+        <button type="button" class="btn" id="btnNextPage" style="padding:5px 12px;font-size:12px;">Sonraki ▶</button>
+        <div style="width:1px;height:20px;background:var(--ps-border);margin:0 4px;"></div>
+        <button type="button" class="btn btn-primary" id="btnBatchPdfAll" style="padding:5px 12px;font-size:12px;">Tüm Sayfalara Uygula &amp; PDF İndir</button>
+      </div>
+
       <div class="canvas-viewport" id="viewport">
         <div class="canvas-box" id="boxBefore">
           <div class="canvas-title">
@@ -1340,34 +1348,106 @@
       executePipeline();
     }
 
+    let loadedPdfDoc = null;
+    let pdfTotalPages = 1;
+    let pdfCurrentPage = 1;
+    let pdfOriginalFileName = "";
+
+    async function renderPdfPage(pageNum) {
+      if (!loadedPdfDoc) return;
+      pdfCurrentPage = pageNum;
+      document.getElementById("pdfPageIndicator").textContent = `Sayfa ${pdfCurrentPage} / ${pdfTotalPages}`;
+      document.getElementById("btnPrevPage").disabled = (pdfCurrentPage <= 1);
+      document.getElementById("btnNextPage").disabled = (pdfCurrentPage >= pdfTotalPages);
+      statusMessage.textContent = `Sayfa ${pdfCurrentPage} oluşturuluyor...`;
+      const page = await loadedPdfDoc.getPage(pageNum);
+      const viewport = page.getViewport({ scale: 2.0 });
+      const canvas = document.createElement("canvas");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      const ctx = canvas.getContext("2d");
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      canvas.toBlob(blob => {
+        if (blob) {
+          setSourceImage(blob, `${pdfOriginalFileName}_sayfa_${pageNum}.png`);
+          statusMessage.textContent = `PDF Sayfa ${pdfCurrentPage} / ${pdfTotalPages} yüklendi`;
+        }
+      }, "image/png");
+    }
+
+    async function batchProcessAllPdfPages() {
+      if (!loadedPdfDoc || pdfTotalPages <= 1) return;
+      statusMessage.textContent = "Tüm PDF sayfaları işleniyor (Toplu İşlem)...";
+      const formData = new FormData();
+      const payload = {
+        name: "pixelflow-multipage-batch",
+        version: "1.0",
+        steps: activeSteps.map(s => ({
+          op: s.op,
+          name: s.name,
+          params: s.params
+        }))
+      };
+      formData.append("pipeline", JSON.stringify(payload));
+
+      for (let p = 1; p <= pdfTotalPages; p++) {
+        const page = await loadedPdfDoc.getPage(p);
+        const viewport = page.getViewport({ scale: 2.0 });
+        const canvas = document.createElement("canvas");
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext("2d");
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+        formData.append("images", blob, `page_${p}.png`);
+      }
+
+      try {
+        const resp = await fetch("/v1/process-multipage", { method: "POST", body: formData });
+        if (!resp.ok) {
+          statusMessage.textContent = "Toplu sayfa işleme hatası!";
+          return;
+        }
+        const outBlob = await resp.blob();
+        const url = URL.createObjectURL(outBlob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `pixelflow_${pdfOriginalFileName || "belge"}_tum_sayfalar.pdf`;
+        a.click();
+        statusMessage.textContent = `Tüm ${pdfTotalPages} sayfa başarıyla işlendi ve birleşik PDF olarak indirildi.`;
+      } catch (err) {
+        statusMessage.textContent = "Toplu işleme bağlantı hatası: " + err;
+      }
+    }
+
     async function handleFileSelection(file) {
       if (!file) return;
+      const paginationBar = document.getElementById("pdfPaginationBar");
       if (file.name.toLowerCase().endsWith(".pdf") || file.type === "application/pdf") {
         statusMessage.textContent = "PDF belgesi yükleniyor ve sayfalandırılıyor...";
         try {
           if (typeof pdfjsLib !== "undefined") {
             const arrayBuffer = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            const page = await pdf.getPage(1);
-            const viewport = page.getViewport({ scale: 2.0 });
-            const canvas = document.createElement("canvas");
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            const ctx = canvas.getContext("2d");
-            await page.render({ canvasContext: ctx, viewport }).promise;
-            canvas.toBlob(blob => {
-              if (blob) {
-                setStudioMode("doc");
-                setSourceImage(blob, file.name.replace(/\.pdf$/i, ".png"));
-                statusMessage.textContent = `PDF yüklendi (1. sayfa taranıyor, ${pdf.numPages} sayfa)`;
-              }
-            }, "image/png");
+            loadedPdfDoc = pdf;
+            pdfTotalPages = pdf.numPages;
+            pdfCurrentPage = 1;
+            pdfOriginalFileName = file.name.replace(/\.pdf$/i, "");
+            setStudioMode("doc");
+            if (pdfTotalPages > 1) {
+              paginationBar.style.display = "flex";
+            } else {
+              paginationBar.style.display = "none";
+            }
+            await renderPdfPage(1);
             return;
           }
         } catch (err) {
           console.warn("PDF.js render hatası:", err);
         }
       }
+      paginationBar.style.display = "none";
+      loadedPdfDoc = null;
       setSourceImage(file, file.name);
     }
 
@@ -1551,6 +1631,14 @@
         sel.value = "";
       }
     });
+
+    document.getElementById("btnPrevPage").addEventListener("click", () => {
+      if (pdfCurrentPage > 1) renderPdfPage(pdfCurrentPage - 1);
+    });
+    document.getElementById("btnNextPage").addEventListener("click", () => {
+      if (pdfCurrentPage < pdfTotalPages) renderPdfPage(pdfCurrentPage + 1);
+    });
+    document.getElementById("btnBatchPdfAll").addEventListener("click", batchProcessAllPdfPages);
 
     // Sekmeler
     const tabLayers = document.getElementById("tabLayers");

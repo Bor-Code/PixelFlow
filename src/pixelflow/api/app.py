@@ -26,6 +26,7 @@ from pixelflow.core.io import (
     MIME_TO_FORMAT,
     decode_image_bytes,
     encode_image_bytes,
+    encode_multipage_pdf,
 )
 from pixelflow.core.logging import get_structured_logger, log_structured
 from pixelflow.core.registry import default_registry
@@ -140,6 +141,33 @@ def _register_v1_routes(app: FastAPI) -> None:
         output_format: Annotated[str | None, Form()] = None,
     ) -> Response:
         return await _handle_process_request(image, pipeline, settings, output_format)
+
+    @app.post("/v1/process-multipage")
+    async def process_multipage_endpoint(
+        images: Annotated[list[UploadFile], File(...)],
+        pipeline: Annotated[str, Form(...)],
+        settings: Annotated[ApiSettings, Depends(get_api_settings)],
+    ) -> Response:
+        return await _handle_multipage_request(images, pipeline, settings)
+
+
+async def _handle_multipage_request(
+    uploads: list[UploadFile],
+    pipeline_text: str,
+    settings: ApiSettings,
+) -> Response:
+    if not uploads:
+        raise InvalidImageError("No pages uploaded")
+    pipeline_obj = load_pipeline_from_string(pipeline_text)
+    pages = []
+    for upload in uploads:
+        raw = await upload.read(settings.max_upload_bytes + 1)
+        if len(raw) > settings.max_upload_bytes:
+            raise InvalidImageError(f"Page exceeds maximum of {settings.max_upload_bytes} bytes")
+        decoded = decode_image_bytes(raw, max_pixels=settings.max_image_pixels)
+        pages.append(pipeline_obj.execute(decoded))
+    pdf_bytes = encode_multipage_pdf(pages)
+    return Response(content=pdf_bytes, media_type="application/pdf")
 
 
 async def _handle_process_request(
