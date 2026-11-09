@@ -10,6 +10,12 @@ from pixelflow.operations.detection import (
     FaceBlurOperation,
     FaceBlurParams,
 )
+from pixelflow.operations.document import (
+    DeskewOperation,
+    DeskewParams,
+    ShadowRemovalOperation,
+    ShadowRemovalParams,
+)
 from pixelflow.operations.edges import (
     CannyOperation,
     CannyParams,
@@ -66,6 +72,8 @@ __all__ = [
     "CannyParams",
     "CropOperation",
     "CropParams",
+    "DeskewOperation",
+    "DeskewParams",
     "FaceBlurOperation",
     "FaceBlurParams",
     "FlipOperation",
@@ -88,6 +96,8 @@ __all__ = [
     "ResizeParams",
     "RotateOperation",
     "RotateParams",
+    "ShadowRemovalOperation",
+    "ShadowRemovalParams",
     "SharpenOperation",
     "SharpenParams",
     "SobelOperation",
