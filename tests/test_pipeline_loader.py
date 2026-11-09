@@ -79,7 +79,7 @@ def test_loader_step_validation_and_duplicate_names() -> None:
     assert dup_op.value.line == 5
     with pytest.raises(InvalidParametersError) as dup_name:
         load_pipeline_from_string(
-            "name: p\nversion: 1\nsteps:\n  - op: grayscale\n    name: s1\n  - op: flip\n    name: s1\n"
+            "name: p\nversion: 1\nsteps:\n  - op: flip\n    name: s1\n  - op: flip\n    name: s1\n"
         )
     assert dup_name.value.line == 6
     with pytest.raises(UnknownOperationError) as unk_op:
@@ -93,4 +93,3 @@ def test_loader_step_validation_and_duplicate_names() -> None:
         load_pipeline_from_string("name: p\nversion: 1\nsteps:\n  - params: {}\n")
     with pytest.raises(InvalidParametersError):
         load_pipeline_from_string("name: p\nversion: 1\nsteps:\n  - op: flip\n    params: 123\n")
-
