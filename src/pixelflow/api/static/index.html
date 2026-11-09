@@ -557,6 +557,16 @@
     </div>
 
     <div class="menu-item">
+      Düzen
+      <div class="menu-dropdown">
+        <div class="dropdown-action" onclick="undo()">Geri Al (Ctrl+Z)</div>
+        <div class="dropdown-action" onclick="redo()">İleri Al (Ctrl+Y)</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-action" onclick="resetAllSteps()">Tüm İşlemleri Sıfırla</div>
+      </div>
+    </div>
+
+    <div class="menu-item">
       Dosya
       <div class="menu-dropdown">
         <div class="dropdown-action" id="menuOpen">Belge / Fotoğraf Aç (Ctrl+O)</div>
@@ -652,6 +662,14 @@
         <button type="button" class="view-btn" data-view="after">Yalnızca İşlenen</button>
         <button type="button" class="view-btn" data-view="before">Yalnızca Orijinal</button>
       </div>
+      <div style="display:flex;gap:4px">
+        <button type="button" class="btn" id="btnUndo" title="Geri Al (Ctrl+Z)" onclick="undo()" disabled style="padding:8px 12px;">
+          <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        </button>
+        <button type="button" class="btn" id="btnRedo" title="İleri Al (Ctrl+Y)" onclick="redo()" disabled style="padding:8px 12px;">
+          <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        </button>
+      </div>
     </div>
 
     <div class="options-right">
@@ -736,8 +754,10 @@
             <strong>İşlenmiş Sonuç</strong>
             <span id="metaAfter">—</span>
           </div>
-          <div class="canvas-view-inner">
-            <img id="imgAfter" alt="Sonuç" style="display:none" />
+          <div class="canvas-view-inner" id="viewInnerAfter" style="position:relative;overflow:hidden;cursor:crosshair;">
+            <img id="imgAfter" alt="Sonuç" style="display:none;user-select:none;pointer-events:none;" />
+            <div id="selectionMarquee" style="display:none;position:absolute;border:2px dashed #0084ff;background:rgba(0,132,255,0.24);pointer-events:none;z-index:20;border-radius:2px;"></div>
+            <div id="canvasOverlayPrompt" style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:12px;color:#fff;background:rgba(18,20,24,0.75);padding:4px 12px;border-radius:12px;pointer-events:none;z-index:15;white-space:nowrap;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.1);">Fareyle sürükleyerek sansür kutusu çizin veya tıklayın</div>
           </div>
         </div>
       </div>
@@ -986,6 +1006,9 @@
     let currentBlob = null;
     let currentFileName = "belge.png";
     let renderTimer = null;
+    let historyStack = [];
+    let historyIndex = -1;
+    let currentTool = "redact";
 
     const imgBefore = document.getElementById("imgBefore");
     const imgAfter = document.getElementById("imgAfter");
@@ -1000,6 +1023,52 @@
     const filePicker = document.getElementById("filePicker");
     const quickPresetChips = document.getElementById("quickPresetChips");
     const presetsListContainer = document.getElementById("presetsListContainer");
+
+    function pushHistory() {
+      if (historyIndex < historyStack.length - 1) {
+        historyStack = historyStack.slice(0, historyIndex + 1);
+      }
+      historyStack.push(JSON.stringify(activeSteps));
+      historyIndex = historyStack.length - 1;
+      updateUndoRedoButtons();
+    }
+
+    function undo() {
+      if (historyIndex > 0) {
+        historyIndex--;
+        activeSteps = JSON.parse(historyStack[historyIndex]);
+        renderStepsUI();
+        scheduleRender();
+        updateUndoRedoButtons();
+        statusMessage.textContent = "Geri alındı (Undo)";
+      }
+    }
+
+    function redo() {
+      if (historyIndex < historyStack.length - 1) {
+        historyIndex++;
+        activeSteps = JSON.parse(historyStack[historyIndex]);
+        renderStepsUI();
+        scheduleRender();
+        updateUndoRedoButtons();
+        statusMessage.textContent = "İleri alındı (Redo)";
+      }
+    }
+
+    function updateUndoRedoButtons() {
+      const btnU = document.getElementById("btnUndo");
+      const btnR = document.getElementById("btnRedo");
+      if (btnU) btnU.disabled = (historyIndex <= 0);
+      if (btnR) btnR.disabled = (historyIndex >= historyStack.length - 1);
+    }
+
+    function resetAllSteps() {
+      if (activeSteps.length === 0) return;
+      activeSteps = [];
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+    }
 
     function setStudioMode(mode) {
       studioMode = mode;
@@ -1066,6 +1135,7 @@
     }
 
     function quickAdd(opKey) {
+      currentTool = opKey;
       const def = EFFECT_DEFS[opKey];
       if (!def) return;
       const id = stepCounter++;
@@ -1075,6 +1145,7 @@
         name: `katman_${id}_${opKey}`,
         params: JSON.parse(JSON.stringify(def.defaults))
       });
+      pushHistory();
       renderStepsUI();
       scheduleRender();
     }
@@ -1188,12 +1259,14 @@
       const tmp = activeSteps[idx];
       activeSteps[idx] = activeSteps[target];
       activeSteps[target] = tmp;
+      pushHistory();
       renderStepsUI();
       scheduleRender();
     }
 
     function deleteStep(idx) {
       activeSteps.splice(idx, 1);
+      pushHistory();
       renderStepsUI();
       scheduleRender();
     }
@@ -1520,6 +1593,131 @@
           boxBefore.className = "canvas-box single";
         }
       });
+    });
+
+    // İnteraktif Kanvas Seçimi & Çizim (Marquee / Sansür / Kaşe)
+    const viewInnerAfter = document.getElementById("viewInnerAfter");
+    const selectionMarquee = document.getElementById("selectionMarquee");
+    let isDraggingMarquee = false;
+    let startCanvasX = 0, startCanvasY = 0;
+
+    viewInnerAfter.addEventListener("mousedown", (e) => {
+      if (!imgAfter.src || imgAfter.style.display === "none") return;
+      const rect = imgAfter.getBoundingClientRect();
+      if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
+
+      const innerRect = viewInnerAfter.getBoundingClientRect();
+      startCanvasX = e.clientX - innerRect.left;
+      startCanvasY = e.clientY - innerRect.top;
+      isDraggingMarquee = true;
+      selectionMarquee.style.left = `${startCanvasX}px`;
+      selectionMarquee.style.top = `${startCanvasY}px`;
+      selectionMarquee.style.width = "0px";
+      selectionMarquee.style.height = "0px";
+      selectionMarquee.style.display = "block";
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDraggingMarquee) return;
+      const innerRect = viewInnerAfter.getBoundingClientRect();
+      const curX = Math.max(0, Math.min(innerRect.width, e.clientX - innerRect.left));
+      const curY = Math.max(0, Math.min(innerRect.height, e.clientY - innerRect.top));
+      const left = Math.min(startCanvasX, curX);
+      const top = Math.min(startCanvasY, curY);
+      const width = Math.abs(curX - startCanvasX);
+      const height = Math.abs(curY - startCanvasY);
+      selectionMarquee.style.left = `${left}px`;
+      selectionMarquee.style.top = `${top}px`;
+      selectionMarquee.style.width = `${width}px`;
+      selectionMarquee.style.height = `${height}px`;
+    });
+
+    window.addEventListener("mouseup", (e) => {
+      if (!isDraggingMarquee) return;
+      isDraggingMarquee = false;
+      selectionMarquee.style.display = "none";
+
+      const rect = imgAfter.getBoundingClientRect();
+      const innerRect = viewInnerAfter.getBoundingClientRect();
+      const endX = Math.max(0, Math.min(innerRect.width, e.clientX - innerRect.left));
+      const endY = Math.max(0, Math.min(innerRect.height, e.clientY - innerRect.top));
+
+      const left = Math.min(startCanvasX, endX);
+      const top = Math.min(startCanvasY, endY);
+      const width = Math.abs(endX - startCanvasX);
+      const height = Math.abs(endY - startCanvasY);
+
+      const scaleX = imgAfter.naturalWidth / rect.width;
+      const scaleY = imgAfter.naturalHeight / rect.height;
+
+      const imgLeft = Math.round((left - (rect.left - innerRect.left)) * scaleX);
+      const imgTop = Math.round((top - (rect.top - innerRect.top)) * scaleY);
+      const imgW = Math.round(width * scaleX);
+      const imgH = Math.round(height * scaleY);
+
+      if (width < 8 && height < 8) {
+        const stampStep = activeSteps.find(s => s.op === "stamp");
+        if (stampStep || currentTool === "stamp") {
+          const clickX = Math.max(0, Math.round((e.clientX - rect.left) * scaleX));
+          const clickY = Math.max(0, Math.round((e.clientY - rect.top) * scaleY));
+          if (stampStep) {
+            stampStep.params.x = clickX;
+            stampStep.params.y = clickY;
+          } else {
+            const id = stepCounter++;
+            activeSteps.push({
+              id,
+              op: "stamp",
+              name: `katman_${id}_stamp`,
+              params: { ...EFFECT_DEFS.stamp.defaults, x: clickX, y: clickY }
+            });
+          }
+          pushHistory();
+          renderStepsUI();
+          scheduleRender();
+          statusMessage.textContent = `Kaşe konumu güncellendi (X: ${clickX}, Y: ${clickY})`;
+        }
+        return;
+      }
+
+      if (imgW > 6 && imgH > 6) {
+        const clampedX = Math.max(0, Math.min(imgAfter.naturalWidth, imgLeft));
+        const clampedY = Math.max(0, Math.min(imgAfter.naturalHeight, imgTop));
+        const clampedW = Math.max(5, Math.min(imgAfter.naturalWidth - clampedX, imgW));
+        const clampedH = Math.max(5, Math.min(imgAfter.naturalHeight - clampedY, imgH));
+
+        const redactStep = activeSteps.slice().reverse().find(s => s.op === "redact");
+        if (redactStep) {
+          redactStep.params.x = clampedX;
+          redactStep.params.y = clampedY;
+          redactStep.params.width = clampedW;
+          redactStep.params.height = clampedH;
+        } else {
+          const id = stepCounter++;
+          activeSteps.push({
+            id,
+            op: "redact",
+            name: `katman_${id}_redact`,
+            params: { ...EFFECT_DEFS.redact.defaults, x: clampedX, y: clampedY, width: clampedW, height: clampedH }
+          });
+        }
+        pushHistory();
+        renderStepsUI();
+        scheduleRender();
+        statusMessage.textContent = `Sansür alanı seçildi: ${clampedW} × ${clampedH} px`;
+      }
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+      if ((e.ctrlKey || e.metaKey) && (e.key === "z" || e.key === "Z")) {
+        e.preventDefault();
+        if (e.shiftKey) redo();
+        else undo();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === "y" || e.key === "Y")) {
+        e.preventDefault();
+        redo();
+      }
     });
 
     // Başlangıç Yüklemesi
