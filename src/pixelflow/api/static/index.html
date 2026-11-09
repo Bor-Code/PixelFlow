@@ -7,18 +7,22 @@
   <style>
     :root {
       --ps-bg: #1e1e1e;
-      --ps-dark: #141414;
-      --ps-panel: #252526;
-      --ps-panel-light: #2d2d30;
-      --ps-border: #383838;
-      --ps-accent: #0078d4;
-      --ps-accent-hover: #106ebe;
-      --ps-text: #cccccc;
+      --ps-dark: #121418;
+      --ps-panel: #22262e;
+      --ps-panel-light: #2c323d;
+      --ps-panel-hover: #373e4b;
+      --ps-border: #3b4455;
+      --ps-accent: #0084ff;
+      --ps-accent-hover: #0070d8;
+      --ps-text: #d8e1ec;
       --ps-text-bright: #ffffff;
-      --ps-text-muted: #8c8c8c;
-      --ps-danger: #e81123;
-      --ps-success: #107c41;
-      --ps-active-tool: #094771;
+      --ps-text-muted: #9aa7b9;
+      --ps-danger: #ef4444;
+      --ps-danger-hover: #dc2626;
+      --ps-success: #10b981;
+      --ps-active-tool: #095995;
+      --radius-sm: 6px;
+      --radius-md: 9px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
@@ -30,42 +34,46 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      font-size: 12px;
+      font-size: 14px;
     }
 
     /* Üst Menü Çubuğu */
     .menu-bar {
-      height: 30px;
+      height: 44px;
       background: var(--ps-panel);
       border-bottom: 1px solid var(--ps-border);
       display: flex;
       align-items: center;
-      padding: 0 10px;
-      gap: 4px;
+      padding: 0 16px;
+      gap: 8px;
       z-index: 100;
     }
     .brand-logo {
-      font-weight: 700;
-      font-size: 13px;
+      font-weight: 800;
+      font-size: 16px;
       color: var(--ps-text-bright);
-      padding: 0 12px 0 4px;
+      padding: 0 16px 0 4px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 9px;
       border-right: 1px solid var(--ps-border);
-      margin-right: 4px;
+      margin-right: 6px;
+      letter-spacing: -0.02em;
     }
     .brand-logo svg {
-      width: 15px;
-      height: 15px;
+      width: 20px;
+      height: 20px;
       fill: var(--ps-accent);
     }
     .menu-item {
       position: relative;
-      padding: 4px 10px;
+      padding: 6px 14px;
       cursor: pointer;
-      border-radius: 3px;
+      border-radius: var(--radius-sm);
       color: var(--ps-text);
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: all 0.14s ease;
     }
     .menu-item:hover {
       background: var(--ps-panel-light);
@@ -78,21 +86,23 @@
       left: 0;
       background: var(--ps-panel);
       border: 1px solid var(--ps-border);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      border-radius: 3px;
-      min-width: 170px;
-      padding: 4px 0;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      border-radius: var(--radius-sm);
+      min-width: 220px;
+      padding: 6px 0;
       z-index: 200;
     }
     .menu-item:hover .menu-dropdown {
       display: block;
     }
     .dropdown-action {
-      padding: 6px 14px;
+      padding: 9px 18px;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       color: var(--ps-text);
+      font-size: 13px;
+      transition: all 0.12s;
     }
     .dropdown-action:hover {
       background: var(--ps-accent);
@@ -101,44 +111,50 @@
     .dropdown-divider {
       height: 1px;
       background: var(--ps-border);
-      margin: 4px 0;
+      margin: 6px 0;
     }
 
     /* Üst Seçenekler / Kontrol Şeridi */
     .options-bar {
-      height: 34px;
-      background: var(--ps-panel);
+      min-height: 50px;
+      background: var(--ps-panel-light);
       border-bottom: 1px solid var(--ps-border);
       display: flex;
       align-items: center;
-      padding: 0 12px;
+      padding: 0 16px;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     .options-left, .options-right {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     .btn {
-      background: var(--ps-panel-light);
+      background: var(--ps-panel);
       border: 1px solid var(--ps-border);
-      color: var(--ps-text);
-      padding: 4px 10px;
-      border-radius: 3px;
+      color: var(--ps-text-bright);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      font-size: 11px;
+      font-size: 13px;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 8px;
+      transition: all 0.15s ease;
     }
     .btn:hover {
-      background: #3e3e42;
-      color: var(--ps-text-bright);
+      background: var(--ps-panel-hover);
+      border-color: #55627a;
+      transform: translateY(-1px);
     }
     .btn-primary {
       background: var(--ps-accent);
       border-color: var(--ps-accent);
       color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 132, 255, 0.3);
     }
     .btn-primary:hover {
       background: var(--ps-accent-hover);
@@ -146,16 +162,19 @@
     .view-toggle {
       display: flex;
       border: 1px solid var(--ps-border);
-      border-radius: 3px;
+      border-radius: var(--radius-sm);
       overflow: hidden;
+      background: var(--ps-panel);
     }
     .view-btn {
       border: none;
-      background: var(--ps-panel-light);
-      color: var(--ps-text);
-      padding: 4px 10px;
-      font-size: 11px;
+      background: transparent;
+      color: var(--ps-text-muted);
+      padding: 7px 15px;
+      font-size: 12.5px;
+      font-weight: 600;
       cursor: pointer;
+      transition: all 0.14s;
     }
     .view-btn.active {
       background: var(--ps-active-tool);
@@ -166,9 +185,13 @@
     .workspace {
       flex: 1;
       display: grid;
-      grid-template-columns: 46px 1fr 320px;
+      grid-template-columns: 60px 1fr 380px;
       overflow: hidden;
       background: var(--ps-dark);
+    }
+    @media (max-width: 1100px) {
+      body { height: auto; overflow: auto; }
+      .workspace { grid-template-columns: 1fr; }
     }
 
     /* Sol Araç Çubuğu (Photoshop Tool Dock) */
@@ -178,23 +201,25 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 6px 0;
-      gap: 4px;
+      padding: 10px 0;
+      gap: 8px;
     }
     .tool-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 4px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       color: var(--ps-text);
-      position: relative;
+      transition: all 0.15s ease;
+      background: transparent;
+      border: 1px solid transparent;
     }
     .tool-btn svg {
-      width: 17px;
-      height: 17px;
+      width: 22px;
+      height: 22px;
       stroke: currentColor;
       fill: none;
       stroke-width: 2;
@@ -202,13 +227,16 @@
     .tool-btn:hover {
       background: var(--ps-panel-light);
       color: var(--ps-text-bright);
+      border-color: var(--ps-border);
+      transform: scale(1.05);
     }
     .tool-btn.active {
       background: var(--ps-active-tool);
       color: #fff;
+      border-color: var(--ps-accent);
     }
     .tool-divider {
-      width: 24px;
+      width: 34px;
       height: 1px;
       background: var(--ps-border);
       margin: 4px 0;
@@ -221,41 +249,41 @@
       align-items: center;
       justify-content: center;
       overflow: auto;
-      background: #111111;
+      background: #101216;
       background-image: 
-        linear-gradient(45deg, #181818 25%, transparent 25%), 
-        linear-gradient(-45deg, #181818 25%, transparent 25%), 
-        linear-gradient(45deg, transparent 75%, #181818 75%), 
-        linear-gradient(-45deg, transparent 75%, #181818 75%);
-      background-size: 20px 20px;
-      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        linear-gradient(45deg, #181b22 25%, transparent 25%), 
+        linear-gradient(-45deg, #181b22 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #181b22 75%), 
+        linear-gradient(-45deg, transparent 75%, #181b22 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0px;
       padding: 24px;
     }
     .canvas-viewport {
       display: flex;
-      gap: 20px;
+      gap: 24px;
       align-items: center;
       justify-content: center;
       max-width: 100%;
       max-height: 100%;
     }
     .canvas-box {
-      background: #1a1a1a;
-      border: 1px solid #333;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-      border-radius: 3px;
+      background: #181b22;
+      border: 1px solid #333d4e;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.7);
+      border-radius: var(--radius-md);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      max-width: calc(50vw - 60px);
+      max-width: calc(50vw - 80px);
     }
     .canvas-box.single {
-      max-width: calc(100vw - 420px);
+      max-width: calc(100vw - 480px);
     }
     .canvas-title {
-      background: #202020;
-      padding: 5px 10px;
-      font-size: 11px;
+      background: #1f232d;
+      padding: 8px 14px;
+      font-size: 13px;
       border-bottom: 1px solid var(--ps-border);
       color: var(--ps-text-muted);
       display: flex;
@@ -263,24 +291,26 @@
     }
     .canvas-title strong {
       color: var(--ps-text-bright);
+      font-size: 13.5px;
     }
     .canvas-view-inner {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 10px;
-      background: #0d0d0d;
-      min-width: 200px;
-      min-height: 200px;
+      padding: 16px;
+      background: #0d0f13;
+      min-width: 260px;
+      min-height: 240px;
     }
     .canvas-view-inner img {
       max-width: 100%;
-      max-height: calc(100vh - 160px);
+      max-height: calc(100vh - 200px);
       object-fit: contain;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      border-radius: 4px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
     }
 
-    /* Sağ Panel (Photoshop Katmanlar & Ayarlamalar) */
+    /* Sağ Panel (Katmanlar & Ayarlar) */
     .sidebar-panels {
       background: var(--ps-panel);
       border-left: 1px solid var(--ps-border);
@@ -289,50 +319,79 @@
       overflow: hidden;
     }
     .panel-tabs {
-      height: 32px;
-      background: #1c1c1c;
+      height: 42px;
+      background: #191c22;
       border-bottom: 1px solid var(--ps-border);
       display: flex;
       align-items: center;
-      padding: 0 4px;
-      gap: 2px;
+      padding: 0 8px;
+      gap: 6px;
     }
     .panel-tab {
-      padding: 6px 12px;
+      padding: 9px 16px;
       cursor: pointer;
-      border-radius: 3px 3px 0 0;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
       color: var(--ps-text-muted);
-      font-size: 11px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.14s;
     }
     .panel-tab:hover {
-      color: var(--ps-text);
+      color: var(--ps-text-bright);
     }
     .panel-tab.active {
       background: var(--ps-panel);
-      color: var(--ps-text-bright);
-      font-weight: 600;
+      color: var(--ps-accent);
+      border-bottom: 2px solid var(--ps-accent);
     }
     .panel-content {
       flex: 1;
       overflow-y: auto;
-      padding: 12px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+    }
+
+    /* Hızlı Şablon Butonları */
+    .quick-preset-chips {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .chip {
+      background: var(--ps-panel-light);
+      border: 1px solid var(--ps-border);
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ps-text);
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .chip:hover {
+      background: var(--ps-active-tool);
+      border-color: var(--ps-accent);
+      color: #fff;
+      transform: translateY(-1px);
     }
 
     /* Efekt Katman Kartı */
     .step-card {
       background: var(--ps-panel-light);
       border: 1px solid var(--ps-border);
-      border-radius: 4px;
-      padding: 10px;
+      border-radius: var(--radius-md);
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
+      transition: border-color 0.15s;
     }
     .step-card:hover {
-      border-color: #4f4f4f;
+      border-color: #55627a;
     }
     .step-header {
       display: flex;
@@ -340,40 +399,43 @@
       align-items: center;
     }
     .step-name {
-      font-weight: 600;
+      font-weight: 700;
       color: var(--ps-text-bright);
-      font-size: 11.5px;
+      font-size: 14px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
     .step-tag {
-      font-size: 9.5px;
-      background: #1e1e1e;
-      padding: 2px 6px;
-      border-radius: 2px;
+      font-size: 11px;
+      background: #181b22;
+      padding: 3px 8px;
+      border-radius: 4px;
       color: var(--ps-accent);
+      font-weight: 600;
     }
     .step-actions {
       display: flex;
-      gap: 3px;
+      gap: 5px;
     }
     .mini-btn {
-      width: 22px;
-      height: 22px;
-      background: #202020;
+      width: 28px;
+      height: 28px;
+      background: #1d212a;
       border: 1px solid var(--ps-border);
-      border-radius: 3px;
-      color: var(--ps-text);
+      border-radius: var(--radius-sm);
+      color: var(--ps-text-bright);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.12s;
     }
     .mini-btn:hover {
-      background: #333;
-      color: #fff;
+      background: var(--ps-panel-hover);
+      border-color: #55627a;
     }
     .mini-btn.del:hover {
       background: var(--ps-danger);
@@ -384,33 +446,36 @@
     .slider-row {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 6px;
     }
     .slider-header {
       display: flex;
       justify-content: space-between;
       color: var(--ps-text-muted);
-      font-size: 10.5px;
+      font-size: 12.5px;
     }
     .slider-header span:last-child {
       color: var(--ps-text-bright);
-      font-family: monospace;
+      font-family: Consolas, monospace;
+      font-weight: 700;
     }
     input[type="range"] {
       width: 100%;
-      height: 4px;
+      height: 6px;
       accent-color: var(--ps-accent);
       cursor: pointer;
+      border-radius: 3px;
     }
     input[type="text"], select.ps-select {
       width: 100%;
-      background: #181818;
+      background: #16181f;
       border: 1px solid var(--ps-border);
       color: var(--ps-text-bright);
-      padding: 5px 8px;
-      border-radius: 3px;
-      font-size: 11px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
       outline: none;
+      font-family: inherit;
     }
     input[type="text"]:focus, select.ps-select:focus {
       border-color: var(--ps-accent);
@@ -418,38 +483,19 @@
 
     /* Alt Durum Çubuğu */
     .status-bar {
-      height: 22px;
-      background: #181818;
+      height: 28px;
+      background: #16181f;
       border-top: 1px solid var(--ps-border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 12px;
-      font-size: 10.5px;
+      padding: 0 16px;
+      font-size: 12px;
       color: var(--ps-text-muted);
     }
     .status-msg {
-      color: #4ec9b0;
-    }
-    .quick-preset-chips {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
-    .chip {
-      background: var(--ps-panel-light);
-      border: 1px solid var(--ps-border);
-      padding: 4px 8px;
-      border-radius: 3px;
-      cursor: pointer;
-      font-size: 10.5px;
-      color: var(--ps-text);
-    }
-    .chip:hover {
-      background: var(--ps-active-tool);
-      border-color: var(--ps-accent);
-      color: #fff;
+      color: #34d399;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -468,7 +514,7 @@
       <div class="menu-dropdown">
         <div class="dropdown-action" id="menuOpen">Resim Aç (Ctrl+O)</div>
         <div class="dropdown-action" id="menuSampleLand">Örnek Manzara Aç</div>
-        <div class="dropdown-action" id="menuSampleDoc">Örnek Belge Aç</div>
+        <div class="dropdown-action" id="menuSampleDoc">Örnek Makbuz Aç</div>
         <div class="dropdown-divider"></div>
         <div class="dropdown-action" id="menuExport">Dışa Aktar (PNG Olarak İndir)</div>
         <div class="dropdown-divider"></div>
@@ -481,8 +527,7 @@
       <div class="menu-dropdown">
         <div class="dropdown-action" onclick="quickAdd('resize')">Boyutlandır...</div>
         <div class="dropdown-action" onclick="quickAdd('rotate')">Döndür...</div>
-        <div class="dropdown-action" onclick="quickAdd('flip')">Yatay/Dikey Çevir</div>
-        <div class="dropdown-action" onclick="quickAdd('crop')">Kırp</div>
+        <div class="dropdown-action" onclick="quickAdd('flip')">Yatay/Dikey Çevir (Ayna)</div>
       </div>
     </div>
 
@@ -490,7 +535,7 @@
       Ayarlamalar
       <div class="menu-dropdown">
         <div class="dropdown-action" onclick="quickAdd('brightness_contrast')">Parlaklık / Kontrast...</div>
-        <div class="dropdown-action" onclick="quickAdd('gamma')">Gama Tonu...</div>
+        <div class="dropdown-action" onclick="quickAdd('gamma')">Gama Ton Eğrisi...</div>
         <div class="dropdown-action" onclick="quickAdd('histogram_equalization')">Otomatik HDR / Histogram...</div>
         <div class="dropdown-action" onclick="quickAdd('grayscale')">Siyah &amp; Beyaz Yap</div>
       </div>
@@ -502,10 +547,10 @@
         <div class="dropdown-action" onclick="quickAdd('sharpen')">Keskinleştir (Unsharp Mask)</div>
         <div class="dropdown-action" onclick="quickAdd('gaussian_blur')">Gauss Bulanıklığı...</div>
         <div class="dropdown-action" onclick="quickAdd('bilateral_filter')">Doku Pürüzsüzleştirme...</div>
-        <div class="dropdown-action" onclick="quickAdd('face_blur')">Yüzleri Otomatik Sansürle/Bulanıklaştır</div>
+        <div class="dropdown-action" onclick="quickAdd('face_blur')">Yüzleri Otomatik Sansürle</div>
         <div class="dropdown-divider"></div>
         <div class="dropdown-action" onclick="quickAdd('canny')">Çizim / Kenar Tespiti (Canny)</div>
-        <div class="dropdown-action" onclick="quickAdd('adaptive_threshold')">Belge Tarayıcı / Metin Temizleme</div>
+        <div class="dropdown-action" onclick="quickAdd('adaptive_threshold')">Belge / Metin Taraması</div>
       </div>
     </div>
 
@@ -521,20 +566,26 @@
   <section class="options-bar">
     <div class="options-left">
       <input type="file" id="filePicker" accept="image/*" style="display:none" />
-      <button type="button" class="btn" id="btnUpload">Görsel Yükle</button>
-      <button type="button" class="btn" id="btnSamplePhoto">Örnek Fotoğraf</button>
+      <button type="button" class="btn btn-primary" id="btnUpload">
+        <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Fotoğraf Yükle
+      </button>
+      <button type="button" class="btn" id="btnSamplePhoto">Örnek Manzara</button>
       <button type="button" class="btn" id="btnSampleDoc">Örnek Makbuz</button>
-      <div style="width:1px;height:18px;background:var(--ps-border);margin:0 4px"></div>
+      <div style="width:1px;height:24px;background:var(--ps-border);margin:0 4px"></div>
       <div class="view-toggle">
-        <button type="button" class="view-btn active" data-view="split">Öncesi / Sonrası</button>
+        <button type="button" class="view-btn active" data-view="split">Öncesi &amp; Sonrası</button>
         <button type="button" class="view-btn" data-view="after">Yalnızca İşlenen</button>
         <button type="button" class="view-btn" data-view="before">Yalnızca Orijinal</button>
       </div>
     </div>
 
     <div class="options-right">
-      <span id="timingBadge" style="color:var(--ps-text-muted);font-size:11px">Hazır</span>
-      <button type="button" class="btn btn-primary" id="btnDownload">PNG Olarak İndir</button>
+      <span id="timingBadge" style="color:var(--ps-text-muted);font-weight:600;font-size:12.5px">Hazır</span>
+      <button type="button" class="btn btn-primary" id="btnDownload">
+        <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        PNG Olarak İndir
+      </button>
     </div>
   </section>
 
@@ -542,13 +593,13 @@
   <main class="workspace">
     <!-- Sol Photoshop Araç Kutusu -->
     <aside class="tool-dock">
-      <div class="tool-btn active" title="Parlaklık / Kontrast" onclick="quickAdd('brightness_contrast')">
+      <div class="tool-btn active" title="Parlaklık &amp; Kontrast" onclick="quickAdd('brightness_contrast')">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </div>
-      <div class="tool-btn" title="Keskinleştir" onclick="quickAdd('sharpen')">
+      <div class="tool-btn" title="Keskinleştir (Unsharp)" onclick="quickAdd('sharpen')">
         <svg viewBox="0 0 24 24"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>
       </div>
-      <div class="tool-btn" title="Bulanıklaştır" onclick="quickAdd('gaussian_blur')">
+      <div class="tool-btn" title="Gauss Bulanıklığı" onclick="quickAdd('gaussian_blur')">
         <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
       </div>
       <div class="tool-btn" title="Otomatik Yüz Sansürü" onclick="quickAdd('face_blur')">
@@ -568,10 +619,10 @@
       <div class="tool-btn" title="Yazı / Filigran Ekle" onclick="quickAdd('watermark')">
         <svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
       </div>
-      <div class="tool-btn" title="Belge / Metin Taraması" onclick="quickAdd('adaptive_threshold')">
+      <div class="tool-btn" title="Belge &amp; Metin Tarayıcı" onclick="quickAdd('adaptive_threshold')">
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       </div>
-      <div class="tool-btn" title="Çizgi / Kenar Çıkar" onclick="quickAdd('canny')">
+      <div class="tool-btn" title="Karakalem &amp; Çizgi Çıkar" onclick="quickAdd('canny')">
         <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       </div>
     </aside>
@@ -604,35 +655,35 @@
     <!-- Sağ Photoshop Panelleri (Katmanlar, Ayarlar) -->
     <aside class="sidebar-panels">
       <div class="panel-tabs">
-        <div class="panel-tab active" id="tabLayers">Katmanlar &amp; Efektler</div>
-        <div class="panel-tab" id="tabPresets">Hazır Şablonlar</div>
+        <div class="panel-tab active" id="tabLayers">Efekt Katmanları</div>
+        <div class="panel-tab" id="tabPresets">Hızlı Şablonlar</div>
       </div>
 
       <div class="panel-content" id="panelLayers">
         <div class="quick-preset-chips">
-          <div class="chip" onclick="applyPreset('social')">+ Sosyal Medya</div>
-          <div class="chip" onclick="applyPreset('document')">+ Belge Tara</div>
-          <div class="chip" onclick="applyPreset('vivid')">+ Canlı HDR</div>
-          <div class="chip" onclick="applyPreset('sketch')">+ Karakalem</div>
+          <div class="chip" onclick="applyPreset('social')">✨ Sosyal Medya</div>
+          <div class="chip" onclick="applyPreset('document')">📄 Belge Tara</div>
+          <div class="chip" onclick="applyPreset('vivid')">🌅 Canlı HDR</div>
+          <div class="chip" onclick="applyPreset('sketch')">✏️ Karakalem</div>
         </div>
 
-        <div id="stepsList" style="display:flex;flex-direction:column;gap:8px;"></div>
+        <div id="stepsList" style="display:flex;flex-direction:column;gap:12px;"></div>
       </div>
 
       <div class="panel-content" id="panelPresets" style="display:none;">
-        <p style="color:var(--ps-text-muted);font-size:11px;margin-bottom:8px;">
-          Sık kullanılan profesyonel pipeline şablonları:
+        <p style="color:var(--ps-text-muted);font-size:13px;line-height:1.5;margin-bottom:12px;">
+          Tek tıkla fotoğraflarınıza profesyonel efekt kombinasyonları uygulayın:
         </p>
-        <button type="button" class="btn" style="width:100%;text-align:left;margin-bottom:6px" onclick="applyPreset('social')">
+        <button type="button" class="btn" style="width:100%;text-align:left;padding:12px;margin-bottom:8px" onclick="applyPreset('social')">
           📸 <strong>Sosyal Medya Paketi:</strong> Boyutlandırma, Kontrast, Keskinlik ve Filigran
         </button>
-        <button type="button" class="btn" style="width:100%;text-align:left;margin-bottom:6px" onclick="applyPreset('document')">
-          📄 <strong>Temiz Belge / Makbuz:</strong> Arka plan temizleme ve net siyah-beyaz binarize
+        <button type="button" class="btn" style="width:100%;text-align:left;padding:12px;margin-bottom:8px" onclick="applyPreset('document')">
+          📄 <strong>Temiz Belge / Makbuz:</strong> Arka plan parazit temizleme ve net siyah-beyaz binarize
         </button>
-        <button type="button" class="btn" style="width:100%;text-align:left;margin-bottom:6px" onclick="applyPreset('vivid')">
+        <button type="button" class="btn" style="width:100%;text-align:left;padding:12px;margin-bottom:8px" onclick="applyPreset('vivid')">
           🌅 <strong>HDR Canlılık:</strong> CLAHE gölge/ışık dengeleme, gama ve unsharp mask
         </button>
-        <button type="button" class="btn" style="width:100%;text-align:left" onclick="applyPreset('sketch')">
+        <button type="button" class="btn" style="width:100%;text-align:left;padding:12px" onclick="applyPreset('sketch')">
           ✏️ <strong>Karakalem Kenar:</strong> Gauss yumuşatma sonrası Canny çizgi tespiti
         </button>
       </div>
@@ -642,7 +693,7 @@
   <!-- Alt Durum Çubuğu -->
   <footer class="status-bar">
     <span class="status-msg" id="statusMessage">PixelFlow Motoru Hazır • 127.0.0.1:8000</span>
-    <span id="canvasDims">— px</span>
+    <span id="canvasDims" style="font-weight:600">— px</span>
   </footer>
 
   <script>
@@ -661,7 +712,7 @@
         tag: "Ton",
         defaults: { gamma: 1.2 },
         fields: [
-          { key: "gamma", label: "Gama", min: 0.3, max: 3.0, step: 0.05 }
+          { key: "gamma", label: "Gama Değeri", min: 0.3, max: 3.0, step: 0.05 }
         ]
       },
       histogram_equalization: {
@@ -674,7 +725,7 @@
         ]
       },
       grayscale: {
-        title: "Siyah & Beyaz Dönüşümü",
+        title: "Siyah & Beyaz",
         tag: "Monokrom",
         defaults: { keep_channels: false },
         fields: []
@@ -702,8 +753,8 @@
         tag: "Filtre",
         defaults: { diameter: 7, sigma_color: 60.0, sigma_space: 60.0 },
         fields: [
-          { key: "diameter", label: "Çap", min: 3, max: 15, step: 2 },
-          { key: "sigma_color", label: "Pürüzsüzleştirme", min: 15, max: 120, step: 5 }
+          { key: "diameter", label: "Yumuşatma Çapı", min: 3, max: 15, step: 2 },
+          { key: "sigma_color", label: "Doku Gücü", min: 15, max: 120, step: 5 }
         ]
       },
       face_blur: {
@@ -719,8 +770,8 @@
         tag: "Geometri",
         defaults: { width: 480, height: 340, keep_aspect_ratio: true, interpolation: "area" },
         fields: [
-          { key: "width", label: "Genişlik (px)", min: 120, max: 1600, step: 20 },
-          { key: "height", label: "Yükseklik (px)", min: 120, max: 1600, step: 20 }
+          { key: "width", label: "Maks. Genişlik (px)", min: 120, max: 1600, step: 20 },
+          { key: "height", label: "Maks. Yükseklik (px)", min: 120, max: 1600, step: 20 }
         ]
       },
       rotate: {
@@ -728,7 +779,7 @@
         tag: "Geometri",
         defaults: { angle: 15.0, expand: true },
         fields: [
-          { key: "angle", label: "Açı (°)", min: -180, max: 180, step: 5 }
+          { key: "angle", label: "Döndürme Açısı (°)", min: -180, max: 180, step: 5 }
         ]
       },
       flip: {
@@ -736,7 +787,7 @@
         tag: "Geometri",
         defaults: { mode: "horizontal" },
         selectFields: [
-          { key: "mode", label: "Yön", options: [["horizontal", "Yatay"], ["vertical", "Dikey"], ["both", "Her İkisi"]] }
+          { key: "mode", label: "Ayna Yönü", options: [["horizontal", "Yatay Çevir"], ["vertical", "Dikey Çevir"], ["both", "Her İki Yöne Çevir"]] }
         ]
       },
       watermark: {
@@ -747,23 +798,23 @@
           { key: "text", label: "Filigran Metni" }
         ],
         selectFields: [
-          { key: "position", label: "Konum", options: [["bottom-right", "Sağ Alt"], ["bottom-left", "Sol Alt"], ["top-right", "Sağ Üst"], ["top-left", "Sol Üst"], ["center", "Ortala"]] }
+          { key: "position", label: "Konum", options: [["bottom-right", "Sağ Alt Köşe"], ["bottom-left", "Sol Alt Köşe"], ["top-right", "Sağ Üst Köşe"], ["top-left", "Sol Üst Köşe"], ["center", "Merkeze Ortala"]] }
         ],
         fields: [
-          { key: "opacity", label: "Opaklık", min: 0.1, max: 1.0, step: 0.05 }
+          { key: "opacity", label: "Opaklık Oranı", min: 0.1, max: 1.0, step: 0.05 }
         ]
       },
       adaptive_threshold: {
-        title: "Belge Tarama & Metin Çıkarımı",
+        title: "Belge & Metin Tarayıcı",
         tag: "Binarize",
         defaults: { method: "gaussian", threshold_type: "binary", block_size: 15, constant: 4.0 },
         fields: [
-          { key: "block_size", label: "Pencere Çapı", min: 7, max: 31, step: 2 },
+          { key: "block_size", label: "Detay Penceresi", min: 7, max: 31, step: 2 },
           { key: "constant", label: "Arka Plan Temizliği", min: 0.0, max: 12.0, step: 1.0 }
         ]
       },
       canny: {
-        title: "Çizgi / Kenar Tespiti",
+        title: "Karakalem & Kenar Çıkar",
         tag: "Kenar",
         defaults: { threshold1: 60.0, threshold2: 160.0 },
         fields: [
@@ -808,9 +859,9 @@
       stepsList.innerHTML = "";
       if (activeSteps.length === 0) {
         stepsList.innerHTML = `
-          <div style="text-align:center;padding:30px 10px;color:var(--ps-text-muted);border:1px dashed var(--ps-border);border-radius:4px;">
+          <div style="text-align:center;padding:36px 14px;color:var(--ps-text-muted);font-size:13.5px;border:1.5px dashed var(--ps-border);border-radius:8px;line-height:1.6;">
             Henüz efekt katmanı eklenmedi.<br/>
-            Soldaki araç kutusundan veya üst menüden bir efekt seçin.
+            Soldaki araç kutusundan veya üst menüden bir efekt seçebilirsiniz.
           </div>
         `;
         return;
@@ -840,8 +891,8 @@
           const row = document.createElement("div");
           row.style.display = "flex";
           row.style.flexDirection = "column";
-          row.style.gap = "3px";
-          row.innerHTML = `<span style="font-size:10.5px;color:var(--ps-text-muted)">${f.label}</span>`;
+          row.style.gap = "4px";
+          row.innerHTML = `<span style="font-size:12.5px;color:var(--ps-text-muted);font-weight:600">${f.label}</span>`;
           const input = document.createElement("input");
           input.type = "text";
           input.value = step.params[f.key] || "";
@@ -857,8 +908,8 @@
           const row = document.createElement("div");
           row.style.display = "flex";
           row.style.flexDirection = "column";
-          row.style.gap = "3px";
-          row.innerHTML = `<span style="font-size:10.5px;color:var(--ps-text-muted)">${f.label}</span>`;
+          row.style.gap = "4px";
+          row.innerHTML = `<span style="font-size:12.5px;color:var(--ps-text-muted);font-weight:600">${f.label}</span>`;
           const sel = document.createElement("select");
           sel.className = "ps-select";
           f.options.forEach(([optVal, optLabel]) => {
@@ -935,7 +986,7 @@
         imgAfter.src = url;
         imgAfter.style.display = "block";
         metaAfter.textContent = metaBefore.textContent + " (Orijinal)";
-        timingBadge.textContent = "Efekt yok";
+        timingBadge.textContent = "Efekt uygulanmadı";
         statusMessage.textContent = "Orijinal resim görüntüleniyor";
         return;
       }
@@ -972,8 +1023,8 @@
         };
         imgAfter.src = outUrl;
         imgAfter.style.display = "block";
-        timingBadge.textContent = `Tamamlandı: ${ms} ms`;
-        statusMessage.textContent = `Başarılı • ${activeSteps.length} efekt uygulandı (${ms} ms)`;
+        timingBadge.textContent = `İşlendi: ${ms} ms`;
+        statusMessage.textContent = `Başarılı • ${activeSteps.length} efekt aktif (${ms} ms)`;
       } catch (err) {
         statusMessage.textContent = "Bağlantı hatası: " + err;
       }
