@@ -128,6 +128,19 @@ def encode_image_bytes(image: ImageArray, image_format: str = "PNG") -> bytes:
     return buffer.getvalue()
 
 
+def encode_multipage_pdf(images: list[ImageArray]) -> bytes:
+    if not images:
+        raise InvalidImageError("No images provided for multipage PDF")
+    for img in images:
+        validate_image_array(img)
+    pil_images = [_numpy_to_pil(img, target_format="PDF") for img in images]
+    buffer = BytesIO()
+    first = pil_images[0]
+    rest = pil_images[1:] if len(pil_images) > 1 else []
+    first.save(buffer, format="PDF", save_all=True, append_images=rest)
+    return buffer.getvalue()
+
+
 def _numpy_to_pil(image: ImageArray, target_format: str) -> Image.Image:
     if image.dtype == np.uint16:
         if image.ndim == 2 and target_format in ("PNG", "TIFF"):

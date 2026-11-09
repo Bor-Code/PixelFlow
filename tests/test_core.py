@@ -22,6 +22,7 @@ from pixelflow.core.image_utils import (
 from pixelflow.core.io import (
     decode_image_bytes,
     encode_image_bytes,
+    encode_multipage_pdf,
     load_image,
     save_image,
 )
@@ -217,6 +218,10 @@ def test_io_pdf_support(tmp_path: Path) -> None:
     saved = save_image(img, pdf_file)
     assert saved.exists()
     assert saved.read_bytes().startswith(b"%PDF")
+    multi = encode_multipage_pdf([img, img])
+    assert multi.startswith(b"%PDF")
+    with pytest.raises(InvalidImageError):
+        encode_multipage_pdf([])
 
 
 def test_pipeline_execution_and_logging() -> None:

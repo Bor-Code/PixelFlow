@@ -131,3 +131,25 @@ async def test_concurrent_api_requests_isolated() -> None:
         )
         assert decode_image_bytes(res_a.content).shape == (10, 10, 3)
         assert decode_image_bytes(res_b.content).shape == (14, 14, 3)
+
+
+@pytest.mark.anyio
+async def test_process_multipage_endpoint() -> None:
+    app = create_app()
+    transport = httpx.ASGITransport(app=app)
+    img_bytes = encode_image_bytes(np.full((16, 16, 3), 100, dtype=np.uint8), "PNG")
+    pipe_json = (
+        '{"name":"p","version":"1","steps":[{"op":"resize","params":{"width":8,"height":8}}]}'
+    )
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        resp = await client.post(
+            "/v1/process-multipage",
+            files=[
+                ("images", ("p1.png", img_bytes, "image/png")),
+                ("images", ("p2.png", img_bytes, "image/png")),
+            ],
+            data={"pipeline": pipe_json},
+        )
+        assert resp.status_code == 200
+        assert resp.headers["content-type"] == "application/pdf"
+        assert resp.content.startswith(b"%PDF")

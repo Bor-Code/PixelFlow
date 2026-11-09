@@ -1,6 +1,7 @@
 from pixelflow.core.io import (
     decode_image_bytes,
     encode_image_bytes,
+    encode_multipage_pdf,
     load_image,
     save_image,
 )
@@ -18,6 +19,7 @@ __all__ = [
     "decode_image_bytes",
     "default_registry",
     "encode_image_bytes",
+    "encode_multipage_pdf",
     "load_image",
     "register_operation",
     "save_image",
