@@ -7,7 +7,7 @@ from collections.abc import Awaitable, Callable
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, File, Form, Request, Response, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 
 import pixelflow.operations
 from pixelflow import __version__
@@ -20,6 +20,7 @@ from pixelflow.api.schemas import (
     ValidateRequestModel,
     ValidateResponseModel,
 )
+from pixelflow.api.ui import load_studio_html
 from pixelflow.core.io import (
     MIME_TO_FORMAT,
     decode_image_bytes,
@@ -95,6 +96,10 @@ def _register_exception_handlers(app: FastAPI) -> None:
 
 
 def _register_health_routes(app: FastAPI) -> None:
+    @app.get("/", response_class=HTMLResponse, include_in_schema=False)
+    async def studio_ui() -> HTMLResponse:
+        return HTMLResponse(content=load_studio_html())
+
     @app.get("/health", response_model=HealthResponseModel)
     async def health_check() -> HealthResponseModel:
         return HealthResponseModel(status="ok", version=__version__)
