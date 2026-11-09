@@ -1,0 +1,24 @@
+name: document-cleanup
+version: "1.0"
+steps:
+  - op: grayscale
+    name: convert_to_grayscale
+  - op: gaussian_blur
+    name: denoise_background
+    params:
+      kernel_size: 3
+      sigma_x: 0.8
+  - op: adaptive_threshold
+    name: binarize_text
+    params:
+      method: gaussian
+      threshold_type: binary
+      block_size: 15
+      constant: 4.0
+  - op: morphology
+    name: close_character_gaps
+    params:
+      action: close
+      kernel_size: 3
+      kernel_shape: rect
+      iterations: 1
