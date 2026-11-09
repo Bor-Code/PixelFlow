@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PixelFlow — Web Fotoğraf Editörü</title>
+  <title>PixelFlow — Profesyonel Belge ve Fotoğraf Düzenleyici</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     :root {
       --ps-bg: #1e1e1e;
@@ -88,7 +89,7 @@
       border: 1px solid var(--ps-border);
       box-shadow: 0 8px 24px rgba(0,0,0,0.6);
       border-radius: var(--radius-sm);
-      min-width: 220px;
+      min-width: 240px;
       padding: 6px 0;
       z-index: 200;
     }
@@ -116,7 +117,7 @@
 
     /* Üst Seçenekler / Kontrol Şeridi */
     .options-bar {
-      min-height: 50px;
+      min-height: 52px;
       background: var(--ps-panel-light);
       border-bottom: 1px solid var(--ps-border);
       display: flex;
@@ -159,6 +160,46 @@
     .btn-primary:hover {
       background: var(--ps-accent-hover);
     }
+
+    /* Mod Değiştirici (Belge vs Fotoğraf) */
+    .mode-switch {
+      display: flex;
+      background: var(--ps-dark);
+      border: 1px solid var(--ps-border);
+      border-radius: var(--radius-sm);
+      padding: 3px;
+      gap: 3px;
+    }
+    .mode-btn {
+      border: none;
+      background: transparent;
+      color: var(--ps-text-muted);
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.14s ease;
+    }
+    .mode-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+    .mode-btn:hover {
+      color: var(--ps-text-bright);
+    }
+    .mode-btn.active {
+      background: var(--ps-accent);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 132, 255, 0.4);
+    }
+
     .view-toggle {
       display: flex;
       border: 1px solid var(--ps-border);
@@ -185,7 +226,7 @@
     .workspace {
       flex: 1;
       display: grid;
-      grid-template-columns: 60px 1fr 380px;
+      grid-template-columns: 60px 1fr 390px;
       overflow: hidden;
       background: var(--ps-dark);
     }
@@ -202,7 +243,8 @@
       flex-direction: column;
       align-items: center;
       padding: 10px 0;
-      gap: 8px;
+      gap: 7px;
+      overflow-y: auto;
     }
     .tool-btn {
       width: 44px;
@@ -216,6 +258,7 @@
       transition: all 0.15s ease;
       background: transparent;
       border: 1px solid transparent;
+      position: relative;
     }
     .tool-btn svg {
       width: 22px;
@@ -278,7 +321,7 @@
       max-width: calc(50vw - 80px);
     }
     .canvas-box.single {
-      max-width: calc(100vw - 480px);
+      max-width: calc(100vw - 490px);
     }
     .canvas-title {
       background: #1f232d;
@@ -298,20 +341,19 @@
       align-items: center;
       justify-content: center;
       padding: 16px;
-      background: #0d0f13;
-      min-width: 260px;
-      min-height: 240px;
+      background: #15181f;
+      min-height: 260px;
     }
     .canvas-view-inner img {
       max-width: 100%;
-      max-height: calc(100vh - 200px);
+      max-height: 62vh;
       object-fit: contain;
       border-radius: 4px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
     }
 
-    /* Sağ Panel (Katmanlar & Ayarlar) */
-    .sidebar-panels {
+    /* Sağ Katmanlar & Ayarlar Paneli */
+    .layers-panel {
       background: var(--ps-panel);
       border-left: 1px solid var(--ps-border);
       display: flex;
@@ -319,30 +361,35 @@
       overflow: hidden;
     }
     .panel-tabs {
-      height: 42px;
-      background: #191c22;
-      border-bottom: 1px solid var(--ps-border);
+      height: 44px;
       display: flex;
-      align-items: center;
-      padding: 0 8px;
-      gap: 6px;
+      background: #1a1d24;
+      border-bottom: 1px solid var(--ps-border);
     }
     .panel-tab {
-      padding: 9px 16px;
-      cursor: pointer;
-      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-      color: var(--ps-text-muted);
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
       font-size: 13px;
-      font-weight: 600;
-      transition: all 0.14s;
-    }
-    .panel-tab:hover {
-      color: var(--ps-text-bright);
+      color: var(--ps-text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s ease;
     }
     .panel-tab.active {
+      color: var(--ps-text-bright);
       background: var(--ps-panel);
-      color: var(--ps-accent);
-      border-bottom: 2px solid var(--ps-accent);
+      border-bottom-color: var(--ps-accent);
+    }
+    .panel-toolbar {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--ps-border);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: #1c2028;
     }
     .panel-content {
       flex: 1;
@@ -363,11 +410,11 @@
     .chip {
       background: var(--ps-panel-light);
       border: 1px solid var(--ps-border);
-      padding: 9px 12px;
+      padding: 10px 12px;
       border-radius: var(--radius-sm);
       cursor: pointer;
       font-size: 12.5px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--ps-text);
       text-align: center;
       transition: all 0.15s;
@@ -412,7 +459,7 @@
       padding: 3px 8px;
       border-radius: 4px;
       color: var(--ps-accent);
-      font-weight: 600;
+      font-weight: 700;
     }
     .step-actions {
       display: flex;
@@ -512,13 +559,28 @@
     <div class="menu-item">
       Dosya
       <div class="menu-dropdown">
-        <div class="dropdown-action" id="menuOpen">Resim Aç (Ctrl+O)</div>
-        <div class="dropdown-action" id="menuSampleLand">Örnek Manzara Aç</div>
-        <div class="dropdown-action" id="menuSampleDoc">Örnek Makbuz Aç</div>
+        <div class="dropdown-action" id="menuOpen">Belge / Fotoğraf Aç (Ctrl+O)</div>
+        <div class="dropdown-action" id="menuSampleDoc">Örnek Makbuz / Belge Aç</div>
+        <div class="dropdown-action" id="menuSampleLand">Örnek Fotoğraf Aç</div>
         <div class="dropdown-divider"></div>
-        <div class="dropdown-action" id="menuExport">Dışa Aktar (PNG Olarak İndir)</div>
+        <div class="dropdown-action" onclick="exportAs('PNG')">PNG Olarak İndir</div>
+        <div class="dropdown-action" onclick="exportAs('PDF')">PDF Belgesi Olarak İndir</div>
+        <div class="dropdown-action" onclick="exportAs('JPEG')">JPEG Olarak İndir</div>
         <div class="dropdown-divider"></div>
         <div class="dropdown-action" id="menuReset">Tüm Efektleri Sıfırla</div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      Belge &amp; Evrak
+      <div class="menu-dropdown">
+        <div class="dropdown-action" onclick="quickAdd('shadow_removal')">Gölge &amp; Arka Plan Temizle</div>
+        <div class="dropdown-action" onclick="quickAdd('deskew')">Otomatik Doğrultma / Eğrilik Gider</div>
+        <div class="dropdown-action" onclick="quickAdd('redact')">Hassas Bilgi Sansürle (Bant / Mozaik)</div>
+        <div class="dropdown-action" onclick="quickAdd('stamp')">Resmi Kaşe / Onay Damgası Ekle</div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-action" onclick="quickAdd('adaptive_threshold')">Taranmış Siyah-Beyaz Belge Yap</div>
+        <div class="dropdown-action" onclick="quickAdd('sharpen')">Yazı &amp; Belge Netleştir</div>
       </div>
     </div>
 
@@ -550,13 +612,13 @@
         <div class="dropdown-action" onclick="quickAdd('face_blur')">Yüzleri Otomatik Sansürle</div>
         <div class="dropdown-divider"></div>
         <div class="dropdown-action" onclick="quickAdd('canny')">Çizim / Kenar Tespiti (Canny)</div>
-        <div class="dropdown-action" onclick="quickAdd('adaptive_threshold')">Belge / Metin Taraması</div>
       </div>
     </div>
 
     <div class="menu-item">
       Katman
       <div class="menu-dropdown">
+        <div class="dropdown-action" onclick="quickAdd('stamp')">Kaşe / İmza / Damga Ekle...</div>
         <div class="dropdown-action" onclick="quickAdd('watermark')">Filigran / Yazı Ekle...</div>
       </div>
     </div>
@@ -565,13 +627,25 @@
   <!-- Üst Seçenekler Şeridi -->
   <section class="options-bar">
     <div class="options-left">
-      <input type="file" id="filePicker" accept="image/*" style="display:none" />
+      <!-- Mod Değiştirici -->
+      <div class="mode-switch">
+        <button type="button" class="mode-btn active" id="btnModeDoc" onclick="setStudioMode('doc')">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Belge &amp; Evrak Modu
+        </button>
+        <button type="button" class="mode-btn" id="btnModePhoto" onclick="setStudioMode('photo')">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Fotoğraf Modu
+        </button>
+      </div>
+
+      <input type="file" id="filePicker" accept="image/*,.pdf,application/pdf" style="display:none" />
       <button type="button" class="btn btn-primary" id="btnUpload">
         <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        Fotoğraf Yükle
+        Dosya / Belge Yükle
       </button>
-      <button type="button" class="btn" id="btnSamplePhoto">Örnek Manzara</button>
       <button type="button" class="btn" id="btnSampleDoc">Örnek Makbuz</button>
+      <button type="button" class="btn" id="btnSamplePhoto">Örnek Fotoğraf</button>
       <div style="width:1px;height:24px;background:var(--ps-border);margin:0 4px"></div>
       <div class="view-toggle">
         <button type="button" class="view-btn active" data-view="split">Öncesi &amp; Sonrası</button>
@@ -582,9 +656,14 @@
 
     <div class="options-right">
       <span id="timingBadge" style="color:var(--ps-text-muted);font-weight:600;font-size:12.5px">Hazır</span>
+      <select id="exportFormat" class="ps-select" style="width:95px;padding:8px 10px;font-size:12.5px;font-weight:700">
+        <option value="PNG">PNG</option>
+        <option value="PDF">PDF</option>
+        <option value="JPEG">JPEG</option>
+      </select>
       <button type="button" class="btn btn-primary" id="btnDownload">
         <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        PNG Olarak İndir
+        İndir
       </button>
     </div>
   </section>
@@ -593,7 +672,26 @@
   <main class="workspace">
     <!-- Sol Photoshop Araç Kutusu -->
     <aside class="tool-dock">
-      <div class="tool-btn active" title="Parlaklık &amp; Kontrast" onclick="quickAdd('brightness_contrast')">
+      <!-- Belge Araçları -->
+      <div class="tool-btn active" title="Gölge &amp; Arka Plan Temizle" onclick="quickAdd('shadow_removal')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+      </div>
+      <div class="tool-btn" title="Otomatik Doğrultma (Deskew)" onclick="quickAdd('deskew')">
+        <svg viewBox="0 0 24 24"><path d="M2 12h20"/><path d="M20 12l-4-4"/><path d="M20 12l-4 4"/><circle cx="12" cy="12" r="9"/></svg>
+      </div>
+      <div class="tool-btn" title="Hassas Bilgi Sansürle" onclick="quickAdd('redact')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2" fill="currentColor"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+      </div>
+      <div class="tool-btn" title="Resmi Kaşe / Onay Ekle" onclick="quickAdd('stamp')">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+      <div class="tool-btn" title="Taranmış Belge / Metin" onclick="quickAdd('adaptive_threshold')">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      <div class="tool-divider"></div>
+
+      <!-- Fotoğraf Araçları -->
+      <div class="tool-btn" title="Parlaklık &amp; Kontrast" onclick="quickAdd('brightness_contrast')">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </div>
       <div class="tool-btn" title="Keskinleştir (Unsharp)" onclick="quickAdd('sharpen')">
@@ -615,15 +713,8 @@
       <div class="tool-btn" title="Ayna / Çevir" onclick="quickAdd('flip')">
         <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><polyline points="20 16 16 12 20 8"/><polyline points="4 8 8 12 4 16"/></svg>
       </div>
-      <div class="tool-divider"></div>
       <div class="tool-btn" title="Yazı / Filigran Ekle" onclick="quickAdd('watermark')">
         <svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-      </div>
-      <div class="tool-btn" title="Belge &amp; Metin Tarayıcı" onclick="quickAdd('adaptive_threshold')">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      </div>
-      <div class="tool-btn" title="Karakalem &amp; Çizgi Çıkar" onclick="quickAdd('canny')">
-        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       </div>
     </aside>
 
@@ -632,7 +723,7 @@
       <div class="canvas-viewport" id="viewport">
         <div class="canvas-box" id="boxBefore">
           <div class="canvas-title">
-            <strong>Orijinal Görüntü</strong>
+            <strong>Orijinal Belge / Görüntü</strong>
             <span id="metaBefore">—</span>
           </div>
           <div class="canvas-view-inner">
@@ -652,52 +743,125 @@
       </div>
     </div>
 
-    <!-- Sağ Photoshop Panelleri (Katmanlar, Ayarlar) -->
-    <aside class="sidebar-panels">
+    <!-- Sağ Katmanlar & Ayarlar Paneli -->
+    <aside class="layers-panel">
       <div class="panel-tabs">
-        <div class="panel-tab active" id="tabLayers">Efekt Katmanları</div>
-        <div class="panel-tab" id="tabPresets">Hızlı Şablonlar</div>
+        <div class="panel-tab active" id="tabLayers">İşlem Katmanları</div>
+        <div class="panel-tab" id="tabPresets">Hazır Şablonlar</div>
+      </div>
+
+      <div class="panel-toolbar">
+        <select id="opSelector" class="ps-select" style="flex:1;">
+          <option value="" disabled selected>+ Yeni Katman Ekle...</option>
+          <optgroup label="Belge &amp; Evrak Araçları">
+            <option value="shadow_removal">Gölge &amp; Arka Plan Temizle</option>
+            <option value="deskew">Otomatik Doğrultma (Deskew)</option>
+            <option value="redact">Hassas Bilgi Sansürle</option>
+            <option value="stamp">Resmi Kaşe / Onay Damgası</option>
+            <option value="adaptive_threshold">Taranmış Metin / Belge</option>
+          </optgroup>
+          <optgroup label="Fotoğraf &amp; Ayarlama">
+            <option value="brightness_contrast">Parlaklık &amp; Kontrast</option>
+            <option value="gamma">Gama Ton Eğrisi</option>
+            <option value="histogram_equalization">Otomatik HDR (CLAHE)</option>
+            <option value="grayscale">Siyah &amp; Beyaz Yap</option>
+            <option value="sharpen">Keskinleştir (Unsharp)</option>
+            <option value="gaussian_blur">Gauss Bulanıklığı</option>
+            <option value="bilateral_filter">Doku Pürüzsüzleştirme</option>
+            <option value="face_blur">Otomatik Yüz Sansürü</option>
+            <option value="resize">Boyutlandır</option>
+            <option value="rotate">Döndür</option>
+            <option value="flip">Ayna / Çevir</option>
+            <option value="watermark">Filigran / Yazı</option>
+            <option value="canny">Karakalem Çizgi Çıkar</option>
+          </optgroup>
+        </select>
+        <button type="button" class="btn btn-primary" id="btnAddOp" style="padding:8px 14px;">Ekle</button>
       </div>
 
       <div class="panel-content" id="panelLayers">
-        <div class="quick-preset-chips">
-          <div class="chip" onclick="applyPreset('social')">Sosyal Medya</div>
-          <div class="chip" onclick="applyPreset('document')">Belge Tara</div>
-          <div class="chip" onclick="applyPreset('vivid')">Canlı HDR</div>
-          <div class="chip" onclick="applyPreset('sketch')">Karakalem</div>
+        <div class="quick-preset-chips" id="quickPresetChips">
+          <!-- Mod'a göre dinamik dolar -->
         </div>
 
         <div id="stepsList" style="display:flex;flex-direction:column;gap:12px;"></div>
       </div>
 
       <div class="panel-content" id="panelPresets" style="display:none;">
-        <p style="color:var(--ps-text-muted);font-size:13px;line-height:1.5;margin-bottom:12px;">
-          Tek tıkla fotoğraflarınıza profesyonel efekt kombinasyonları uygulayın:
+        <p style="color:var(--ps-text-muted);font-size:13px;line-height:1.5;margin-bottom:12px;" id="presetsDesc">
+          Tek tıkla belgelerinize veya fotoğraflarınıza hazır işlem paketleri uygulayın:
         </p>
-        <button type="button" class="btn" style="width:100%;text-align:left;padding:12px;margin-bottom:8px" onclick="applyPreset('social')">
-          <strong>Sosyal Medya Paketi:</strong> Boyutlandırma, Kontrast, Keskinlik ve Filigran
-        </button>
-        <button type="button" class="btn" style="width:100%;text-align:left;padding:12px;margin-bottom:8px" onclick="applyPreset('document')">
-          <strong>Temiz Belge / Makbuz:</strong> Arka plan parazit temizleme ve net siyah-beyaz binarize
-        </button>
-        <button type="button" class="btn" style="width:100%;text-align:left;padding:12px;margin-bottom:8px" onclick="applyPreset('vivid')">
-          <strong>HDR Canlılık:</strong> CLAHE gölge/ışık dengeleme, gama ve unsharp mask
-        </button>
-        <button type="button" class="btn" style="width:100%;text-align:left;padding:12px" onclick="applyPreset('sketch')">
-          <strong>Karakalem Kenar:</strong> Gauss yumuşatma sonrası Canny çizgi tespiti
-        </button>
+        <div id="presetsListContainer" style="display:flex;flex-direction:column;gap:8px;"></div>
       </div>
     </aside>
   </main>
 
   <!-- Alt Durum Çubuğu -->
   <footer class="status-bar">
-    <span class="status-msg" id="statusMessage">PixelFlow Motoru Hazır • 127.0.0.1:8000</span>
+    <span class="status-msg" id="statusMessage">PixelFlow Motoru Hazır • Belge ve Fotoğraf İşleme Aktif</span>
     <span id="canvasDims" style="font-weight:600">— px</span>
   </footer>
 
   <script>
     const EFFECT_DEFS = {
+      // Belge İşlemleri
+      shadow_removal: {
+        title: "Gölge & Arka Plan Temizleme",
+        tag: "Belge",
+        defaults: { kernel_size: 25, blur_size: 21 },
+        fields: [
+          { key: "kernel_size", label: "Gölge Filtresi Boyutu", min: 5, max: 81, step: 2 },
+          { key: "blur_size", label: "Pürüzsüzleştirme", min: 5, max: 51, step: 2 }
+        ]
+      },
+      deskew: {
+        title: "Otomatik Belge Doğrultma",
+        tag: "Eğrilik",
+        defaults: { max_angle: 45.0, fill_value: 255 },
+        fields: [
+          { key: "max_angle", label: "Maksimum Düzeltme Açısı (°)", min: 5, max: 60, step: 1 }
+        ]
+      },
+      redact: {
+        title: "Hassas Bilgi Sansürleme",
+        tag: "Gizlilik",
+        defaults: { x: 30, y: 100, width: 220, height: 35, mode: "solid", blur_ksize: 25, pixel_size: 10 },
+        selectFields: [
+          { key: "mode", label: "Sansür Türü", options: [["solid", "Siyah Bant"], ["blur", "Bulanıklaştırma"], ["pixelate", "Mozaik / Piksel"]] }
+        ],
+        fields: [
+          { key: "x", label: "Yatay Konum (X)", min: 0, max: 1000, step: 5 },
+          { key: "y", label: "Dikey Konum (Y)", min: 0, max: 1000, step: 5 },
+          { key: "width", label: "Bant Genişliği", min: 20, max: 600, step: 5 },
+          { key: "height", label: "Bant Yüksekliği", min: 10, max: 200, step: 5 }
+        ]
+      },
+      stamp: {
+        title: "Resmi Kaşe / Damga / İmza",
+        tag: "Onay",
+        defaults: { text: "ASLI GİBİDİR", x: 40, y: 160, scale: 0.9, angle: -12.0, opacity: 0.85, box_border: true },
+        textFields: [
+          { key: "text", label: "Kaşe Metni (Örn: ONAYLANDI, GİZLİ)" }
+        ],
+        fields: [
+          { key: "x", label: "Konum X", min: 0, max: 1000, step: 5 },
+          { key: "y", label: "Konum Y", min: 0, max: 1000, step: 5 },
+          { key: "scale", label: "Ölçek Boyutu", min: 0.4, max: 2.0, step: 0.1 },
+          { key: "angle", label: "Eğim Açısı (°)", min: -45, max: 45, step: 1 },
+          { key: "opacity", label: "Mürekkep Opaklığı", min: 0.2, max: 1.0, step: 0.05 }
+        ]
+      },
+      adaptive_threshold: {
+        title: "Taranmış Belge & Metin",
+        tag: "Binarize",
+        defaults: { method: "gaussian", threshold_type: "binary", block_size: 15, constant: 4.0 },
+        fields: [
+          { key: "block_size", label: "Detay Penceresi", min: 7, max: 31, step: 2 },
+          { key: "constant", label: "Arka Plan Temizliği", min: 0.0, max: 12.0, step: 1.0 }
+        ]
+      },
+
+      // Fotoğraf & Filtre İşlemleri
       brightness_contrast: {
         title: "Parlaklık & Kontrast",
         tag: "Renk",
@@ -768,49 +932,41 @@
       resize: {
         title: "Boyutlandırma",
         tag: "Geometri",
-        defaults: { width: 480, height: 340, keep_aspect_ratio: true, interpolation: "area" },
+        defaults: { width: 800, height: 600, interpolation: "linear" },
         fields: [
-          { key: "width", label: "Maks. Genişlik (px)", min: 120, max: 1600, step: 20 },
-          { key: "height", label: "Maks. Yükseklik (px)", min: 120, max: 1600, step: 20 }
+          { key: "width", label: "Hedef Genişlik (px)", min: 100, max: 2400, step: 50 },
+          { key: "height", label: "Hedef Yükseklik (px)", min: 100, max: 2400, step: 50 }
         ]
       },
       rotate: {
-        title: "Döndürme",
+        title: "Serbest Döndürme",
         tag: "Geometri",
-        defaults: { angle: 15.0, expand: true },
+        defaults: { angle: 90.0, expand: true },
         fields: [
-          { key: "angle", label: "Döndürme Açısı (°)", min: -180, max: 180, step: 5 }
+          { key: "angle", label: "Döndürme Açısı (°)", min: -180.0, max: 180.0, step: 5.0 }
         ]
       },
       flip: {
-        title: "Çevir / Ayna",
+        title: "Aynalama / Çevirme",
         tag: "Geometri",
-        defaults: { mode: "horizontal" },
+        defaults: { direction: "horizontal" },
         selectFields: [
-          { key: "mode", label: "Ayna Yönü", options: [["horizontal", "Yatay Çevir"], ["vertical", "Dikey Çevir"], ["both", "Her İki Yöne Çevir"]] }
-        ]
+          { key: "direction", label: "Çevirme Yönü", options: [["horizontal", "Yatay (Ayna)"], ["vertical", "Dikey (Ters)"], ["both", "Her İki Yön"]] }
+        ],
+        fields: []
       },
       watermark: {
         title: "Yazı / Filigran",
-        tag: "Katman",
-        defaults: { text: "PixelFlow", position: "bottom-right", opacity: 0.8, scale: 0.25, margin: 14 },
+        tag: "Metin",
+        defaults: { text: "PixelFlow Studio", position: "bottom-right", opacity: 0.5, scale: 0.35 },
         textFields: [
-          { key: "text", label: "Filigran Metni" }
+          { key: "text", label: "Görüntülenecek Metin" }
         ],
         selectFields: [
           { key: "position", label: "Konum", options: [["bottom-right", "Sağ Alt Köşe"], ["bottom-left", "Sol Alt Köşe"], ["top-right", "Sağ Üst Köşe"], ["top-left", "Sol Üst Köşe"], ["center", "Merkeze Ortala"]] }
         ],
         fields: [
           { key: "opacity", label: "Opaklık Oranı", min: 0.1, max: 1.0, step: 0.05 }
-        ]
-      },
-      adaptive_threshold: {
-        title: "Belge & Metin Tarayıcı",
-        tag: "Binarize",
-        defaults: { method: "gaussian", threshold_type: "binary", block_size: 15, constant: 4.0 },
-        fields: [
-          { key: "block_size", label: "Detay Penceresi", min: 7, max: 31, step: 2 },
-          { key: "constant", label: "Arka Plan Temizliği", min: 0.0, max: 12.0, step: 1.0 }
         ]
       },
       canny: {
@@ -824,10 +980,11 @@
       }
     };
 
+    let studioMode = "doc"; // "doc" | "photo"
     let activeSteps = [];
     let stepCounter = 1;
     let currentBlob = null;
-    let currentFileName = "resim.png";
+    let currentFileName = "belge.png";
     let renderTimer = null;
 
     const imgBefore = document.getElementById("imgBefore");
@@ -839,7 +996,74 @@
     const stepsList = document.getElementById("stepsList");
     const canvasDims = document.getElementById("canvasDims");
     const btnDownload = document.getElementById("btnDownload");
+    const exportFormat = document.getElementById("exportFormat");
     const filePicker = document.getElementById("filePicker");
+    const quickPresetChips = document.getElementById("quickPresetChips");
+    const presetsListContainer = document.getElementById("presetsListContainer");
+
+    function setStudioMode(mode) {
+      studioMode = mode;
+      document.getElementById("btnModeDoc").classList.toggle("active", mode === "doc");
+      document.getElementById("btnModePhoto").classList.toggle("active", mode === "photo");
+      renderPresetChips();
+      renderPresetList();
+      if (mode === "doc") {
+        statusMessage.textContent = "Belge & Evrak Modu aktif • Gölge temizleme, deskew, sansür ve kaşe araçları hazır";
+      } else {
+        statusMessage.textContent = "Fotoğraf Modu aktif • Renk, filtre, unsharp ve doku araçları hazır";
+      }
+    }
+
+    function renderPresetChips() {
+      quickPresetChips.innerHTML = "";
+      const chips = studioMode === "doc" ? [
+        { label: "Gölge Temizle", preset: "clean_doc" },
+        { label: "Doğrult (Deskew)", preset: "deskew_doc" },
+        { label: "TC Sansürle", preset: "redact_doc" },
+        { label: "Resmi Kaşe", preset: "stamp_doc" }
+      ] : [
+        { label: "Sosyal Medya", preset: "social" },
+        { label: "Canlı HDR", preset: "vivid" },
+        { label: "Karakalem", preset: "sketch" },
+        { label: "Portre & Yüz", preset: "portrait" }
+      ];
+
+      chips.forEach(c => {
+        const div = document.createElement("div");
+        div.className = "chip";
+        div.textContent = c.label;
+        div.onclick = () => applyPreset(c.preset);
+        quickPresetChips.appendChild(div);
+      });
+    }
+
+    function renderPresetList() {
+      presetsListContainer.innerHTML = "";
+      const presets = studioMode === "doc" ? [
+        { id: "clean_doc", title: "Temiz Belge & Gölge Gider", desc: "Arka plan ışık dengesi ve gölge temizliği + metin keskinleştirme" },
+        { id: "deskew_doc", title: "Otomatik Evrak Doğrultma", desc: "Yamuk taranmış evrakları otomatik tespit edip düzeltir" },
+        { id: "redact_doc", title: "Kimlik & Bilgi Sansürü", desc: "TC Kimlik, telefon ve adres gibi alanları siyah bant ile maskeleme" },
+        { id: "stamp_doc", title: "Resmi Evrak Onay Kaşesi", desc: "Sayfa üzerine açılı ve çerçeveli 'ASLI GİBİDİR' kaşesi ve imza alanı" },
+        { id: "bw_scan", title: "Taranmış Fotokopi / Binarize", desc: "Temiz siyah-beyaz belge tarama efekti" }
+      ] : [
+        { id: "social", title: "Sosyal Medya Paketi", desc: "Boyutlandırma, kontrast, keskinlik ve köşe filigranı" },
+        { id: "vivid", title: "HDR Canlılık", desc: "CLAHE dinamik ışık dengeleme, gama eğrisi ve unsharp mask" },
+        { id: "sketch", title: "Karakalem Çizim", desc: "Gauss yumuşatma sonrası Canny kenar çizgileri" },
+        { id: "portrait", title: "Portre İyileştirme", desc: "Bilateral cilt pürüzsüzleştirme ve hafif kontrast" }
+      ];
+
+      presets.forEach(p => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn";
+        btn.style.width = "100%";
+        btn.style.textAlign = "left";
+        btn.style.padding = "12px";
+        btn.innerHTML = `<strong>${p.title}:</strong> ${p.desc}`;
+        btn.onclick = () => applyPreset(p.id);
+        presetsListContainer.appendChild(btn);
+      });
+    }
 
     function quickAdd(opKey) {
       const def = EFFECT_DEFS[opKey];
@@ -861,7 +1085,7 @@
         stepsList.innerHTML = `
           <div style="text-align:center;padding:36px 14px;color:var(--ps-text-muted);font-size:13.5px;border:1.5px dashed var(--ps-border);border-radius:8px;line-height:1.6;">
             Henüz efekt katmanı eklenmedi.<br/>
-            Soldaki araç kutusundan veya üst menüden bir efekt seçebilirsiniz.
+            Soldaki araç kutusundan veya üst menüden bir işlem seçebilirsiniz.
           </div>
         `;
         return;
@@ -976,7 +1200,7 @@
 
     function scheduleRender() {
       clearTimeout(renderTimer);
-      renderTimer = setTimeout(executePipeline, 150);
+      renderTimer = setTimeout(executePipeline, 140);
     }
 
     async function executePipeline() {
@@ -987,14 +1211,14 @@
         imgAfter.style.display = "block";
         metaAfter.textContent = metaBefore.textContent + " (Orijinal)";
         timingBadge.textContent = "Efekt uygulanmadı";
-        statusMessage.textContent = "Orijinal resim görüntüleniyor";
+        statusMessage.textContent = "Orijinal belge/resim görüntüleniyor";
         return;
       }
 
       statusMessage.textContent = "PixelFlow işleniyor...";
       const t0 = performance.now();
       const payload = {
-        name: "pixelflow-photoshop-run",
+        name: "pixelflow-studio-run",
         version: "1.0",
         steps: activeSteps.map(s => ({
           op: s.op,
@@ -1024,7 +1248,7 @@
         imgAfter.src = outUrl;
         imgAfter.style.display = "block";
         timingBadge.textContent = `İşlendi: ${ms} ms`;
-        statusMessage.textContent = `Başarılı • ${activeSteps.length} efekt aktif (${ms} ms)`;
+        statusMessage.textContent = `Başarılı • ${activeSteps.length} katman uygulandı (${ms} ms)`;
       } catch (err) {
         statusMessage.textContent = "Bağlantı hatası: " + err;
       }
@@ -1041,6 +1265,37 @@
       imgBefore.src = url;
       imgBefore.style.display = "block";
       executePipeline();
+    }
+
+    async function handleFileSelection(file) {
+      if (!file) return;
+      if (file.name.toLowerCase().endsWith(".pdf") || file.type === "application/pdf") {
+        statusMessage.textContent = "PDF belgesi yükleniyor ve sayfalandırılıyor...";
+        try {
+          if (typeof pdfjsLib !== "undefined") {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            const page = await pdf.getPage(1);
+            const viewport = page.getViewport({ scale: 2.0 });
+            const canvas = document.createElement("canvas");
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            const ctx = canvas.getContext("2d");
+            await page.render({ canvasContext: ctx, viewport }).promise;
+            canvas.toBlob(blob => {
+              if (blob) {
+                setStudioMode("doc");
+                setSourceImage(blob, file.name.replace(/\.pdf$/i, ".png"));
+                statusMessage.textContent = `PDF yüklendi (1. sayfa taranıyor, ${pdf.numPages} sayfa)`;
+              }
+            }, "image/png");
+            return;
+          }
+        } catch (err) {
+          console.warn("PDF.js render hatası:", err);
+        }
+      }
+      setSourceImage(file, file.name);
     }
 
     function generateSampleLandscape() {
@@ -1075,53 +1330,72 @@
       ctx.fill();
 
       c.toBlob(blob => {
-        if (blob) setSourceImage(blob, "ornek_manzara.png");
+        if (blob) {
+          setStudioMode("photo");
+          setSourceImage(blob, "ornek_manzara.png");
+        }
       }, "image/png");
     }
 
     function generateSampleDocument() {
       const c = document.createElement("canvas");
-      c.width = 520;
-      c.height = 400;
+      c.width = 560;
+      c.height = 420;
       const ctx = c.getContext("2d");
-      ctx.fillStyle = "#f3f4f6";
-      ctx.fillRect(0, 0, 520, 400);
+      ctx.fillStyle = "#f8f9fa";
+      ctx.fillRect(0, 0, 560, 420);
 
-      for (let i = 0; i < 1600; i++) {
-        ctx.fillStyle = i % 2 === 0 ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.25)";
-        ctx.fillRect(Math.random() * 520, Math.random() * 400, 2, 2);
-      }
+      // Gölge efekti simülasyonu
+      const grad = ctx.createLinearGradient(0, 0, 560, 420);
+      grad.addColorStop(0, "rgba(40,40,40,0.35)");
+      grad.addColorStop(1, "rgba(255,255,255,0.0)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 560, 420);
+
       ctx.fillStyle = "#111827";
-      ctx.font = "bold 26px sans-serif";
-      ctx.fillText("PIXELFLOW MAKBUZ #2026", 38, 64);
-      ctx.font = "18px monospace";
-      ctx.fillText("Müşteri: Photoshop Studio", 38, 115);
-      ctx.fillText("Toplam Tutar: 450.00 TL", 38, 155);
+      ctx.font = "bold 24px sans-serif";
+      ctx.fillText("T.C. RESMİ BELGE & TAAHHÜTNAME", 40, 58);
+      ctx.font = "16px monospace";
+      ctx.fillText("Evrak No: PKF-2026/8941", 40, 100);
+      ctx.fillText("İsim: Ahmet Yılmaz", 40, 135);
+      ctx.fillText("T.C. Kimlik: 12345678901", 40, 170);
+      ctx.fillText("Adres: Atatürk Bulvarı No: 42 Çankaya", 40, 205);
       ctx.strokeStyle = "#374151";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(36, 195, 440, 130);
-      ctx.font = "bold 20px sans-serif";
-      ctx.fillText("ONAYLANDI & ÖDENDİ", 65, 270);
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(40, 240, 480, 130);
+      ctx.font = "15px sans-serif";
+      ctx.fillText("Yukarıdaki bilgilerin doğruluğu teyit edilmiştir.", 60, 285);
+      ctx.fillText("İmza & Yetkili Mühür:", 60, 335);
 
       c.toBlob(blob => {
         if (blob) {
-          setSourceImage(blob, "ornek_makbuz.png");
-          applyPreset("document");
+          setStudioMode("doc");
+          setSourceImage(blob, "ornek_evrak.png");
+          applyPreset("clean_doc");
         }
       }, "image/png");
     }
 
     function applyPreset(name) {
       activeSteps = [];
-      if (name === "social") {
+      if (name === "clean_doc") {
+        quickAdd("shadow_removal");
+        quickAdd("sharpen");
+      } else if (name === "deskew_doc") {
+        quickAdd("deskew");
+      } else if (name === "redact_doc") {
+        quickAdd("redact");
+      } else if (name === "stamp_doc") {
+        quickAdd("stamp");
+      } else if (name === "bw_scan") {
+        quickAdd("grayscale");
+        quickAdd("gaussian_blur");
+        quickAdd("adaptive_threshold");
+      } else if (name === "social") {
         quickAdd("resize");
         quickAdd("brightness_contrast");
         quickAdd("sharpen");
         quickAdd("watermark");
-      } else if (name === "document") {
-        quickAdd("grayscale");
-        quickAdd("gaussian_blur");
-        quickAdd("adaptive_threshold");
       } else if (name === "vivid") {
         quickAdd("histogram_equalization");
         quickAdd("gamma");
@@ -1129,6 +1403,47 @@
       } else if (name === "sketch") {
         quickAdd("gaussian_blur");
         quickAdd("canny");
+      } else if (name === "portrait") {
+        quickAdd("bilateral_filter");
+        quickAdd("brightness_contrast");
+      }
+    }
+
+    async function exportAs(format) {
+      if (!currentBlob) return;
+      statusMessage.textContent = `${format} olarak dışa aktarılıyor...`;
+
+      const payload = {
+        name: "pixelflow-export",
+        version: "1.0",
+        steps: activeSteps.map(s => ({
+          op: s.op,
+          name: s.name,
+          params: s.params
+        }))
+      };
+
+      const formData = new FormData();
+      formData.append("image", currentBlob, currentFileName);
+      formData.append("pipeline", JSON.stringify(payload));
+      formData.append("output_format", format);
+
+      try {
+        const resp = await fetch("/v1/process", { method: "POST", body: formData });
+        if (!resp.ok) {
+          statusMessage.textContent = "Dışa aktarma hatası!";
+          return;
+        }
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const ext = format.toLowerCase();
+        a.download = `pixelflow_${studioMode === "doc" ? "belge" : "foto"}.${ext}`;
+        a.click();
+        statusMessage.textContent = `${format} başarıyla indirildi.`;
+      } catch (err) {
+        statusMessage.textContent = "İndirme hatası: " + err;
       }
     }
 
@@ -1137,14 +1452,14 @@
     document.getElementById("menuOpen").addEventListener("click", () => filePicker.click());
     filePicker.addEventListener("change", (e) => {
       if (e.target.files && e.target.files[0]) {
-        setSourceImage(e.target.files[0], e.target.files[0].name);
+        handleFileSelection(e.target.files[0]);
       }
     });
 
-    document.getElementById("btnSamplePhoto").addEventListener("click", generateSampleLandscape);
-    document.getElementById("menuSampleLand").addEventListener("click", generateSampleLandscape);
     document.getElementById("btnSampleDoc").addEventListener("click", generateSampleDocument);
     document.getElementById("menuSampleDoc").addEventListener("click", generateSampleDocument);
+    document.getElementById("btnSamplePhoto").addEventListener("click", generateSampleLandscape);
+    document.getElementById("menuSampleLand").addEventListener("click", generateSampleLandscape);
 
     document.getElementById("menuReset").addEventListener("click", () => {
       activeSteps = [];
@@ -1153,14 +1468,15 @@
     });
 
     document.getElementById("btnDownload").addEventListener("click", () => {
-      if (!imgAfter.src) return;
-      const a = document.createElement("a");
-      a.href = imgAfter.src;
-      a.download = "pixelflow_duzenlenen.png";
-      a.click();
+      exportAs(exportFormat.value);
     });
-    document.getElementById("menuExport").addEventListener("click", () => {
-      document.getElementById("btnDownload").click();
+
+    document.getElementById("btnAddOp").addEventListener("click", () => {
+      const sel = document.getElementById("opSelector");
+      if (sel.value) {
+        quickAdd(sel.value);
+        sel.value = "";
+      }
     });
 
     // Sekmeler
@@ -1207,8 +1523,9 @@
     });
 
     // Başlangıç Yüklemesi
-    generateSampleLandscape();
-    applyPreset("social");
+    renderPresetChips();
+    renderPresetList();
+    generateSampleDocument();
   </script>
 </body>
 </html>

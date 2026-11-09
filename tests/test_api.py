@@ -74,6 +74,15 @@ async def test_process_endpoint_success() -> None:
         out_arr = decode_image_bytes(resp.content)
         assert out_arr.shape == (8, 8, 3)
 
+        pdf_resp = await client.post(
+            "/v1/process",
+            files={"image": ("in.png", img_bytes, "image/png")},
+            data={"pipeline": pipe_json, "output_format": "PDF"},
+        )
+        assert pdf_resp.status_code == 200
+        assert pdf_resp.headers["content-type"] == "application/pdf"
+        assert pdf_resp.content.startswith(b"%PDF")
+
 
 @pytest.mark.anyio
 async def test_process_endpoint_limits() -> None:

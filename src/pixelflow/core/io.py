@@ -13,7 +13,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = False
 
 DEFAULT_MAX_PIXELS = 64_000_000
 SUPPORTED_EXTENSIONS: frozenset[str] = frozenset(
-    {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff"}
+    {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff", ".pdf"}
 )
 FORMAT_TO_MIME: dict[str, str] = {
     "PNG": "image/png",
@@ -21,6 +21,7 @@ FORMAT_TO_MIME: dict[str, str] = {
     "WEBP": "image/webp",
     "BMP": "image/bmp",
     "TIFF": "image/tiff",
+    "PDF": "application/pdf",
 }
 MIME_TO_FORMAT: dict[str, str] = {v: k for k, v in FORMAT_TO_MIME.items()}
 
@@ -153,5 +154,6 @@ def _extension_to_format(ext: str) -> str:
         ".bmp": "BMP",
         ".tif": "TIFF",
         ".tiff": "TIFF",
+        ".pdf": "PDF",
     }
     return mapping[ext]

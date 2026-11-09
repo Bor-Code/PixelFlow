@@ -22,6 +22,7 @@ from pixelflow.api.schemas import (
 )
 from pixelflow.api.ui import load_studio_html
 from pixelflow.core.io import (
+    FORMAT_TO_MIME,
     MIME_TO_FORMAT,
     decode_image_bytes,
     encode_image_bytes,
@@ -136,14 +137,16 @@ def _register_v1_routes(app: FastAPI) -> None:
         image: Annotated[UploadFile, File(...)],
         pipeline: Annotated[str, Form(...)],
         settings: Annotated[ApiSettings, Depends(get_api_settings)],
+        output_format: Annotated[str | None, Form()] = None,
     ) -> Response:
-        return await _handle_process_request(image, pipeline, settings)
+        return await _handle_process_request(image, pipeline, settings, output_format)
 
 
 async def _handle_process_request(
     upload: UploadFile,
     pipeline_text: str,
     settings: ApiSettings,
+    output_format: str | None = None,
 ) -> Response:
     content_type = (upload.content_type or "").lower().strip()
     if content_type not in settings.allowed_mime_types:
@@ -159,9 +162,12 @@ async def _handle_process_request(
     pipeline_obj = load_pipeline_from_string(pipeline_text)
     decoded = decode_image_bytes(raw_bytes, max_pixels=settings.max_image_pixels)
     processed = pipeline_obj.execute(decoded)
-    target_format = MIME_TO_FORMAT.get(content_type, "PNG")
+    target_format = (output_format or MIME_TO_FORMAT.get(content_type, "PNG")).upper()
+    if target_format == "JPG":
+        target_format = "JPEG"
+    output_media = FORMAT_TO_MIME.get(target_format, content_type)
     output_bytes = encode_image_bytes(processed, image_format=target_format)
-    return Response(content=output_bytes, media_type=content_type)
+    return Response(content=output_bytes, media_type=output_media)
 
 
 def create_app(settings_override: ApiSettings | None = None) -> FastAPI:

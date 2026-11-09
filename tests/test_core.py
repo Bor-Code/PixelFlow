@@ -209,6 +209,16 @@ def test_io_edge_cases(tmp_path: Path) -> None:
         decode_image_bytes(gif_buf.getvalue())
 
 
+def test_io_pdf_support(tmp_path: Path) -> None:
+    img = np.full((50, 60, 3), 120, dtype=np.uint8)
+    pdf_bytes = encode_image_bytes(img, "PDF")
+    assert pdf_bytes.startswith(b"%PDF")
+    pdf_file = tmp_path / "document.pdf"
+    saved = save_image(img, pdf_file)
+    assert saved.exists()
+    assert saved.read_bytes().startswith(b"%PDF")
+
+
 def test_pipeline_execution_and_logging() -> None:
     reg = OperationRegistry()
     reg.register("dummy_add")(DummyAddOperation)
