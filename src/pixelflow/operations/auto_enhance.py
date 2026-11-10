@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 from pydantic import Field
 
-from pixelflow.core.image_utils import merge_alpha, split_alpha, to_uint8
+from pixelflow.core.image_utils import merge_alpha, to_uint8
 from pixelflow.core.operation import ImageArray, ImageOperation, OperationParams
 from pixelflow.core.registry import register_operation
 
