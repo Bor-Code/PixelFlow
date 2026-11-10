@@ -528,6 +528,25 @@
       border-color: var(--ps-accent);
     }
 
+    .corner-pin {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #0084ff;
+      border: 3px solid #ffffff;
+      box-shadow: 0 0 12px rgba(0, 132, 255, 0.9);
+      position: absolute;
+      cursor: crosshair;
+      transform: translate(-50%, -50%);
+      z-index: 30;
+      transition: transform 0.08s ease, background 0.15s;
+    }
+    .corner-pin:hover {
+      transform: translate(-50%, -50%) scale(1.35);
+      background: #f59e0b;
+      border-color: #ffffff;
+    }
+
     /* Alt Durum Çubuğu */
     .status-bar {
       height: 28px;
@@ -706,6 +725,9 @@
       <div class="tool-btn" title="Taranmış Belge / Metin" onclick="quickAdd('adaptive_threshold')">
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       </div>
+      <div class="tool-btn" title="4-Köşe Perspektif Düzelt (CamScanner)" onclick="quickAdd('perspective_warp')">
+        <svg viewBox="0 0 24 24"><path d="M3 5l18-2-3 16L4 21z"/><circle cx="3" cy="5" r="1.5" fill="currentColor"/><circle cx="21" cy="3" r="1.5" fill="currentColor"/><circle cx="18" cy="19" r="1.5" fill="currentColor"/><circle cx="4" cy="21" r="1.5" fill="currentColor"/></svg>
+      </div>
       <div class="tool-divider"></div>
 
       <!-- Fotoğraf Araçları -->
@@ -752,8 +774,15 @@
             <strong>Orijinal Belge / Görüntü</strong>
             <span id="metaBefore">—</span>
           </div>
-          <div class="canvas-view-inner">
-            <img id="imgBefore" alt="Orijinal" style="display:none" />
+          <div class="canvas-view-inner" id="viewInnerBefore" style="position:relative;overflow:hidden;">
+            <img id="imgBefore" alt="Orijinal" style="display:none;user-select:none;pointer-events:none;" />
+            <svg id="perspectiveSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:25;display:none;">
+              <polygon id="polyCorners" fill="rgba(0, 132, 255, 0.18)" stroke="#0084ff" stroke-width="2.5" stroke-dasharray="6,4" />
+            </svg>
+            <div class="corner-pin" id="pin_tl" title="Sol Üst Köşe" style="display:none;"></div>
+            <div class="corner-pin" id="pin_tr" title="Sağ Üst Köşe" style="display:none;"></div>
+            <div class="corner-pin" id="pin_br" title="Sağ Alt Köşe" style="display:none;"></div>
+            <div class="corner-pin" id="pin_bl" title="Sol Alt Köşe" style="display:none;"></div>
           </div>
         </div>
 
@@ -848,6 +877,15 @@
         defaults: { max_angle: 45.0, fill_value: 255 },
         fields: [
           { key: "max_angle", label: "Maksimum Düzeltme Açısı (°)", min: 5, max: 60, step: 1 }
+        ]
+      },
+      perspective_warp: {
+        title: "4-Köşe Perspektif Düzelt (CamScanner)",
+        tag: "Perspektif",
+        defaults: { auto_detect: false, output_width: 800, output_height: 600, src_points: null },
+        fields: [
+          { key: "output_width", label: "Hedef Genişlik (px)", min: 200, max: 2400, step: 50 },
+          { key: "output_height", label: "Hedef Yükseklik (px)", min: 200, max: 2400, step: 50 }
         ]
       },
       redact: {
@@ -1257,8 +1295,28 @@
           card.appendChild(row);
         });
 
+        if (step.op === "perspective_warp") {
+          const btnAuto = document.createElement("button");
+          btnAuto.type = "button";
+          btnAuto.className = "btn";
+          btnAuto.style.marginTop = "8px";
+          btnAuto.style.width = "100%";
+          btnAuto.textContent = step.params.auto_detect ? "✓ Otomatik Belge Köşesi Açık" : "🔍 Otomatik Belge Köşesi Bul";
+          btnAuto.onclick = () => {
+            step.params.auto_detect = !step.params.auto_detect;
+            if (step.params.auto_detect) {
+              step.params.src_points = null;
+            }
+            pushHistory();
+            renderStepsUI();
+            scheduleRender();
+          };
+          card.appendChild(btnAuto);
+        }
+
         stepsList.appendChild(card);
       });
+      syncPerspectivePins();
     }
 
     function moveStep(idx, dir) {
@@ -1342,6 +1400,7 @@
       imgBefore.onload = () => {
         metaBefore.textContent = `${imgBefore.naturalWidth} × ${imgBefore.naturalHeight} px`;
         canvasDims.textContent = `${imgBefore.naturalWidth} × ${imgBefore.naturalHeight} piksel`;
+        syncPerspectivePins();
       };
       imgBefore.src = url;
       imgBefore.style.display = "block";
@@ -1806,6 +1865,128 @@
         e.preventDefault();
         redo();
       }
+    });
+
+    // 4-Köşe Perspektif Pinleri & SVG Çokgeni (CamScanner)
+    const perspectiveSvg = document.getElementById("perspectiveSvg");
+    const polyCorners = document.getElementById("polyCorners");
+    const pinTL = document.getElementById("pin_tl");
+    const pinTR = document.getElementById("pin_tr");
+    const pinBR = document.getElementById("pin_br");
+    const pinBL = document.getElementById("pin_bl");
+    const pins = [pinTL, pinTR, pinBR, pinBL];
+    let activePin = null;
+
+    function getImgBeforeMetrics() {
+      if (!imgBefore || imgBefore.style.display === "none" || !imgBefore.naturalWidth) return null;
+      const imgRect = imgBefore.getBoundingClientRect();
+      const viewRect = document.getElementById("viewInnerBefore").getBoundingClientRect();
+      return {
+        offsetX: imgRect.left - viewRect.left,
+        offsetY: imgRect.top - viewRect.top,
+        scaleX: imgRect.width / imgBefore.naturalWidth,
+        scaleY: imgRect.height / imgBefore.naturalHeight
+      };
+    }
+
+    function syncPerspectivePins() {
+      const step = activeSteps.find(s => s.op === "perspective_warp");
+      if (!step || !imgBefore.naturalWidth || imgBefore.style.display === "none") {
+        if (perspectiveSvg) perspectiveSvg.style.display = "none";
+        pins.forEach(p => { if (p) p.style.display = "none"; });
+        return;
+      }
+
+      const m = getImgBeforeMetrics();
+      if (!m) return;
+
+      const w = imgBefore.naturalWidth;
+      const h = imgBefore.naturalHeight;
+      if (!step.params.src_points || !Array.isArray(step.params.src_points) || step.params.src_points.length !== 4) {
+        step.params.src_points = [
+          [Math.round(w * 0.08), Math.round(h * 0.08)],
+          [Math.round(w * 0.92), Math.round(h * 0.08)],
+          [Math.round(w * 0.92), Math.round(h * 0.92)],
+          [Math.round(w * 0.08), Math.round(h * 0.92)]
+        ];
+      }
+
+      perspectiveSvg.style.display = "block";
+      const pts = step.params.src_points;
+      const screenPts = pts.map(pt => ({
+        x: m.offsetX + pt[0] * m.scaleX,
+        y: m.offsetY + pt[1] * m.scaleY
+      }));
+
+      pins.forEach((pin, i) => {
+        pin.style.display = "block";
+        pin.style.left = `${screenPts[i].x}px`;
+        pin.style.top = `${screenPts[i].y}px`;
+      });
+
+      polyCorners.setAttribute("points", screenPts.map(p => `${p.x},${p.y}`).join(" "));
+    }
+
+    pins.forEach((pin, pinIdx) => {
+      if (!pin) return;
+      pin.addEventListener("mousedown", (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        activePin = pinIdx;
+      });
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (activePin === null) return;
+      const step = activeSteps.find(s => s.op === "perspective_warp");
+      if (!step) return;
+      const m = getImgBeforeMetrics();
+      if (!m) return;
+      const viewRect = document.getElementById("viewInnerBefore").getBoundingClientRect();
+      const curX = e.clientX - viewRect.left;
+      const curY = e.clientY - viewRect.top;
+
+      pins[activePin].style.left = `${curX}px`;
+      pins[activePin].style.top = `${curY}px`;
+
+      const pts = pins.map(p => {
+        const x = parseFloat(p.style.left) || 0;
+        const y = parseFloat(p.style.top) || 0;
+        return `${x},${y}`;
+      });
+      polyCorners.setAttribute("points", pts.join(" "));
+    });
+
+    window.addEventListener("mouseup", (e) => {
+      if (activePin === null) return;
+      const pinIndex = activePin;
+      activePin = null;
+
+      const step = activeSteps.find(s => s.op === "perspective_warp");
+      if (!step) return;
+      const m = getImgBeforeMetrics();
+      if (!m) return;
+
+      const viewRect = document.getElementById("viewInnerBefore").getBoundingClientRect();
+      const curX = e.clientX - viewRect.left;
+      const curY = e.clientY - viewRect.top;
+
+      const imgX = Math.round(Math.max(0, Math.min(imgBefore.naturalWidth, (curX - m.offsetX) / m.scaleX)));
+      const imgY = Math.round(Math.max(0, Math.min(imgBefore.naturalHeight, (curY - m.offsetY) / m.scaleY)));
+
+      if (!step.params.src_points) {
+        step.params.src_points = [[0,0], [imgBefore.naturalWidth, 0], [imgBefore.naturalWidth, imgBefore.naturalHeight], [0, imgBefore.naturalHeight]];
+      }
+      step.params.src_points[pinIndex] = [imgX, imgY];
+      step.params.auto_detect = false;
+      pushHistory();
+      syncPerspectivePins();
+      scheduleRender();
+      statusMessage.textContent = `Perspektif köşe noktası ${pinIndex + 1} ayarlandı: (${imgX}, ${imgY})`;
+    });
+
+    window.addEventListener("resize", () => {
+      syncPerspectivePins();
     });
 
     // Başlangıç Yüklemesi
