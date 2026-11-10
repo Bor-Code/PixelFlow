@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -30,7 +31,13 @@
       --radius-lg: 16px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
       background: var(--pf-bg-base);
@@ -54,11 +61,15 @@
       z-index: 150;
       flex-shrink: 0;
     }
-    .topbar-left, .topbar-center, .topbar-right {
+
+    .topbar-left,
+    .topbar-center,
+    .topbar-right {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
     .brand-logo {
       display: flex;
       align-items: center;
@@ -69,18 +80,21 @@
       border-radius: 6px;
       transition: opacity 0.15s ease, transform 0.15s ease;
     }
+
     .brand-logo:hover {
       opacity: 0.92;
       transform: translateY(-1px);
     }
+
     .brand-logo-img {
       height: 28px;
       width: auto;
-      max-width: 110px;
+      max-width: 135px;
       object-fit: contain;
       display: block;
       filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.45));
     }
+
     .btn-upload-pill {
       background: var(--pf-bg-card);
       border: 1px solid var(--pf-border);
@@ -95,11 +109,13 @@
       cursor: pointer;
       transition: all 0.15s ease;
     }
+
     .btn-upload-pill:hover {
       background: var(--pf-bg-card-hover);
       border-color: var(--pf-accent);
       color: var(--pf-accent);
     }
+
     .btn-icon {
       background: transparent;
       border: 1px solid transparent;
@@ -113,19 +129,23 @@
       cursor: pointer;
       transition: all 0.15s ease;
     }
+
     .btn-icon svg {
       width: 16px;
       height: 16px;
     }
+
     .btn-icon:hover:not(:disabled) {
       background: var(--pf-bg-card);
       color: var(--pf-text-white);
       border-color: var(--pf-border);
     }
+
     .btn-icon:disabled {
       opacity: 0.35;
       cursor: not-allowed;
     }
+
     .btn-download-main {
       background: var(--pf-accent);
       border: 1px solid var(--pf-accent);
@@ -141,11 +161,13 @@
       box-shadow: 0 3px 10px rgba(56, 189, 248, 0.3);
       transition: all 0.15s ease;
     }
+
     .btn-download-main:hover {
       background: var(--pf-accent-hover);
       box-shadow: 0 4px 14px rgba(56, 189, 248, 0.45);
       transform: translateY(-1px);
     }
+
     .select-format {
       background: var(--pf-bg-card);
       border: 1px solid var(--pf-border);
@@ -169,6 +191,7 @@
       gap: 2px;
       user-select: none;
     }
+
     .lang-btn {
       display: inline-flex;
       align-items: center;
@@ -185,16 +208,19 @@
       transition: all 0.15s ease;
       line-height: 1.2;
     }
+
     .lang-btn:hover {
       color: var(--pf-text-white);
       background: rgba(255, 255, 255, 0.06);
     }
+
     .lang-btn.active {
       background: rgba(56, 189, 248, 0.18);
       border: 1px solid rgba(56, 189, 248, 0.45);
       color: var(--pf-accent);
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
     }
+
     .lang-btn .flag-icon {
       font-size: 13px;
       display: inline-block;
@@ -208,6 +234,7 @@
       gap: 2px;
       margin-left: 6px;
     }
+
     .ps-menu-item {
       position: relative;
       padding: 5px 9px;
@@ -219,10 +246,13 @@
       user-select: none;
       transition: background 0.12s ease, color 0.12s ease;
     }
-    .ps-menu-item:hover, .ps-menu-item.open {
+
+    .ps-menu-item:hover,
+    .ps-menu-item.open {
       background: rgba(255, 255, 255, 0.08);
       color: #ffffff;
     }
+
     .ps-dropdown {
       display: none;
       position: absolute;
@@ -236,9 +266,11 @@
       padding: 5px 0;
       z-index: 1000;
     }
+
     .ps-dropdown.show {
       display: block;
     }
+
     .ps-menu-action {
       padding: 6px 14px;
       font-size: 11.5px;
@@ -250,18 +282,22 @@
       white-space: nowrap;
       transition: background 0.12s;
     }
+
     .ps-menu-action:hover {
       background: #0084ff;
       color: #ffffff;
     }
+
     .ps-menu-action .ps-shortcut {
       font-size: 10px;
       color: #798b9e;
       margin-left: 18px;
     }
+
     .ps-menu-action:hover .ps-shortcut {
       color: rgba(255, 255, 255, 0.85);
     }
+
     .ps-menu-divider {
       height: 1px;
       background: rgba(255, 255, 255, 0.07);
@@ -292,10 +328,13 @@
       box-shadow: 3px 0 16px rgba(0, 0, 0, 0.4);
       transition: width 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.24s ease;
     }
-    .sidebar-dock:hover, .sidebar-dock.pinned {
+
+    .sidebar-dock:hover,
+    .sidebar-dock.pinned {
       width: 195px;
       box-shadow: 8px 0 28px rgba(0, 0, 0, 0.65);
     }
+
     .sidebar-header-toggle {
       height: 42px;
       padding: 0 16px;
@@ -309,16 +348,19 @@
       cursor: pointer;
       white-space: nowrap;
     }
+
     .sidebar-header-toggle svg {
       width: 18px;
       height: 18px;
       flex-shrink: 0;
     }
+
     .sidebar-header-toggle span {
       opacity: 0;
       transform: translateX(-8px);
       transition: opacity 0.2s ease 0.04s, transform 0.2s ease 0.04s;
     }
+
     .sidebar-dock:hover .sidebar-header-toggle span,
     .sidebar-dock.pinned .sidebar-header-toggle span {
       opacity: 1;
@@ -331,6 +373,7 @@
       gap: 3px;
       padding: 8px 6px;
     }
+
     .nav-item {
       display: flex;
       align-items: center;
@@ -344,15 +387,18 @@
       position: relative;
       gap: 12px;
     }
+
     .nav-item:hover {
       background: rgba(255, 255, 255, 0.06);
       color: var(--pf-text-white);
     }
+
     .nav-item.active {
       background: var(--pf-accent-soft);
       color: var(--pf-accent);
       font-weight: 600;
     }
+
     .nav-item.active::before {
       content: '';
       position: absolute;
@@ -363,6 +409,7 @@
       background: var(--pf-accent);
       border-radius: 0 3px 3px 0;
     }
+
     .nav-item svg {
       width: 17px;
       height: 17px;
@@ -371,6 +418,7 @@
       fill: none;
       stroke-width: 2;
     }
+
     .nav-item span.label {
       font-size: 11.5px;
       font-weight: 500;
@@ -380,11 +428,13 @@
       transition: opacity 0.2s ease 0.04s, transform 0.2s ease 0.04s;
       pointer-events: none;
     }
+
     .sidebar-dock:hover .nav-item span.label,
     .sidebar-dock.pinned .nav-item span.label {
       opacity: 1;
       transform: translateX(0);
     }
+
     .nav-badge-ai {
       background: linear-gradient(135deg, #0084ff, #8b5cf6);
       color: #fff;
@@ -396,6 +446,7 @@
       opacity: 0;
       transition: opacity 0.2s ease 0.04s;
     }
+
     .sidebar-dock:hover .nav-badge-ai,
     .sidebar-dock.pinned .nav-badge-ai {
       opacity: 1;
@@ -413,10 +464,12 @@
       flex-shrink: 0;
       z-index: 60;
     }
+
     .drawer-header {
       padding: 12px 14px 10px;
       border-bottom: 1px solid var(--pf-border);
     }
+
     .drawer-title {
       font-size: 13.5px;
       font-weight: 700;
@@ -425,6 +478,7 @@
       align-items: center;
       justify-content: space-between;
     }
+
     .drawer-sub {
       font-size: 11px;
       color: var(--pf-text-muted);
@@ -435,6 +489,7 @@
     .cards-section {
       padding: 12px 14px;
     }
+
     .section-headline {
       font-size: 10.5px;
       font-weight: 700;
@@ -446,12 +501,14 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 7px;
       margin-bottom: 12px;
     }
+
     .tool-card {
       background: var(--pf-bg-card);
       border: 1px solid var(--pf-border);
@@ -466,16 +523,19 @@
       position: relative;
       transition: all 0.16s ease;
     }
+
     .tool-card:hover {
       background: var(--pf-bg-card-hover);
       border-color: var(--pf-accent);
       transform: translateY(-1px);
       box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
     }
+
     .tool-card.active {
       border-color: var(--pf-accent);
       background: var(--pf-accent-soft);
     }
+
     .tool-card-icon {
       width: 28px;
       height: 28px;
@@ -486,20 +546,24 @@
       justify-content: center;
       color: var(--pf-text-white);
     }
+
     .tool-card-icon svg {
       width: 15px;
       height: 15px;
     }
+
     .tool-card:hover .tool-card-icon {
       background: var(--pf-accent);
       color: #0c1b0e;
     }
+
     .tool-card-name {
       font-size: 10.5px;
       font-weight: 600;
       color: var(--pf-text);
       line-height: 1.25;
     }
+
     .card-tag {
       position: absolute;
       top: 4px;
@@ -511,8 +575,15 @@
       background: #0084ff;
       color: #fff;
     }
-    .card-tag.new { background: #ec4899; }
-    .card-tag.ai { background: #38bdf8; color: #061826; }
+
+    .card-tag.new {
+      background: #ec4899;
+    }
+
+    .card-tag.ai {
+      background: #38bdf8;
+      color: #061826;
+    }
 
     /* Ayar Sürgüleri & Katman Kartları */
     .controls-section {
@@ -521,6 +592,7 @@
       flex-direction: column;
       gap: 10px;
     }
+
     .active-step-card {
       background: var(--pf-bg-card);
       border: 1px solid var(--pf-border);
@@ -530,6 +602,7 @@
       flex-direction: column;
       gap: 9px;
     }
+
     .step-header {
       display: flex;
       align-items: center;
@@ -537,11 +610,13 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       padding-bottom: 6px;
     }
+
     .step-title {
       font-weight: 700;
       font-size: 11.5px;
       color: var(--pf-text-white);
     }
+
     .step-remove {
       background: transparent;
       border: none;
@@ -552,15 +627,18 @@
       padding: 1px 5px;
       border-radius: 3px;
     }
+
     .step-remove:hover {
       background: rgba(239, 68, 68, 0.15);
       color: var(--pf-danger);
     }
+
     .slider-row {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
+
     .slider-meta {
       display: flex;
       justify-content: space-between;
@@ -568,10 +646,12 @@
       color: var(--pf-text-muted);
       font-weight: 500;
     }
+
     .slider-meta span.val {
       color: var(--pf-text-white);
       font-weight: 700;
     }
+
     input[type="range"] {
       -webkit-appearance: none;
       width: 100%;
@@ -580,6 +660,7 @@
       background: #2b3242;
       outline: none;
     }
+
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 16px;
@@ -590,6 +671,7 @@
       box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
       transition: transform 0.1s;
     }
+
     input[type="range"]::-webkit-slider-thumb:hover {
       transform: scale(1.25);
     }
@@ -607,7 +689,10 @@
     /* 2. Resimdeki Fotor Tarzı Boş Durum (Empty State Dropzone) */
     .empty-state-view {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -615,6 +700,7 @@
       padding: 30px;
       z-index: 30;
     }
+
     .empty-drop-card {
       background: rgba(22, 26, 34, 0.7);
       border: 2px dashed #2c3445;
@@ -627,6 +713,7 @@
       max-width: 560px;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     }
+
     .empty-icon-circle {
       width: 76px;
       height: 76px;
@@ -638,22 +725,26 @@
       color: var(--pf-accent);
       margin-bottom: 20px;
     }
+
     .empty-icon-circle svg {
       width: 38px;
       height: 38px;
     }
+
     .empty-headline {
       font-size: 20px;
       font-weight: 700;
       color: var(--pf-text-white);
       margin-bottom: 8px;
     }
+
     .empty-sub {
       font-size: 13.5px;
       color: var(--pf-text-muted);
       margin-bottom: 26px;
       line-height: 1.5;
     }
+
     .btn-big-upload {
       background: var(--pf-accent);
       color: #061826;
@@ -669,15 +760,18 @@
       box-shadow: 0 6px 22px rgba(56, 189, 248, 0.4);
       transition: all 0.15s ease;
     }
+
     .btn-big-upload:hover {
       background: var(--pf-accent-hover);
       transform: translateY(-2px);
     }
+
     .sample-photos-row {
       display: flex;
       gap: 12px;
       margin-top: 26px;
     }
+
     .sample-photo-chip {
       background: var(--pf-bg-card);
       border: 1px solid var(--pf-border);
@@ -692,6 +786,7 @@
       color: var(--pf-text);
       transition: all 0.15s ease;
     }
+
     .sample-photo-chip:hover {
       border-color: var(--pf-accent);
       color: var(--pf-accent);
@@ -708,6 +803,7 @@
       justify-content: center;
       padding: 20px;
     }
+
     .canvas-stage {
       display: flex;
       gap: 16px;
@@ -718,6 +814,7 @@
       transition: transform 0.15s ease-out;
       transform-origin: center center;
     }
+
     .canvas-viewport {
       position: relative;
       max-width: 100%;
@@ -729,12 +826,14 @@
       border-radius: 6px;
       overflow: hidden;
     }
+
     .canvas-viewport img {
       max-width: calc(100vw - 440px);
       max-height: calc(100vh - 120px);
       object-fit: contain;
       display: block;
     }
+
     .viewport-badge {
       position: absolute;
       top: 10px;
@@ -766,6 +865,7 @@
       z-index: 45;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     }
+
     .floating-btn {
       background: transparent;
       border: 1px solid transparent;
@@ -780,7 +880,12 @@
       gap: 4px;
       transition: all 0.14s ease;
     }
-    .floating-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+
+    .floating-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
     .floating-btn.active {
       background: var(--pf-bg-card);
       color: var(--pf-accent);
@@ -802,6 +907,7 @@
       z-index: 45;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     }
+
     .zoom-btn {
       background: transparent;
       border: none;
@@ -817,10 +923,12 @@
       cursor: pointer;
       transition: all 0.12s;
     }
+
     .zoom-btn:hover {
       background: var(--pf-bg-card);
       color: var(--pf-accent);
     }
+
     .zoom-level {
       font-size: 11.5px;
       font-weight: 700;
@@ -829,9 +937,11 @@
       text-align: center;
       cursor: pointer;
     }
+
     .zoom-level:hover {
       color: var(--pf-text-white);
     }
+
     .zoom-btn-icon {
       background: transparent;
       border: none;
@@ -845,6 +955,7 @@
       cursor: pointer;
       transition: all 0.12s;
     }
+
     .zoom-btn-icon:hover {
       background: var(--pf-bg-card);
       color: var(--pf-text-white);
@@ -859,6 +970,7 @@
       display: none;
       z-index: 35;
     }
+
     .corner-pin {
       width: 22px;
       height: 22px;
@@ -872,6 +984,7 @@
       z-index: 30;
       transition: transform 0.08s ease, background 0.15s;
     }
+
     .corner-pin:hover {
       transform: translate(-50%, -50%) scale(1.35);
       background: #f59e0b;
@@ -882,12 +995,16 @@
     .pf-modal {
       display: none;
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: rgba(0, 0, 0, 0.75);
       z-index: 9999;
       align-items: center;
       justify-content: center;
     }
+
     .pf-modal-box {
       background: var(--pf-bg-drawer);
       border: 1px solid var(--pf-border);
@@ -899,12 +1016,13 @@
     }
   </style>
 </head>
+
 <body>
   <!-- Üst Gezinme Çubuğu (Photoshop Stili Menü Barı) -->
   <header class="topbar">
     <div class="topbar-left">
       <div class="brand-logo" onclick="location.reload()" title="PixelFlow Studio" id="brandLogoContainer">
-        <img class="brand-logo-img" id="brandLogoImg" src="data:image/png;base64,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" alt="PixelFlow" />
+        <img class="brand-logo-img" id="brandLogoImg" src="/pictures/logo.png" onerror="this.src='/static/logo.png'" alt="PixelFlow" />
       </div>
 
       <nav class="ps-menubar" id="psMenuBar">
@@ -964,7 +1082,8 @@
               <span class="ps-shortcut">Auto</span>
             </div>
             <div class="ps-menu-action" onclick="quickAdd('grayscale')">
-              <span data-tr="Siyah & Beyaz (Grayscale)" data-en="Black & White (Grayscale)">Siyah & Beyaz (Grayscale)</span>
+              <span data-tr="Siyah & Beyaz (Grayscale)" data-en="Black & White (Grayscale)">Siyah & Beyaz
+                (Grayscale)</span>
             </div>
             <div class="ps-menu-action" onclick="quickAdd('brightness_contrast')">
               <span data-tr="Parlaklık / Kontrast" data-en="Brightness / Contrast">Parlaklık / Kontrast</span>
@@ -990,7 +1109,8 @@
           <span class="ps-menu-label" data-tr="Filtre" data-en="Filter">Filtre</span>
           <div class="ps-dropdown" id="menuFilter">
             <div class="ps-menu-action" onclick="quickAdd('preset')">
-              <span data-tr="Sinematik LUT Presetleri..." data-en="Cinematic LUT Presets...">Sinematik LUT Presetleri...</span>
+              <span data-tr="Sinematik LUT Presetleri..." data-en="Cinematic LUT Presets...">Sinematik LUT
+                Presetleri...</span>
             </div>
             <div class="ps-menu-action" onclick="quickAdd('duotone')">
               <span data-tr="Duotone Gradyan Eşleme" data-en="Duotone Gradient Map">Duotone Gradyan Eşleme</span>
@@ -1043,7 +1163,8 @@
             </div>
             <div class="ps-menu-divider"></div>
             <div class="ps-menu-action" onclick="setComparisonMode('split')">
-              <span data-tr="Perde Karşılaştırma (Split)" data-en="Curtain Split View">Perde Karşılaştırma (Split)</span>
+              <span data-tr="Perde Karşılaştırma (Split)" data-en="Curtain Split View">Perde Karşılaştırma
+                (Split)</span>
             </div>
             <div class="ps-menu-action" onclick="setComparisonMode('after')">
               <span data-tr="Sadece Düzenlenen (After)" data-en="Processed Only (After)">Sadece Düzenlenen</span>
@@ -1068,7 +1189,8 @@
               <span data-tr="Dijital İmza Çiz..." data-en="Draw Digital Signature...">Dijital İmza Çiz...</span>
             </div>
             <div class="ps-menu-action" onclick="runAutoPiiRedaction()">
-              <span data-tr="TC / IBAN Otomatik Maskele" data-en="Auto Mask PII (ID/IBAN)">TC / IBAN Otomatik Maskele</span>
+              <span data-tr="TC / IBAN Otomatik Maskele" data-en="Auto Mask PII (ID/IBAN)">TC / IBAN Otomatik
+                Maskele</span>
             </div>
           </div>
         </div>
@@ -1076,17 +1198,28 @@
 
       <input type="file" id="filePicker" accept="image/*,.pdf,application/pdf" style="display:none" />
 
-      <button type="button" class="btn-upload-pill" id="btnTopUpload" title="Yeni Görsel veya Belge Yükle" style="margin-left:8px;">
-        <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <button type="button" class="btn-upload-pill" id="btnTopUpload" title="Yeni Görsel veya Belge Yükle"
+        style="margin-left:8px;">
+        <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
         <span data-tr="Görsel Aç" data-en="Open Image">Görsel Aç</span>
       </button>
 
       <div style="display:flex;gap:3px;margin-left:4px;">
         <button type="button" class="btn-icon" id="btnUndo" title="Geri Al (Ctrl+Z)" onclick="undo()" disabled>
-          <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24">
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+          </svg>
         </button>
         <button type="button" class="btn-icon" id="btnRedo" title="İleri Al (Ctrl+Y)" onclick="redo()" disabled>
-          <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24">
+            <polyline points="23 4 23 10 17 10" />
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+          </svg>
         </button>
       </div>
     </div>
@@ -1096,33 +1229,64 @@
       <button type="button" class="btn-icon" id="btnPrevPage" title="Önceki Sayfa">‹</button>
       <span id="pdfPageIndicator" style="font-size:12.5px;font-weight:600;">Sayfa 1 / 1</span>
       <button type="button" class="btn-icon" id="btnNextPage" title="Sonraki Sayfa">›</button>
-      <button type="button" class="btn-upload-pill" id="btnBatchPdfAll" style="padding:4px 10px;font-size:11.5px;" data-tr="Tüm Sayfaları İşle" data-en="Process All Pages">Tüm Sayfaları İşle</button>
+      <button type="button" class="btn-upload-pill" id="btnBatchPdfAll" style="padding:4px 10px;font-size:11.5px;"
+        data-tr="Tüm Sayfaları İşle" data-en="Process All Pages">Tüm Sayfaları İşle</button>
     </div>
 
     <div class="topbar-right">
       <!-- Dil Seçeneği (TR / US Bayraklı Dil Seçici) -->
       <div class="lang-switcher-pill" id="langSwitcher" role="group" aria-label="Language Selector">
         <button type="button" class="lang-btn active" id="langBtnTr" onclick="setLanguage('tr')" title="Türkçe">
-          <svg class="flag-icon" viewBox="0 0 1200 800" width="16" height="11" style="border-radius:2px;display:inline-block;vertical-align:middle;box-shadow:0 0 2px rgba(0,0,0,0.5);flex-shrink:0;">
-            <rect width="1200" height="800" fill="#E30A17"/>
-            <circle cx="425" cy="400" r="250" fill="#ffffff"/>
-            <circle cx="475" cy="400" r="200" fill="#E30A17"/>
-            <polygon points="583.3,400 706.7,440.1 630.5,335.1 630.5,464.9 706.7,359.9" fill="#ffffff"/>
+          <svg class="flag-icon" viewBox="0 0 1200 800" width="16" height="11"
+            style="border-radius:2px;display:inline-block;vertical-align:middle;box-shadow:0 0 2px rgba(0,0,0,0.5);flex-shrink:0;">
+            <rect width="1200" height="800" fill="#E30A17" />
+            <circle cx="425" cy="400" r="250" fill="#ffffff" />
+            <circle cx="475" cy="400" r="200" fill="#E30A17" />
+            <polygon points="583.3,400 706.7,440.1 630.5,335.1 630.5,464.9 706.7,359.9" fill="#ffffff" />
           </svg>
           <span class="lang-code">TR</span>
         </button>
         <button type="button" class="lang-btn" id="langBtnEn" onclick="setLanguage('en')" title="English (US)">
-          <svg class="flag-icon" viewBox="0 0 190 100" width="16" height="11" style="border-radius:2px;display:inline-block;vertical-align:middle;box-shadow:0 0 2px rgba(0,0,0,0.5);flex-shrink:0;">
-            <rect width="190" height="100" fill="#B22234"/>
-            <path d="M0,7.69h190M0,23.08h190M0,38.46h190M0,53.85h190M0,69.23h190M0,84.62h190" stroke="#ffffff" stroke-width="7.69"/>
-            <rect width="76" height="53.85" fill="#3C3B6E"/>
+          <svg class="flag-icon" viewBox="0 0 190 100" width="16" height="11"
+            style="border-radius:2px;display:inline-block;vertical-align:middle;box-shadow:0 0 2px rgba(0,0,0,0.5);flex-shrink:0;">
+            <rect width="190" height="100" fill="#B22234" />
+            <path d="M0,7.69h190M0,23.08h190M0,38.46h190M0,53.85h190M0,69.23h190M0,84.62h190" stroke="#ffffff"
+              stroke-width="7.69" />
+            <rect width="76" height="53.85" fill="#3C3B6E" />
             <g fill="#ffffff" transform="scale(1.15) translate(2, 2)">
-              <circle cx="5" cy="5" r="1.8"/><circle cx="15" cy="5" r="1.8"/><circle cx="25" cy="5" r="1.8"/><circle cx="35" cy="5" r="1.8"/><circle cx="45" cy="5" r="1.8"/><circle cx="55" cy="5" r="1.8"/>
-              <circle cx="10" cy="11" r="1.8"/><circle cx="20" cy="11" r="1.8"/><circle cx="30" cy="11" r="1.8"/><circle cx="40" cy="11" r="1.8"/><circle cx="50" cy="11" r="1.8"/>
-              <circle cx="5" cy="17" r="1.8"/><circle cx="15" cy="17" r="1.8"/><circle cx="25" cy="17" r="1.8"/><circle cx="35" cy="17" r="1.8"/><circle cx="45" cy="17" r="1.8"/><circle cx="55" cy="17" r="1.8"/>
-              <circle cx="10" cy="23" r="1.8"/><circle cx="20" cy="23" r="1.8"/><circle cx="30" cy="23" r="1.8"/><circle cx="40" cy="23" r="1.8"/><circle cx="50" cy="23" r="1.8"/>
-              <circle cx="5" cy="29" r="1.8"/><circle cx="15" cy="29" r="1.8"/><circle cx="25" cy="29" r="1.8"/><circle cx="35" cy="29" r="1.8"/><circle cx="45" cy="29" r="1.8"/><circle cx="55" cy="29" r="1.8"/>
-              <circle cx="10" cy="35" r="1.8"/><circle cx="20" cy="35" r="1.8"/><circle cx="30" cy="35" r="1.8"/><circle cx="40" cy="35" r="1.8"/><circle cx="50" cy="35" r="1.8"/>
+              <circle cx="5" cy="5" r="1.8" />
+              <circle cx="15" cy="5" r="1.8" />
+              <circle cx="25" cy="5" r="1.8" />
+              <circle cx="35" cy="5" r="1.8" />
+              <circle cx="45" cy="5" r="1.8" />
+              <circle cx="55" cy="5" r="1.8" />
+              <circle cx="10" cy="11" r="1.8" />
+              <circle cx="20" cy="11" r="1.8" />
+              <circle cx="30" cy="11" r="1.8" />
+              <circle cx="40" cy="11" r="1.8" />
+              <circle cx="50" cy="11" r="1.8" />
+              <circle cx="5" cy="17" r="1.8" />
+              <circle cx="15" cy="17" r="1.8" />
+              <circle cx="25" cy="17" r="1.8" />
+              <circle cx="35" cy="17" r="1.8" />
+              <circle cx="45" cy="17" r="1.8" />
+              <circle cx="55" cy="17" r="1.8" />
+              <circle cx="10" cy="23" r="1.8" />
+              <circle cx="20" cy="23" r="1.8" />
+              <circle cx="30" cy="23" r="1.8" />
+              <circle cx="40" cy="23" r="1.8" />
+              <circle cx="50" cy="23" r="1.8" />
+              <circle cx="5" cy="29" r="1.8" />
+              <circle cx="15" cy="29" r="1.8" />
+              <circle cx="25" cy="29" r="1.8" />
+              <circle cx="35" cy="29" r="1.8" />
+              <circle cx="45" cy="29" r="1.8" />
+              <circle cx="55" cy="29" r="1.8" />
+              <circle cx="10" cy="35" r="1.8" />
+              <circle cx="20" cy="35" r="1.8" />
+              <circle cx="30" cy="35" r="1.8" />
+              <circle cx="40" cy="35" r="1.8" />
+              <circle cx="50" cy="35" r="1.8" />
             </g>
           </svg>
           <span class="lang-code">EN</span>
@@ -1135,7 +1299,11 @@
         <option value="PDF">PDF</option>
       </select>
       <button type="button" class="btn-download-main" id="btnDownload">
-        <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
         <span data-tr="İndir" data-en="Export">İndir</span>
       </button>
     </div>
@@ -1146,44 +1314,83 @@
     <!-- 1. RESİMDEKİ KAYARAK AÇILAN SOL MENÜ (Slide-Out Expandable Left Sidebar) -->
     <aside class="sidebar-dock" id="mainSidebar">
       <div class="sidebar-header-toggle" onclick="toggleSidebarPin()" title="Menüyü Sabitle / Kapat">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
         <span data-tr="Fotoğraf Stüdyosu" data-en="Photo Studio">Fotoğraf Stüdyosu</span>
       </div>
 
       <div class="sidebar-nav">
         <div class="nav-item active" data-category="ai" onclick="switchCategory('ai')">
-          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
           <span class="label" data-tr="Akıllı Araçlar" data-en="Smart AI">Akıllı Araçlar</span>
           <span class="nav-badge-ai">AI</span>
         </div>
 
         <div class="nav-item" data-category="adjust" onclick="switchCategory('adjust')">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
           <span class="label" data-tr="Ayar &amp; Renk" data-en="Adjust &amp; Tone">Ayar &amp; Renk</span>
         </div>
 
         <div class="nav-item" data-category="effects" onclick="switchCategory('effects')">
-          <svg viewBox="0 0 24 24"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>
+          <svg viewBox="0 0 24 24">
+            <polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2" />
+          </svg>
           <span class="label" data-tr="Filtre &amp; Efekt" data-en="Filter &amp; Effects">Filtre &amp; Efekt</span>
         </div>
 
         <div class="nav-item" data-category="retouch" onclick="switchCategory('retouch')">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+            <line x1="9" y1="9" x2="9.01" y2="9" />
+            <line x1="15" y1="9" x2="15.01" y2="9" />
+          </svg>
           <span class="label" data-tr="Portre &amp; Rötuş" data-en="Portrait &amp; Retouch">Portre &amp; Rötuş</span>
         </div>
 
         <div class="nav-item" data-category="geometry" onclick="switchCategory('geometry')">
-          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <line x1="9" y1="3" x2="9" y2="21" />
+            <line x1="15" y1="3" x2="15" y2="21" />
+            <line x1="3" y1="9" x2="21" y2="9" />
+            <line x1="3" y1="15" x2="21" y2="15" />
+          </svg>
           <span class="label" data-tr="Kırp &amp; Geometri" data-en="Crop &amp; Geometry">Kırp &amp; Geometri</span>
         </div>
 
         <div class="nav-item" data-category="text" onclick="switchCategory('text')">
-          <svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+          <svg viewBox="0 0 24 24">
+            <polyline points="4 7 4 4 20 4 20 7" />
+            <line x1="9" y1="20" x2="15" y2="20" />
+            <line x1="12" y1="4" x2="12" y2="20" />
+          </svg>
           <span class="label" data-tr="Yazı &amp; İmza" data-en="Text &amp; Sign">Yazı &amp; İmza</span>
         </div>
 
         <div class="nav-item" data-category="docs" onclick="switchCategory('docs')">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <svg viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
           <span class="label" data-tr="Belge Araçları" data-en="Doc Tools">Belge Araçları</span>
         </div>
       </div>
@@ -1195,7 +1402,10 @@
         <div class="drawer-title">
           <span id="drawerTitleText">Akıllı Araçlar</span>
           <button type="button" class="btn-icon" title="Tüm Katmanları Sıfırla" onclick="resetAllSteps()">
-            <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+            <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <polyline points="3 3 3 8 8 8" />
+            </svg>
           </button>
         </div>
         <div class="drawer-sub" id="drawerSubText">Yapay zeka destekli tek tıkla fotoğraf iyileştirme ve kesim</div>
@@ -1205,7 +1415,8 @@
       <div class="cards-section">
         <div class="section-headline">
           <span data-tr="Önerilen Araçlar" data-en="Recommended Tools">Önerilen Araçlar</span>
-          <span style="font-size:10.5px;color:var(--pf-accent)" data-tr="Seç &amp; Uygula" data-en="Select &amp; Apply">Seç &amp; Uygula</span>
+          <span style="font-size:10.5px;color:var(--pf-accent)" data-tr="Seç &amp; Uygula"
+            data-en="Select &amp; Apply">Seç &amp; Uygula</span>
         </div>
         <div class="cards-grid" id="categoryCardsGrid">
           <!-- Kategoriye göre dinamik dolar -->
@@ -1214,12 +1425,15 @@
 
       <!-- Canlı 256 Histogram -->
       <div style="padding:0 18px 14px;">
-        <div style="background:var(--pf-bg-card);border:1px solid var(--pf-border);border-radius:var(--radius-sm);padding:9px;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;font-weight:700;color:var(--pf-text-muted);">
+        <div
+          style="background:var(--pf-bg-card);border:1px solid var(--pf-border);border-radius:var(--radius-sm);padding:9px;">
+          <div
+            style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;font-weight:700;color:var(--pf-text-muted);">
             <span data-tr="CANLI HISTOGRAM (RGB)" data-en="LIVE HISTOGRAM (RGB)">CANLI HISTOGRAM (RGB)</span>
             <span style="color:var(--pf-accent);" data-tr="256 Seviye" data-en="256 Levels">256 Seviye</span>
           </div>
-          <canvas id="histCanvas" width="256" height="58" style="width:100%;height:58px;display:block;border-radius:4px;background:#080a0f;"></canvas>
+          <canvas id="histCanvas" width="256" height="58"
+            style="width:100%;height:58px;display:block;border-radius:4px;background:#080a0f;"></canvas>
         </div>
       </div>
 
@@ -1241,23 +1455,46 @@
       <div class="empty-state-view" id="emptyStateView">
         <div class="empty-drop-card">
           <div class="empty-icon-circle">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
           </div>
-          <h2 class="empty-headline" data-tr="Fotoğrafınızı veya Belgenizi Yükleyin" data-en="Upload Your Photo or Document">Fotoğrafınızı veya Belgenizi Yükleyin</h2>
-          <p class="empty-sub" data-tr="Profesyonel yapay zeka araçlarıyla her detayı anında iyileştirin, rötuşlayın veya temizleyin." data-en="Enhance, retouch, and clean every detail instantly with professional AI tools.">Profesyonel yapay zeka araçlarıyla her detayı anında iyileştirin, rötuşlayın veya temizleyin.</p>
+          <h2 class="empty-headline" data-tr="Fotoğrafınızı veya Belgenizi Yükleyin"
+            data-en="Upload Your Photo or Document">Fotoğrafınızı veya Belgenizi Yükleyin</h2>
+          <p class="empty-sub"
+            data-tr="Profesyonel yapay zeka araçlarıyla her detayı anında iyileştirin, rötuşlayın veya temizleyin."
+            data-en="Enhance, retouch, and clean every detail instantly with professional AI tools.">Profesyonel yapay
+            zeka araçlarıyla her detayı anında iyileştirin, rötuşlayın veya temizleyin.</p>
           <button type="button" class="btn-big-upload" id="btnBigUpload">
-            <svg style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <svg style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
             <span data-tr="Görsel Seç / Yükle" data-en="Select / Open Image">Görsel Seç / Yükle</span>
           </button>
 
-          <div style="font-size:12px;color:var(--pf-text-muted);margin-top:24px;" data-tr="veya hazır örneklerden birini deneyin:" data-en="or try one of the ready samples:">veya hazır örneklerden birini deneyin:</div>
+          <div style="font-size:12px;color:var(--pf-text-muted);margin-top:24px;"
+            data-tr="veya hazır örneklerden birini deneyin:" data-en="or try one of the ready samples:">veya hazır
+            örneklerden birini deneyin:</div>
           <div class="sample-photos-row">
             <div class="sample-photo-chip" id="btnSamplePhoto">
-              <svg style="width:15px;height:15px;color:#38bdf8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+              <svg style="width:15px;height:15px;color:#38bdf8" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <circle cx="12" cy="12" r="5" />
+                <path
+                  d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+              </svg>
               <span data-tr="Canlı Manzara" data-en="Vivid Landscape">Canlı Manzara</span>
             </div>
             <div class="sample-photo-chip" id="btnSampleDoc">
-              <svg style="width:15px;height:15px;color:#f59e0b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <svg style="width:15px;height:15px;color:#f59e0b" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
               <span data-tr="Taranmış Fatura / Evrak" data-en="Scanned Invoice / Doc">Taranmış Fatura / Evrak</span>
             </div>
           </div>
@@ -1268,20 +1505,35 @@
       <div class="active-canvas-container" id="activeCanvasContainer">
         <!-- Üst Kıyaslama ve Görünüm Seçenekleri -->
         <div class="canvas-floating-bar" id="canvasFloatingBar">
-          <button type="button" class="floating-btn active" id="btnModeSingle" onclick="setViewMode('single')" title="Yalnızca düzenlenen görüntüyü göster">
-            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+          <button type="button" class="floating-btn active" id="btnModeSingle" onclick="setViewMode('single')"
+            title="Yalnızca düzenlenen görüntüyü göster">
+            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+            </svg>
             <span data-tr="Tek Görünüm" data-en="Single View">Tek Görünüm</span>
           </button>
-          <button type="button" class="floating-btn" id="btnModeSplit" onclick="setViewMode('split')" title="Öncesi ve sonrasını yan yana göster">
-            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+          <button type="button" class="floating-btn" id="btnModeSplit" onclick="setViewMode('split')"
+            title="Öncesi ve sonrasını yan yana göster">
+            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <line x1="12" y1="3" x2="12" y2="21" />
+            </svg>
             <span data-tr="Yan Yana" data-en="Split View">Yan Yana</span>
           </button>
-          <button type="button" class="floating-btn" id="btnModeCurtain" onclick="setViewMode('curtain')" title="Perde sürgüsü ile canlı karşılaştır">
-            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><polyline points="8 8 12 4 16 8"/><polyline points="8 16 12 20 16 16"/></svg>
+          <button type="button" class="floating-btn" id="btnModeCurtain" onclick="setViewMode('curtain')"
+            title="Perde sürgüsü ile canlı karşılaştır">
+            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="2" x2="12" y2="22" />
+              <polyline points="8 8 12 4 16 8" />
+              <polyline points="8 16 12 20 16 16" />
+            </svg>
             <span data-tr="Perde Kıyasla" data-en="Curtain Slider">Perde Kıyasla</span>
           </button>
           <button type="button" class="floating-btn" id="btnPeekOriginal" title="Basılı tutarak orijinali görün">
-            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
             <span data-tr="Orijinal (Basılı Tut)" data-en="Hold for Original">Orijinal (Basılı Tut)</span>
           </button>
         </div>
@@ -1296,21 +1548,32 @@
 
           <!-- Ana Düzenlenen Kutu (Sağ / Tek) -->
           <div class="canvas-viewport" id="boxAfter" style="position:relative;cursor:crosshair;">
-            <span class="viewport-badge" id="badgeAfter" style="display:none;" data-tr="Düzenlenen" data-en="Processed">Düzenlenen</span>
-            <img id="imgAfter" alt="Düzenlenen Belge / Fotoğraf" style="display:none;user-select:none;pointer-events:none;" />
+            <span class="viewport-badge" id="badgeAfter" style="display:none;" data-tr="Düzenlenen"
+              data-en="Processed">Düzenlenen</span>
+            <img id="imgAfter" alt="Düzenlenen Belge / Fotoğraf"
+              style="display:none;user-select:none;pointer-events:none;" />
 
             <!-- Canlı Perde Kıyaslama Sürgüsü -->
-            <div id="curtainOverlay" style="position:absolute;top:0;left:0;height:100%;width:50%;overflow:hidden;border-right:2px solid var(--pf-accent);display:none;pointer-events:none;z-index:20;box-shadow:2px 0 10px rgba(56, 189, 248, 0.4);">
-              <img id="imgCurtainBefore" alt="Orijinal Perde" style="position:absolute;top:0;left:0;height:100%;max-width:none;user-select:none;" />
+            <div id="curtainOverlay"
+              style="position:absolute;top:0;left:0;height:100%;width:50%;overflow:hidden;border-right:2px solid var(--pf-accent);display:none;pointer-events:none;z-index:20;box-shadow:2px 0 10px rgba(56, 189, 248, 0.4);">
+              <img id="imgCurtainBefore" alt="Orijinal Perde"
+                style="position:absolute;top:0;left:0;height:100%;max-width:none;user-select:none;" />
               <span class="viewport-badge" style="left:8px;top:8px;" data-tr="Öncesi" data-en="Before">Öncesi</span>
             </div>
-            <div id="curtainHandle" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:var(--pf-accent);color:#081b2a;display:none;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(56, 189, 248, 0.8);z-index:25;cursor:ew-resize;">
-              <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="7 16 3 12 7 8"/><polyline points="17 8 21 12 17 16"/></svg>
+            <div id="curtainHandle"
+              style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:var(--pf-accent);color:#081b2a;display:none;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(56, 189, 248, 0.8);z-index:25;cursor:ew-resize;">
+              <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5">
+                <polyline points="7 16 3 12 7 8" />
+                <polyline points="17 8 21 12 17 16" />
+              </svg>
             </div>
 
             <!-- CamScanner Köşe Pinleri & SVG -->
-            <svg id="perspectiveSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:30;display:none;">
-              <polygon id="polyCorners" fill="rgba(56, 189, 248, 0.18)" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="6,4" />
+            <svg id="perspectiveSvg"
+              style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:30;display:none;">
+              <polygon id="polyCorners" fill="rgba(56, 189, 248, 0.18)" stroke="#38bdf8" stroke-width="2.5"
+                stroke-dasharray="6,4" />
             </svg>
             <div class="corner-pin" id="pin_tl" title="Sol Üst Köşe" style="display:none;"></div>
             <div class="corner-pin" id="pin_tr" title="Sağ Üst Köşe" style="display:none;"></div>
@@ -1322,16 +1585,23 @@
 
         <!-- Alt Yüzen Yakınlaştırma ve Sahne Çubuğu -->
         <div class="canvas-zoom-bar">
-          <span id="canvasDims" style="font-size:11px;color:var(--pf-text-muted);font-weight:600;margin-right:6px;padding-right:8px;border-right:1px solid var(--pf-border);">— px</span>
+          <span id="canvasDims"
+            style="font-size:11px;color:var(--pf-text-muted);font-weight:600;margin-right:6px;padding-right:8px;border-right:1px solid var(--pf-border);">—
+            px</span>
           <button type="button" class="zoom-btn" onclick="zoomCanvas(-0.15)" title="Uzaklaştır (−)">−</button>
-          <span class="zoom-level" id="zoomLevelIndicator" onclick="resetZoom()" title="Yakınlaştırmayı sıfırlamak için tıklayın">100%</span>
+          <span class="zoom-level" id="zoomLevelIndicator" onclick="resetZoom()"
+            title="Yakınlaştırmayı sıfırlamak için tıklayın">100%</span>
           <button type="button" class="zoom-btn" onclick="zoomCanvas(0.15)" title="Yakınlaştır (+)">+</button>
           <div style="width:1px;height:16px;background:var(--pf-border);margin:0 4px;"></div>
           <button type="button" class="zoom-btn-icon" onclick="fitCanvas()" title="Ekrana Sığdır">
-            <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+            </svg>
           </button>
           <button type="button" class="zoom-btn-icon" onclick="rotateCanvas()" title="90° Saat Yönünde Döndür">
-            <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+            </svg>
           </button>
         </div>
       </div>
@@ -1342,18 +1612,23 @@
   <div id="signatureModal" class="pf-modal">
     <div class="pf-modal-box">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <strong style="font-size:16px;color:#fff;" data-tr="Dijital İmza Pad (İmzanızı Çizin)" data-en="Digital Signature Pad (Draw Your Signature)">Dijital İmza Pad (İmzanızı Çizin)</strong>
+        <strong style="font-size:16px;color:#fff;" data-tr="Dijital İmza Pad (İmzanızı Çizin)"
+          data-en="Digital Signature Pad (Draw Your Signature)">Dijital İmza Pad (İmzanızı Çizin)</strong>
         <button type="button" class="btn-icon" onclick="closeSignatureModal()">×</button>
       </div>
-      <p style="color:var(--pf-text-muted);font-size:12.5px;margin-bottom:12px;" data-tr="Beyaz alana farenizle veya dokunmatik ekranınızla imzanızı atın. Kağıt arka planı otomatik şeffaflaştırılır." data-en="Sign in the box using your mouse or touchscreen. The background is automatically made transparent.">
+      <p style="color:var(--pf-text-muted);font-size:12.5px;margin-bottom:12px;"
+        data-tr="Beyaz alana farenizle veya dokunmatik ekranınızla imzanızı atın. Kağıt arka planı otomatik şeffaflaştırılır."
+        data-en="Sign in the box using your mouse or touchscreen. The background is automatically made transparent.">
         Beyaz alana farenizle veya dokunmatik ekranınızla imzanızı atın. Kağıt arka planı otomatik şeffaflaştırılır.
       </p>
-      <div style="border:1.5px dashed var(--pf-border);border-radius:8px;background:#ffffff;margin-bottom:14px;overflow:hidden;cursor:crosshair;">
+      <div
+        style="border:1.5px dashed var(--pf-border);border-radius:8px;background:#ffffff;margin-bottom:14px;overflow:hidden;cursor:crosshair;">
         <canvas id="sigCanvas" width="480" height="180" style="display:block;touch-action:none;width:100%;"></canvas>
       </div>
       <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
         <div style="display:flex;gap:8px;align-items:center;">
-          <button type="button" class="btn-upload-pill" onclick="clearSignatureCanvas()" data-tr="Temizle" data-en="Clear">Temizle</button>
+          <button type="button" class="btn-upload-pill" onclick="clearSignatureCanvas()" data-tr="Temizle"
+            data-en="Clear">Temizle</button>
           <select id="sigColor" class="select-format">
             <option value="#0c2461" data-tr="Mavi Mürekkep" data-en="Blue Ink">Mavi Mürekkep</option>
             <option value="#1e272e" data-tr="Siyah Mürekkep" data-en="Black Ink">Siyah Mürekkep</option>
@@ -1361,8 +1636,10 @@
           </select>
         </div>
         <div style="display:flex;gap:8px;">
-          <button type="button" class="btn-upload-pill" onclick="closeSignatureModal()" data-tr="Vazgeç" data-en="Cancel">Vazgeç</button>
-          <button type="button" class="btn-download-main" onclick="applyDrawnSignature()" data-tr="Belgeye Ekle" data-en="Apply to Doc">Belgeye Ekle</button>
+          <button type="button" class="btn-upload-pill" onclick="closeSignatureModal()" data-tr="Vazgeç"
+            data-en="Cancel">Vazgeç</button>
+          <button type="button" class="btn-download-main" onclick="applyDrawnSignature()" data-tr="Belgeye Ekle"
+            data-en="Apply to Doc">Belgeye Ekle</button>
         </div>
       </div>
     </div>
@@ -1372,15 +1649,21 @@
   <div id="ocrModal" class="pf-modal">
     <div class="pf-modal-box">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <strong style="font-size:16px;color:#fff;" data-tr="Belge Metinleri (OCR Tarama)" data-en="Document Text (OCR Scan)">Belge Metinleri (OCR Tarama)</strong>
+        <strong style="font-size:16px;color:#fff;" data-tr="Belge Metinleri (OCR Tarama)"
+          data-en="Document Text (OCR Scan)">Belge Metinleri (OCR Tarama)</strong>
         <button type="button" class="btn-icon" onclick="closeOcrModal()">×</button>
       </div>
-      <textarea id="ocrOutputText" rows="9" style="width:100%;background:#090d16;border:1px solid var(--pf-border);border-radius:6px;color:#f8fafc;padding:12px;font-family:monospace;font-size:13px;resize:vertical;" readonly></textarea>
+      <textarea id="ocrOutputText" rows="9"
+        style="width:100%;background:#090d16;border:1px solid var(--pf-border);border-radius:6px;color:#f8fafc;padding:12px;font-family:monospace;font-size:13px;resize:vertical;"
+        readonly></textarea>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
-        <span id="ocrStatusMsg" style="font-size:12px;color:var(--pf-text-muted);" data-tr="Hazır" data-en="Ready">Hazır</span>
+        <span id="ocrStatusMsg" style="font-size:12px;color:var(--pf-text-muted);" data-tr="Hazır"
+          data-en="Ready">Hazır</span>
         <div style="display:flex;gap:8px;">
-          <button type="button" class="btn-upload-pill" onclick="copyOcrText()" data-tr="Panoya Kopyala" data-en="Copy to Clipboard">Panoya Kopyala</button>
-          <button type="button" class="btn-download-main" onclick="closeOcrModal()" data-tr="Kapat" data-en="Close">Kapat</button>
+          <button type="button" class="btn-upload-pill" onclick="copyOcrText()" data-tr="Panoya Kopyala"
+            data-en="Copy to Clipboard">Panoya Kopyala</button>
+          <button type="button" class="btn-download-main" onclick="closeOcrModal()" data-tr="Kapat"
+            data-en="Close">Kapat</button>
         </div>
       </div>
     </div>
@@ -1988,13 +2271,13 @@
     let currentLang = "tr";
     try {
       currentLang = localStorage.getItem("pixelflow_lang") || "tr";
-    } catch (e) {}
+    } catch (e) { }
 
     function setLanguage(lang) {
       currentLang = (lang === "en") ? "en" : "tr";
       try {
         localStorage.setItem("pixelflow_lang", currentLang);
-      } catch (e) {}
+      } catch (e) { }
 
       const btnTr = document.getElementById("langBtnTr");
       const btnEn = document.getElementById("langBtnEn");
@@ -2142,8 +2425,8 @@
         stepsList.innerHTML = `
           <div style="text-align:center;padding:24px 10px;color:var(--pf-text-muted);font-size:12px;border:1px dashed var(--pf-border);border-radius:var(--radius-sm);line-height:1.5;">
             ${(currentLang === "en")
-              ? "No effect layers applied yet.<br/>Click any card above to add an operation."
-              : "Henüz efekt katmanı eklenmedi.<br/>Yukarıdaki kartlara tıklayarak işlem ekleyebilirsiniz."}
+            ? "No effect layers applied yet.<br/>Click any card above to add an operation."
+            : "Henüz efekt katmanı eklenmedi.<br/>Yukarıdaki kartlara tıklayarak işlem ekleyebilirsiniz."}
           </div>
         `;
         syncPerspectivePins();
@@ -3053,4 +3336,5 @@
     setLanguage(currentLang);
   </script>
 </body>
+
 </html>

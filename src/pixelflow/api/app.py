@@ -4,6 +4,7 @@ import logging
 import time
 import uuid
 from collections.abc import Awaitable, Callable
+from pathlib import Path
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, File, Form, Request, Response, UploadFile
@@ -209,4 +210,7 @@ def create_app(settings_override: ApiSettings | None = None) -> FastAPI:
     _register_health_routes(app)
     _register_v1_routes(app)
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+    pics_dir = Path(__file__).resolve().parent.parent.parent.parent / "pictures"
+    if pics_dir.is_dir():
+        app.mount("/pictures", StaticFiles(directory=pics_dir), name="pictures")
     return app
