@@ -54,6 +54,10 @@ from pixelflow.operations.geometry import (
     RotateOperation,
     RotateParams,
 )
+from pixelflow.operations.inpaint import (
+    InpaintOperation,
+    InpaintParams,
+)
 from pixelflow.operations.morphology import (
     MorphologyOperation,
     MorphologyParams,
@@ -116,6 +120,8 @@ __all__ = [
     "GrayscaleParams",
     "HistogramEqualizationOperation",
     "HistogramEqualizationParams",
+    "InpaintOperation",
+    "InpaintParams",
     "MedianBlurOperation",
     "MedianBlurParams",
     "MorphologyOperation",
