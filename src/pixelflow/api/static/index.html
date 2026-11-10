@@ -167,6 +167,49 @@
       cursor: pointer;
     }
 
+    /* Sağ Üst Dil Seçici (TR / EN Language Switcher) */
+    .lang-switcher-pill {
+      display: inline-flex;
+      align-items: center;
+      background: var(--pf-bg-card);
+      border: 1px solid var(--pf-border);
+      border-radius: 16px;
+      padding: 2px 3px;
+      gap: 2px;
+      user-select: none;
+    }
+    .lang-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      border-radius: 12px;
+      padding: 3px 8px;
+      color: var(--pf-text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      line-height: 1.2;
+    }
+    .lang-btn:hover {
+      color: var(--pf-text-white);
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .lang-btn.active {
+      background: rgba(56, 189, 248, 0.18);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: var(--pf-accent);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    }
+    .lang-btn .flag-icon {
+      font-size: 13px;
+      display: inline-block;
+      line-height: 1;
+    }
+
     /* Photoshop Tarzı Üst Menü Çubuğu (PS Menubar) */
     .ps-menubar {
       display: flex;
@@ -1069,10 +1112,22 @@
       <button type="button" class="btn-icon" id="btnPrevPage" title="Önceki Sayfa">‹</button>
       <span id="pdfPageIndicator" style="font-size:12.5px;font-weight:600;">Sayfa 1 / 1</span>
       <button type="button" class="btn-icon" id="btnNextPage" title="Sonraki Sayfa">›</button>
-      <button type="button" class="btn-upload-pill" id="btnBatchPdfAll" style="padding:4px 10px;font-size:11.5px;">Tüm Sayfaları İşle</button>
+      <button type="button" class="btn-upload-pill" id="btnBatchPdfAll" style="padding:4px 10px;font-size:11.5px;" data-tr="Tüm Sayfaları İşle" data-en="Process All Pages">Tüm Sayfaları İşle</button>
     </div>
 
     <div class="topbar-right">
+      <!-- Dil Seçeneği (TR / EN Language Switcher Pill) -->
+      <div class="lang-switcher-pill" id="langSwitcher" role="group" aria-label="Language Selector">
+        <button type="button" class="lang-btn active" id="langBtnTr" onclick="setLanguage('tr')" title="Türkçe">
+          <span class="flag-icon">🇹🇷</span>
+          <span class="lang-code">TR</span>
+        </button>
+        <button type="button" class="lang-btn" id="langBtnEn" onclick="setLanguage('en')" title="English">
+          <span class="flag-icon">🇬🇧</span>
+          <span class="lang-code">EN</span>
+        </button>
+      </div>
+
       <select id="exportFormat" class="select-format">
         <option value="PNG">PNG</option>
         <option value="JPEG">JPEG</option>
@@ -1080,7 +1135,7 @@
       </select>
       <button type="button" class="btn-download-main" id="btnDownload">
         <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        İndir
+        <span data-tr="İndir" data-en="Export">İndir</span>
       </button>
     </div>
   </header>
@@ -1091,44 +1146,44 @@
     <aside class="sidebar-dock" id="mainSidebar">
       <div class="sidebar-header-toggle" onclick="toggleSidebarPin()" title="Menüyü Sabitle / Kapat">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        <span>Fotoğraf Stüdyosu</span>
+        <span data-tr="Fotoğraf Stüdyosu" data-en="Photo Studio">Fotoğraf Stüdyosu</span>
       </div>
 
       <div class="sidebar-nav">
         <div class="nav-item active" data-category="ai" onclick="switchCategory('ai')">
           <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          <span class="label">Akıllı Araçlar</span>
+          <span class="label" data-tr="Akıllı Araçlar" data-en="Smart AI">Akıllı Araçlar</span>
           <span class="nav-badge-ai">AI</span>
         </div>
 
         <div class="nav-item" data-category="adjust" onclick="switchCategory('adjust')">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          <span class="label">Ayar &amp; Renk</span>
+          <span class="label" data-tr="Ayar &amp; Renk" data-en="Adjust &amp; Tone">Ayar &amp; Renk</span>
         </div>
 
         <div class="nav-item" data-category="effects" onclick="switchCategory('effects')">
           <svg viewBox="0 0 24 24"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>
-          <span class="label">Filtre &amp; Efekt</span>
+          <span class="label" data-tr="Filtre &amp; Efekt" data-en="Filter &amp; Effects">Filtre &amp; Efekt</span>
         </div>
 
         <div class="nav-item" data-category="retouch" onclick="switchCategory('retouch')">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-          <span class="label">Portre &amp; Rötuş</span>
+          <span class="label" data-tr="Portre &amp; Rötuş" data-en="Portrait &amp; Retouch">Portre &amp; Rötuş</span>
         </div>
 
         <div class="nav-item" data-category="geometry" onclick="switchCategory('geometry')">
           <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
-          <span class="label">Kırp &amp; Geometri</span>
+          <span class="label" data-tr="Kırp &amp; Geometri" data-en="Crop &amp; Geometry">Kırp &amp; Geometri</span>
         </div>
 
         <div class="nav-item" data-category="text" onclick="switchCategory('text')">
           <svg viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-          <span class="label">Yazı &amp; İmza</span>
+          <span class="label" data-tr="Yazı &amp; İmza" data-en="Text &amp; Sign">Yazı &amp; İmza</span>
         </div>
 
         <div class="nav-item" data-category="docs" onclick="switchCategory('docs')">
           <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          <span class="label">Belge Araçları</span>
+          <span class="label" data-tr="Belge Araçları" data-en="Doc Tools">Belge Araçları</span>
         </div>
       </div>
     </aside>
@@ -1148,8 +1203,8 @@
       <!-- Fotor Tarzı Önerilen Araç Kartları -->
       <div class="cards-section">
         <div class="section-headline">
-          <span>Önerilen Araçlar</span>
-          <span style="font-size:10.5px;color:var(--pf-accent)">Seç &amp; Uygula</span>
+          <span data-tr="Önerilen Araçlar" data-en="Recommended Tools">Önerilen Araçlar</span>
+          <span style="font-size:10.5px;color:var(--pf-accent)" data-tr="Seç &amp; Uygula" data-en="Select &amp; Apply">Seç &amp; Uygula</span>
         </div>
         <div class="cards-grid" id="categoryCardsGrid">
           <!-- Kategoriye göre dinamik dolar -->
@@ -1160,8 +1215,8 @@
       <div style="padding:0 18px 14px;">
         <div style="background:var(--pf-bg-card);border:1px solid var(--pf-border);border-radius:var(--radius-sm);padding:9px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;font-weight:700;color:var(--pf-text-muted);">
-            <span>CANLI HISTOGRAM (RGB)</span>
-            <span style="color:var(--pf-accent);">256 Seviye</span>
+            <span data-tr="CANLI HISTOGRAM (RGB)" data-en="LIVE HISTOGRAM (RGB)">CANLI HISTOGRAM (RGB)</span>
+            <span style="color:var(--pf-accent);" data-tr="256 Seviye" data-en="256 Levels">256 Seviye</span>
           </div>
           <canvas id="histCanvas" width="256" height="58" style="width:100%;height:58px;display:block;border-radius:4px;background:#080a0f;"></canvas>
         </div>
@@ -1170,7 +1225,7 @@
       <!-- Aktif İşlem Sürgüleri & Katmanlar -->
       <div class="controls-section">
         <div class="section-headline">
-          <span>Uygulanan Katmanlar</span>
+          <span data-tr="Uygulanan Katmanlar" data-en="Applied Layers">Uygulanan Katmanlar</span>
           <span id="activeLayersCount" style="color:var(--pf-text-white)">0 Katman</span>
         </div>
         <div id="stepsList" style="display:flex;flex-direction:column;gap:10px;">
@@ -1187,22 +1242,22 @@
           <div class="empty-icon-circle">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           </div>
-          <h2 class="empty-headline">Fotoğrafınızı veya Belgenizi Yükleyin</h2>
-          <p class="empty-sub">Profesyonel yapay zeka araçlarıyla her detayı anında iyileştirin, rötuşlayın veya temizleyin.</p>
+          <h2 class="empty-headline" data-tr="Fotoğrafınızı veya Belgenizi Yükleyin" data-en="Upload Your Photo or Document">Fotoğrafınızı veya Belgenizi Yükleyin</h2>
+          <p class="empty-sub" data-tr="Profesyonel yapay zeka araçlarıyla her detayı anında iyileştirin, rötuşlayın veya temizleyin." data-en="Enhance, retouch, and clean every detail instantly with professional AI tools.">Profesyonel yapay zeka araçlarıyla her detayı anında iyileştirin, rötuşlayın veya temizleyin.</p>
           <button type="button" class="btn-big-upload" id="btnBigUpload">
             <svg style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Görsel Seç / Yükle
+            <span data-tr="Görsel Seç / Yükle" data-en="Select / Open Image">Görsel Seç / Yükle</span>
           </button>
 
-          <div style="font-size:12px;color:var(--pf-text-muted);margin-top:24px;">veya hazır örneklerden birini deneyin:</div>
+          <div style="font-size:12px;color:var(--pf-text-muted);margin-top:24px;" data-tr="veya hazır örneklerden birini deneyin:" data-en="or try one of the ready samples:">veya hazır örneklerden birini deneyin:</div>
           <div class="sample-photos-row">
             <div class="sample-photo-chip" id="btnSamplePhoto">
               <svg style="width:15px;height:15px;color:#38bdf8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-              Canlı Manzara
+              <span data-tr="Canlı Manzara" data-en="Vivid Landscape">Canlı Manzara</span>
             </div>
             <div class="sample-photo-chip" id="btnSampleDoc">
               <svg style="width:15px;height:15px;color:#f59e0b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Taranmış Fatura / Evrak
+              <span data-tr="Taranmış Fatura / Evrak" data-en="Scanned Invoice / Doc">Taranmış Fatura / Evrak</span>
             </div>
           </div>
         </div>
@@ -1214,19 +1269,19 @@
         <div class="canvas-floating-bar" id="canvasFloatingBar">
           <button type="button" class="floating-btn active" id="btnModeSingle" onclick="setViewMode('single')" title="Yalnızca düzenlenen görüntüyü göster">
             <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-            Tek Görünüm
+            <span data-tr="Tek Görünüm" data-en="Single View">Tek Görünüm</span>
           </button>
           <button type="button" class="floating-btn" id="btnModeSplit" onclick="setViewMode('split')" title="Öncesi ve sonrasını yan yana göster">
             <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
-            Yan Yana
+            <span data-tr="Yan Yana" data-en="Split View">Yan Yana</span>
           </button>
           <button type="button" class="floating-btn" id="btnModeCurtain" onclick="setViewMode('curtain')" title="Perde sürgüsü ile canlı karşılaştır">
             <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><polyline points="8 8 12 4 16 8"/><polyline points="8 16 12 20 16 16"/></svg>
-            Perde Kıyasla
+            <span data-tr="Perde Kıyasla" data-en="Curtain Slider">Perde Kıyasla</span>
           </button>
           <button type="button" class="floating-btn" id="btnPeekOriginal" title="Basılı tutarak orijinali görün">
             <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            Orijinal (Basılı Tut)
+            <span data-tr="Orijinal (Basılı Tut)" data-en="Hold for Original">Orijinal (Basılı Tut)</span>
           </button>
         </div>
 
@@ -1234,19 +1289,19 @@
         <div class="canvas-stage" id="canvasStage">
           <!-- Yan Yana Modunda Orijinal Kutu (Sol) -->
           <div class="canvas-viewport" id="boxBefore" style="display:none;position:relative;">
-            <span class="viewport-badge">Orijinal</span>
+            <span class="viewport-badge" data-tr="Orijinal" data-en="Original">Orijinal</span>
             <img id="imgBefore" alt="Orijinal" style="display:none;user-select:none;pointer-events:none;" />
           </div>
 
           <!-- Ana Düzenlenen Kutu (Sağ / Tek) -->
           <div class="canvas-viewport" id="boxAfter" style="position:relative;cursor:crosshair;">
-            <span class="viewport-badge" id="badgeAfter" style="display:none;">Düzenlenen</span>
+            <span class="viewport-badge" id="badgeAfter" style="display:none;" data-tr="Düzenlenen" data-en="Processed">Düzenlenen</span>
             <img id="imgAfter" alt="Düzenlenen Belge / Fotoğraf" style="display:none;user-select:none;pointer-events:none;" />
 
             <!-- Canlı Perde Kıyaslama Sürgüsü -->
             <div id="curtainOverlay" style="position:absolute;top:0;left:0;height:100%;width:50%;overflow:hidden;border-right:2px solid var(--pf-accent);display:none;pointer-events:none;z-index:20;box-shadow:2px 0 10px rgba(56, 189, 248, 0.4);">
               <img id="imgCurtainBefore" alt="Orijinal Perde" style="position:absolute;top:0;left:0;height:100%;max-width:none;user-select:none;" />
-              <span class="viewport-badge" style="left:8px;top:8px;">Öncesi</span>
+              <span class="viewport-badge" style="left:8px;top:8px;" data-tr="Öncesi" data-en="Before">Öncesi</span>
             </div>
             <div id="curtainHandle" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:var(--pf-accent);color:#081b2a;display:none;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(56, 189, 248, 0.8);z-index:25;cursor:ew-resize;">
               <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="7 16 3 12 7 8"/><polyline points="17 8 21 12 17 16"/></svg>
@@ -1286,10 +1341,10 @@
   <div id="signatureModal" class="pf-modal">
     <div class="pf-modal-box">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <strong style="font-size:16px;color:#fff;">Dijital İmza Pad (İmzanızı Çizin)</strong>
+        <strong style="font-size:16px;color:#fff;" data-tr="Dijital İmza Pad (İmzanızı Çizin)" data-en="Digital Signature Pad (Draw Your Signature)">Dijital İmza Pad (İmzanızı Çizin)</strong>
         <button type="button" class="btn-icon" onclick="closeSignatureModal()">×</button>
       </div>
-      <p style="color:var(--pf-text-muted);font-size:12.5px;margin-bottom:12px;">
+      <p style="color:var(--pf-text-muted);font-size:12.5px;margin-bottom:12px;" data-tr="Beyaz alana farenizle veya dokunmatik ekranınızla imzanızı atın. Kağıt arka planı otomatik şeffaflaştırılır." data-en="Sign in the box using your mouse or touchscreen. The background is automatically made transparent.">
         Beyaz alana farenizle veya dokunmatik ekranınızla imzanızı atın. Kağıt arka planı otomatik şeffaflaştırılır.
       </p>
       <div style="border:1.5px dashed var(--pf-border);border-radius:8px;background:#ffffff;margin-bottom:14px;overflow:hidden;cursor:crosshair;">
@@ -1297,16 +1352,16 @@
       </div>
       <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
         <div style="display:flex;gap:8px;align-items:center;">
-          <button type="button" class="btn-upload-pill" onclick="clearSignatureCanvas()">Temizle</button>
+          <button type="button" class="btn-upload-pill" onclick="clearSignatureCanvas()" data-tr="Temizle" data-en="Clear">Temizle</button>
           <select id="sigColor" class="select-format">
-            <option value="#0c2461">Mavi Mürekkep</option>
-            <option value="#1e272e">Siyah Mürekkep</option>
-            <option value="#b71540">Kırmızı Mühür</option>
+            <option value="#0c2461" data-tr="Mavi Mürekkep" data-en="Blue Ink">Mavi Mürekkep</option>
+            <option value="#1e272e" data-tr="Siyah Mürekkep" data-en="Black Ink">Siyah Mürekkep</option>
+            <option value="#b71540" data-tr="Kırmızı Mühür" data-en="Red Stamp">Kırmızı Mühür</option>
           </select>
         </div>
         <div style="display:flex;gap:8px;">
-          <button type="button" class="btn-upload-pill" onclick="closeSignatureModal()">Vazgeç</button>
-          <button type="button" class="btn-download-main" onclick="applyDrawnSignature()">Belgeye Ekle</button>
+          <button type="button" class="btn-upload-pill" onclick="closeSignatureModal()" data-tr="Vazgeç" data-en="Cancel">Vazgeç</button>
+          <button type="button" class="btn-download-main" onclick="applyDrawnSignature()" data-tr="Belgeye Ekle" data-en="Apply to Doc">Belgeye Ekle</button>
         </div>
       </div>
     </div>
@@ -1316,15 +1371,15 @@
   <div id="ocrModal" class="pf-modal">
     <div class="pf-modal-box">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <strong style="font-size:16px;color:#fff;">Belge Metinleri (OCR Tarama)</strong>
+        <strong style="font-size:16px;color:#fff;" data-tr="Belge Metinleri (OCR Tarama)" data-en="Document Text (OCR Scan)">Belge Metinleri (OCR Tarama)</strong>
         <button type="button" class="btn-icon" onclick="closeOcrModal()">×</button>
       </div>
       <textarea id="ocrOutputText" rows="9" style="width:100%;background:#090d16;border:1px solid var(--pf-border);border-radius:6px;color:#f8fafc;padding:12px;font-family:monospace;font-size:13px;resize:vertical;" readonly></textarea>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
-        <span id="ocrStatusMsg" style="font-size:12px;color:var(--pf-text-muted);">Hazır</span>
+        <span id="ocrStatusMsg" style="font-size:12px;color:var(--pf-text-muted);" data-tr="Hazır" data-en="Ready">Hazır</span>
         <div style="display:flex;gap:8px;">
-          <button type="button" class="btn-upload-pill" onclick="copyOcrText()">Panoya Kopyala</button>
-          <button type="button" class="btn-download-main" onclick="closeOcrModal()">Kapat</button>
+          <button type="button" class="btn-upload-pill" onclick="copyOcrText()" data-tr="Panoya Kopyala" data-en="Copy to Clipboard">Panoya Kopyala</button>
+          <button type="button" class="btn-download-main" onclick="closeOcrModal()" data-tr="Kapat" data-en="Close">Kapat</button>
         </div>
       </div>
     </div>
@@ -1749,89 +1804,130 @@
       }
     };
 
-    // Kategori Kart Tanımları (Fotor Style - 2. Resim)
+    // Kategori Kart Tanımları (Bilingual TR/EN)
     const CATEGORY_CARDS = {
       ai: {
-        title: "Akıllı & AI Araçlar",
-        sub: "Yapay zeka destekli tek tıkla fotoğraf iyileştirme ve kesim",
+        title: { tr: "Akıllı & AI Araçlar", en: "Smart & AI Tools" },
+        sub: { tr: "Yapay zeka destekli tek tıkla fotoğraf iyileştirme ve kesim", en: "AI-powered one-click photo enhancement and cutout" },
         cards: [
-          { op: "auto_enhance", name: "1-Tap Auto-Enhance", tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 6 1-5 5 1 7-5-4-5 4 1-7-5-5 6-1 3-6z"/></svg>' },
-          { op: "inpaint", name: "Sihirli Silgi (Inpaint)", tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2l4 4-12 12H6v-4L18 2z"/><path d="M14 6l4 4"/></svg>' },
-          { op: "background_removal", name: "Arka Plan Sil", tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 18l4-4-4-4"/></svg>' },
-          { op: "sharpen", name: "Unblur (Netleştir)", tag: "HD", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>' },
-          { op: "face_blur", name: "Yüz Sansürü", tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5 2 4 2 4-2 4-2"/></svg>' }
+          { op: "auto_enhance", name: { tr: "1-Tap Auto-Enhance", en: "1-Tap Auto-Enhance" }, tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 6 1-5 5 1 7-5-4-5 4 1-7-5-5 6-1 3-6z"/></svg>' },
+          { op: "inpaint", name: { tr: "Sihirli Silgi (Inpaint)", en: "Magic Eraser (Inpaint)" }, tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2l4 4-12 12H6v-4L18 2z"/><path d="M14 6l4 4"/></svg>' },
+          { op: "background_removal", name: { tr: "Arka Plan Sil", en: "Remove Background" }, tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 18l4-4-4-4"/></svg>' },
+          { op: "sharpen", name: { tr: "Unblur (Netleştir)", en: "Unblur (Sharpen)" }, tag: "HD", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>' },
+          { op: "face_blur", name: { tr: "Yüz Sansürü", en: "Face Censorship" }, tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5 2 4 2 4-2 4-2"/></svg>' }
         ]
       },
       adjust: {
-        title: "Ayar & Renk Dengesi",
-        sub: "Parlaklık, kontrast, ton eğrileri ve renk canlılığı",
+        title: { tr: "Ayar & Renk Dengesi", en: "Adjust & Tone" },
+        sub: { tr: "Parlaklık, kontrast, ton eğrileri ve renk canlılığı", en: "Brightness, contrast, color curves, and vibrance" },
         cards: [
-          { op: "brightness_contrast", name: "Parlaklık / Kontrast", tag: "Temel", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>' },
-          { op: "vibrance", name: "Canlılık (Vibrance)", tag: "Renk", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>' },
-          { op: "curves", name: "Renk Eğrileri", tag: "Pro", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c4-12 14-12 18-18"/></svg>' },
-          { op: "histogram_equalization", name: "HDR CLAHE", tag: "Denge", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>' },
-          { op: "gamma", name: "Gama Eğrisi", tag: "Işık", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/></svg>' },
-          { op: "grayscale", name: "Siyah & Beyaz", tag: "Mono", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/></svg>' }
+          { op: "brightness_contrast", name: { tr: "Parlaklık / Kontrast", en: "Brightness / Contrast" }, tag: { tr: "Temel", en: "Basic" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>' },
+          { op: "vibrance", name: { tr: "Canlılık (Vibrance)", en: "Vibrance" }, tag: { tr: "Renk", en: "Color" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>' },
+          { op: "curves", name: { tr: "Renk Eğrileri", en: "Color Curves" }, tag: "Pro", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c4-12 14-12 18-18"/></svg>' },
+          { op: "histogram_equalization", name: { tr: "HDR CLAHE", en: "HDR CLAHE" }, tag: { tr: "Denge", en: "Balance" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>' },
+          { op: "gamma", name: { tr: "Gama Eğrisi", en: "Gamma Curve" }, tag: { tr: "Işık", en: "Light" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/></svg>' },
+          { op: "grayscale", name: { tr: "Siyah & Beyaz", en: "Black & White" }, tag: "Mono", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/></svg>' }
         ]
       },
       effects: {
-        title: "Filtreler & Efektler",
-        sub: "Fotoğrafınıza artistik dokunuşlar ve atmosfer katın",
+        title: { tr: "Filtreler & Efektler", en: "Filters & Effects" },
+        sub: { tr: "Fotoğrafınıza artistik dokunuşlar ve atmosfer katın", en: "Add artistic atmosphere and cinematic look" },
         cards: [
-          { op: "preset", name: "Sinematik LUT Preset", tag: "Sinema", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg>' },
-          { op: "duotone", name: "Duotone Gradyan", tag: "Spotify", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><circle cx="12" cy="12" r="9"/></svg>' },
-          { op: "color_splash", name: "Color Splash", tag: "Popüler", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>' },
-          { op: "tilt_shift", name: "Tilt-Shift Minyatür", tag: "Minyatür", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>' },
-          { op: "vignette", name: "Vinyet Karartma", tag: "Odak", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>' },
-          { op: "glitch", name: "Glitch / RGB Split", tag: "Siber", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>' },
-          { op: "film_grain", name: "Analog Film Greni", tag: "Doku", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="12" cy="19" r="1"/><circle cx="12" cy="5" r="1"/></svg>' },
-          { op: "sharpen", name: "Keskinleştir (Unsharp)", tag: "Netlik", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>' },
-          { op: "gaussian_blur", name: "Gauss Bulanıklık", tag: "Yumuşak", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>' },
-          { op: "canny", name: "Karakalem Çizim", tag: "Sanat", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>' }
+          { op: "preset", name: { tr: "Sinematik LUT Preset", en: "Cinematic LUT Preset" }, tag: { tr: "Sinema", en: "Cinema" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg>' },
+          { op: "duotone", name: { tr: "Duotone Gradyan", en: "Duotone Gradient" }, tag: "Spotify", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><circle cx="12" cy="12" r="9"/></svg>' },
+          { op: "color_splash", name: { tr: "Color Splash", en: "Color Splash" }, tag: { tr: "Popüler", en: "Popular" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>' },
+          { op: "tilt_shift", name: { tr: "Tilt-Shift Minyatür", en: "Tilt-Shift Miniature" }, tag: { tr: "Minyatür", en: "Miniature" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>' },
+          { op: "vignette", name: { tr: "Vinyet Karartma", en: "Vignette Framing" }, tag: { tr: "Odak", en: "Focus" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>' },
+          { op: "glitch", name: { tr: "Glitch / RGB Split", en: "Glitch / RGB Split" }, tag: { tr: "Siber", en: "Cyber" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>' },
+          { op: "film_grain", name: { tr: "Analog Film Greni", en: "Analog Film Grain" }, tag: { tr: "Doku", en: "Texture" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="12" cy="19" r="1"/><circle cx="12" cy="5" r="1"/></svg>' },
+          { op: "sharpen", name: { tr: "Keskinleştir (Unsharp)", en: "Sharpen (Unsharp)" }, tag: { tr: "Netlik", en: "Clarity" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>' },
+          { op: "gaussian_blur", name: { tr: "Gauss Bulanıklık", en: "Gaussian Blur" }, tag: { tr: "Yumuşak", en: "Soft" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>' },
+          { op: "canny", name: { tr: "Karakalem Çizim", en: "Canny Edge Sketch" }, tag: { tr: "Sanat", en: "Art" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>' }
         ]
       },
       retouch: {
-        title: "Portre & Rötuş",
-        sub: "Cilt pürüzsüzleştirme ve portre geliştirme",
+        title: { tr: "Portre & Rötuş", en: "Portrait & Retouch" },
+        sub: { tr: "Cilt pürüzsüzleştirme ve portre geliştirme", en: "Skin smoothing and portrait enhancement" },
         cards: [
-          { op: "denoise", name: "Gece Parazit Giderme", tag: "Denoise", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>' },
-          { op: "bilateral_filter", name: "Cilt Pürüzsüzleştir", tag: "Portre", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5 2 4 2 4-2 4-2"/></svg>' },
-          { op: "face_blur", name: "Yüz Sansürü / Mozaik", tag: "Gizlilik", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2" fill="currentColor"/></svg>' }
+          { op: "denoise", name: { tr: "Gece Parazit Giderme", en: "Noise Reduction (Denoise)" }, tag: "Denoise", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>' },
+          { op: "bilateral_filter", name: { tr: "Cilt Pürüzsüzleştir", en: "Skin Smoothing" }, tag: { tr: "Portre", en: "Portrait" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5 2 4 2 4-2 4-2"/></svg>' },
+          { op: "face_blur", name: { tr: "Yüz Sansürü / Mozaik", en: "Face Censorship / Mosaic" }, tag: { tr: "Gizlilik", en: "Privacy" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2" fill="currentColor"/></svg>' }
         ]
       },
       geometry: {
-        title: "Kırp & Geometri",
-        sub: "Boyutlandırma, perspektif düzeltme ve döndürme",
+        title: { tr: "Kırp & Geometri", en: "Crop & Geometry" },
+        sub: { tr: "Boyutlandırma, perspektif düzeltme ve döndürme", en: "Resizing, perspective correction, and rotation" },
         cards: [
-          { op: "resize", name: "Boyutlandır", tag: "Ölçü", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/></svg>' },
-          { op: "rotate", name: "Serbest Döndür", tag: "Açı", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>' },
-          { op: "flip", name: "Aynala / Çevir", tag: "Yön", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 3 4 7 8 11"/><polyline points="16 21 20 17 16 13"/></svg>' },
-          { op: "perspective_warp", name: "4-Köşe Perspektif", tag: "CamScan", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5l18-2-3 16L4 21z"/></svg>' }
+          { op: "resize", name: { tr: "Boyutlandır", en: "Resize Image" }, tag: { tr: "Ölçü", en: "Scale" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/></svg>' },
+          { op: "rotate", name: { tr: "Serbest Döndür", en: "Free Rotation" }, tag: { tr: "Açı", en: "Angle" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>' },
+          { op: "flip", name: { tr: "Aynala / Çevir", en: "Flip / Mirror" }, tag: { tr: "Yön", en: "Direction" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 3 4 7 8 11"/><polyline points="16 21 20 17 16 13"/></svg>' },
+          { op: "perspective_warp", name: { tr: "4-Köşe Perspektif", en: "4-Corner Perspective" }, tag: "CamScan", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5l18-2-3 16L4 21z"/></svg>' }
         ]
       },
       text: {
-        title: "Yazı & Dijital İmza",
-        sub: "Filigran, damga ve dokunmatik imza ekleme",
+        title: { tr: "Yazı & Dijital İmza", en: "Text & Signature" },
+        sub: { tr: "Filigran, damga ve dokunmatik imza ekleme", en: "Watermarks, stamps, and digital signatures" },
         cards: [
-          { op: "qr_overlay", name: "QR Kod Filigranı", tag: "QR", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>' },
-          { op: "watermark", name: "Yazı / Filigran", tag: "Metin", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>' },
-          { op: "stamp", name: "Resmi Kaşe / Damga", tag: "Onay", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>' },
-          { op: "signature_pad", name: "İmza Çiz (İmza Pad)", tag: "Çizim", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-2-2-12 12v4h4z"/></svg>', action: "openSigModal" },
-          { op: "signature_extract", name: "İmza Çıkar (Şeffaf)", tag: "Ayıkla", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3l5 5L8 21H3v-5L16 3z"/></svg>' }
+          { op: "qr_overlay", name: { tr: "QR Kod Filigranı", en: "QR Code Watermark" }, tag: "QR", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>' },
+          { op: "watermark", name: { tr: "Yazı / Filigran", en: "Text / Watermark" }, tag: { tr: "Metin", en: "Text" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>' },
+          { op: "stamp", name: { tr: "Resmi Kaşe / Damga", en: "Official Stamp / Seal" }, tag: { tr: "Onay", en: "Stamp" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>' },
+          { op: "signature_pad", name: { tr: "İmza Çiz (İmza Pad)", en: "Draw Signature Pad" }, tag: { tr: "Çizim", en: "Draw" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-2-2-12 12v4h4z"/></svg>', action: "openSigModal" },
+          { op: "signature_extract", name: { tr: "İmza Çıkar (Şeffaf)", en: "Extract Signature (Alpha)" }, tag: { tr: "Ayıkla", en: "Extract" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3l5 5L8 21H3v-5L16 3z"/></svg>' }
         ]
       },
       docs: {
-        title: "Belge & Evrak Araçları",
-        sub: "Gölge giderme, eğrilik düzeltme ve kişisel veri maskeleme",
+        title: { tr: "Belge & Evrak Araçları", en: "Document & Paper Tools" },
+        sub: { tr: "Gölge giderme, eğrilik düzeltme ve kişisel veri maskeleme", en: "Shadow removal, deskewing, and PII masking" },
         cards: [
-          { op: "shadow_removal", name: "Gölge Temizle", tag: "Aydınlat", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/></svg>' },
-          { op: "deskew", name: "Otomatik Doğrult", tag: "Deskew", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="2" y1="12" x2="22" y2="12"/></svg>' },
-          { op: "auto_pii", name: "TC/IBAN Maskele", tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', action: "autoPii" },
-          { op: "ocr_read", name: "Metin Oku (OCR)", tag: "OCR", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/></svg>', action: "ocrRead" },
-          { op: "redact", name: "Hassas Bilgi Sansürle", tag: "Sansür", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2" fill="currentColor"/></svg>' },
-          { op: "adaptive_threshold", name: "Siyah-Beyaz Tarama", tag: "Fotokopi", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>' }
+          { op: "shadow_removal", name: { tr: "Gölge Temizle", en: "Remove Document Shadows" }, tag: { tr: "Aydınlat", en: "Clean" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/></svg>' },
+          { op: "deskew", name: { tr: "Otomatik Doğrult", en: "Auto Deskew Document" }, tag: "Deskew", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="2" y1="12" x2="22" y2="12"/></svg>' },
+          { op: "auto_pii", name: { tr: "TC/IBAN Maskele", en: "Auto Mask PII (ID/IBAN)" }, tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', action: "autoPii" },
+          { op: "ocr_read", name: { tr: "Metin Oku (OCR)", en: "Read Text (OCR)" }, tag: "OCR", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/></svg>', action: "ocrRead" },
+          { op: "redact", name: { tr: "Hassas Bilgi Sansürle", en: "Redact Sensitive Data" }, tag: { tr: "Sansür", en: "Redact" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2" fill="currentColor"/></svg>' },
+          { op: "adaptive_threshold", name: { tr: "Siyah-Beyaz Tarama", en: "B&W Document Scan" }, tag: { tr: "Fotokopi", en: "Scan" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>' }
         ]
       }
+    };
+
+    // İngilizce Efekt Başlık Eşlemeleri
+    const EFFECT_TITLE_EN = {
+      auto_enhance: "1-Tap Auto-Enhance",
+      background_removal: "Remove Background (Cutout)",
+      inpaint: "Magic Eraser (Inpaint)",
+      sharpen: "Unblur (Sharpen)",
+      face_blur: "Face Censorship / Mosaic",
+      brightness_contrast: "Brightness / Contrast",
+      vibrance: "Vibrance & Saturation",
+      curves: "Color Curves",
+      histogram_equalization: "HDR CLAHE Equalization",
+      gamma: "Gamma Correction",
+      grayscale: "Black & White (Grayscale)",
+      preset: "Cinematic LUT Preset",
+      duotone: "Duotone Gradient Map",
+      color_splash: "Color Splash (Selective Color)",
+      tilt_shift: "Tilt-Shift Miniature",
+      vignette: "Vignette Framing",
+      glitch: "Glitch & RGB Split",
+      film_grain: "Analog Film Grain",
+      gaussian_blur: "Gaussian Blur",
+      canny: "Canny Edge Detection",
+      denoise: "Noise Reduction (Denoise)",
+      bilateral_filter: "Skin Smoothing (Bilateral)",
+      resize: "Resize Image",
+      rotate: "Rotate Image",
+      flip: "Flip / Mirror",
+      perspective_warp: "4-Corner Perspective Warp",
+      qr_overlay: "QR Code Watermark",
+      watermark: "Text / Watermark",
+      stamp: "Official Stamp / Seal",
+      signature_pad: "Digital Signature",
+      signature_extract: "Extract Signature (Alpha)",
+      shadow_removal: "Remove Document Shadows",
+      deskew: "Auto Deskew Document",
+      auto_pii: "Auto Mask PII (ID/IBAN)",
+      ocr_read: "Read Text (OCR)",
+      redact: "Redact Sensitive Region",
+      adaptive_threshold: "B&W Document Scan (Adaptive)"
     };
 
     let activeCategory = "ai";
@@ -1888,6 +1984,33 @@
       if (mainSidebar) mainSidebar.classList.toggle("pinned");
     }
 
+    let currentLang = "tr";
+    try {
+      currentLang = localStorage.getItem("pixelflow_lang") || "tr";
+    } catch (e) {}
+
+    function setLanguage(lang) {
+      currentLang = (lang === "en") ? "en" : "tr";
+      try {
+        localStorage.setItem("pixelflow_lang", currentLang);
+      } catch (e) {}
+
+      const btnTr = document.getElementById("langBtnTr");
+      const btnEn = document.getElementById("langBtnEn");
+      if (btnTr) btnTr.classList.toggle("active", currentLang === "tr");
+      if (btnEn) btnEn.classList.toggle("active", currentLang === "en");
+
+      document.querySelectorAll("[data-tr]").forEach(el => {
+        const text = el.getAttribute("data-" + currentLang);
+        if (text) {
+          el.textContent = text;
+        }
+      });
+
+      renderCategoryDrawer();
+      renderStepsUI();
+    }
+
     function switchCategory(catKey) {
       activeCategory = catKey;
       document.querySelectorAll(".sidebar-nav .nav-item").forEach(item => {
@@ -1898,17 +2021,22 @@
 
     function renderCategoryDrawer() {
       const cat = CATEGORY_CARDS[activeCategory] || CATEGORY_CARDS.ai;
-      drawerTitleText.textContent = cat.title;
-      drawerSubText.textContent = cat.sub;
+      const title = (typeof cat.title === "object") ? (cat.title[currentLang] || cat.title.tr) : cat.title;
+      const sub = (typeof cat.sub === "object") ? (cat.sub[currentLang] || cat.sub.tr) : cat.sub;
+      if (drawerTitleText) drawerTitleText.textContent = title;
+      if (drawerSubText) drawerSubText.textContent = sub;
+      if (!categoryCardsGrid) return;
       categoryCardsGrid.innerHTML = "";
 
       cat.cards.forEach(c => {
         const div = document.createElement("div");
         div.className = "tool-card";
+        const cName = (typeof c.name === "object") ? (c.name[currentLang] || c.name.tr) : c.name;
+        const cTag = (typeof c.tag === "object") ? (c.tag[currentLang] || c.tag.tr) : c.tag;
         div.innerHTML = `
-          ${c.tag ? `<span class="card-tag ${c.tag.toLowerCase()}">${c.tag}</span>` : ""}
+          ${cTag ? `<span class="card-tag ${String(cTag).toLowerCase()}">${cTag}</span>` : ""}
           <div class="tool-card-icon">${c.icon}</div>
-          <div class="tool-card-name">${c.name}</div>
+          <div class="tool-card-name">${cName}</div>
         `;
         div.onclick = () => {
           if (c.action === "openSigModal") {
@@ -2003,13 +2131,18 @@
     }
 
     function renderStepsUI() {
+      if (!stepsList || !activeLayersCount) return;
       stepsList.innerHTML = "";
-      activeLayersCount.textContent = `${activeSteps.length} Katman`;
+      activeLayersCount.textContent = (currentLang === "en")
+        ? `${activeSteps.length} ${activeSteps.length === 1 ? "Layer" : "Layers"}`
+        : `${activeSteps.length} Katman`;
 
       if (activeSteps.length === 0) {
         stepsList.innerHTML = `
           <div style="text-align:center;padding:24px 10px;color:var(--pf-text-muted);font-size:12px;border:1px dashed var(--pf-border);border-radius:var(--radius-sm);line-height:1.5;">
-            Henüz efekt katmanı eklenmedi.<br/>Yukarıdaki kartlara tıklayarak işlem ekleyebilirsiniz.
+            ${(currentLang === "en")
+              ? "No effect layers applied yet.<br/>Click any card above to add an operation."
+              : "Henüz efekt katmanı eklenmedi.<br/>Yukarıdaki kartlara tıklayarak işlem ekleyebilirsiniz."}
           </div>
         `;
         syncPerspectivePins();
@@ -2018,6 +2151,8 @@
 
       activeSteps.forEach((step, idx) => {
         const def = EFFECT_DEFS[step.op] || { title: step.op, tag: "Özel", fields: [] };
+        const localizedTitle = (currentLang === "en" && EFFECT_TITLE_EN[step.op]) ? EFFECT_TITLE_EN[step.op] : def.title;
+        const removeTitle = (currentLang === "en") ? "Remove Layer" : "Katmanı Kaldır";
         const card = document.createElement("div");
         card.className = "active-step-card";
 
@@ -2026,9 +2161,9 @@
         header.innerHTML = `
           <div style="display:flex;align-items:center;gap:6px;">
             <span style="font-size:11px;font-weight:700;color:var(--pf-accent);background:var(--pf-accent-soft);padding:2px 5px;border-radius:4px;">#${idx + 1}</span>
-            <span class="step-title">${def.title}</span>
+            <span class="step-title">${localizedTitle}</span>
           </div>
-          <button type="button" class="step-remove" title="Katmanı Kaldır" onclick="deleteStep(${idx})">×</button>
+          <button type="button" class="step-remove" title="${removeTitle}" onclick="deleteStep(${idx})">×</button>
         `;
         card.appendChild(header);
 
@@ -2913,8 +3048,8 @@
       }
     });
 
-    // Başlangıç Yüklemesi
-    renderCategoryDrawer();
+    // Başlangıç Yüklemesi (Dil Tercihi ve Çekmece)
+    setLanguage(currentLang);
   </script>
 </body>
 </html>
