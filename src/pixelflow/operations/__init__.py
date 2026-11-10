@@ -1,3 +1,7 @@
+from pixelflow.operations.auto_enhance import (
+    AutoEnhanceOperation,
+    AutoEnhanceParams,
+)
 from pixelflow.operations.background import (
     BackgroundRemovalOperation,
     BackgroundRemovalParams,
@@ -94,6 +98,8 @@ from pixelflow.operations.vibrance import (
 __all__ = [
     "AdaptiveThresholdOperation",
     "AdaptiveThresholdParams",
+    "AutoEnhanceOperation",
+    "AutoEnhanceParams",
     "BackgroundRemovalOperation",
     "BackgroundRemovalParams",
     "BilateralFilterOperation",

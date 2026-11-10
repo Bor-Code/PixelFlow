@@ -1129,14 +1129,13 @@
     // Kapsamlı Efekt ve Filtre Tanımları
     const EFFECT_DEFS = {
       // Akıllı & AI Araçlar
-      one_tap_enhance: {
-        title: "1-Tap Enhance (Tek Tıkla Canlandır)",
+      auto_enhance: {
+        title: "1-Tap Akıllı İyileştirme (Auto-Enhance)",
         tag: "AI",
-        isPreset: true,
-        ops: [
-          { op: "histogram_equalization", params: { use_clahe: true, clip_limit: 2.2, tile_grid_size: 8 } },
-          { op: "gamma", params: { gamma: 1.15 } },
-          { op: "sharpen", params: { amount: 0.9, kernel_size: 3, sigma: 1.0 } }
+        defaults: { strength: 1.0, auto_white_balance: true, auto_contrast: true, unsharp: true, clip_limit: 2.0 },
+        fields: [
+          { key: "strength", label: "İyileştirme Gücü", min: 0.2, max: 2.0, step: 0.1 },
+          { key: "clip_limit", label: "Kontrast Sınırı", min: 1.0, max: 4.5, step: 0.2 }
         ]
       },
       background_removal: {
@@ -1381,6 +1380,7 @@
         title: "Akıllı & AI Araçlar",
         sub: "Yapay zeka destekli tek tıkla fotoğraf iyileştirme ve kesim",
         cards: [
+          { op: "auto_enhance", name: "1-Tap Auto-Enhance", tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 6 1-5 5 1 7-5-4-5 4 1-7-5-5 6-1 3-6z"/></svg>' },
           { op: "inpaint", name: "Sihirli Silgi (Inpaint)", tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2l4 4-12 12H6v-4L18 2z"/><path d="M14 6l4 4"/></svg>' },
           { op: "background_removal", name: "Arka Plan Sil", tag: "AI", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 18l4-4-4-4"/></svg>' },
           { op: "sharpen", name: "Unblur (Netleştir)", tag: "HD", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>' },
