@@ -74,6 +74,10 @@ from pixelflow.operations.perspective import (
     PerspectiveWarpOperation,
     PerspectiveWarpParams,
 )
+from pixelflow.operations.preset import (
+    PresetOperation,
+    PresetParams,
+)
 from pixelflow.operations.redact import (
     RedactOperation,
     RedactParams,
@@ -136,6 +140,8 @@ __all__ = [
     "OtsuThresholdParams",
     "PerspectiveWarpOperation",
     "PerspectiveWarpParams",
+    "PresetOperation",
+    "PresetParams",
     "RedactOperation",
     "RedactParams",
     "ResizeOperation",
