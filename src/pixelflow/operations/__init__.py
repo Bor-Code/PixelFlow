@@ -64,6 +64,10 @@ from pixelflow.operations.redact import (
     StampOperation,
     StampParams,
 )
+from pixelflow.operations.signature import (
+    SignatureExtractOperation,
+    SignatureExtractParams,
+)
 from pixelflow.operations.threshold import (
     AdaptiveThresholdOperation,
     AdaptiveThresholdParams,
@@ -118,6 +122,8 @@ __all__ = [
     "ShadowRemovalParams",
     "SharpenOperation",
     "SharpenParams",
+    "SignatureExtractOperation",
+    "SignatureExtractParams",
     "SobelOperation",
     "SobelParams",
     "StampOperation",

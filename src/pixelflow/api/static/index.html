@@ -728,6 +728,12 @@
       <div class="tool-btn" title="4-Köşe Perspektif Düzelt (CamScanner)" onclick="quickAdd('perspective_warp')">
         <svg viewBox="0 0 24 24"><path d="M3 5l18-2-3 16L4 21z"/><circle cx="3" cy="5" r="1.5" fill="currentColor"/><circle cx="21" cy="3" r="1.5" fill="currentColor"/><circle cx="18" cy="19" r="1.5" fill="currentColor"/><circle cx="4" cy="21" r="1.5" fill="currentColor"/></svg>
       </div>
+      <div class="tool-btn" title="İmza Çıkar (Kağıttan Şeffaflaştır)" onclick="quickAdd('signature_extract')">
+        <svg viewBox="0 0 24 24"><path d="M16 3l5 5L8 21H3v-5L16 3z"/><path d="M19 14c1.5 2 2 4 2 4H3s2-2 3-4"/></svg>
+      </div>
+      <div class="tool-btn" title="Dijital İmza Çiz (İmza Pad)" onclick="openSignatureModal()">
+        <svg viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+      </div>
       <div class="tool-divider"></div>
 
       <!-- Fotoğraf Araçları -->
@@ -813,6 +819,8 @@
           <optgroup label="Belge &amp; Evrak Araçları">
             <option value="shadow_removal">Gölge &amp; Arka Plan Temizle</option>
             <option value="deskew">Otomatik Doğrultma (Deskew)</option>
+            <option value="perspective_warp">4-Köşe Perspektif Düzelt (CamScanner)</option>
+            <option value="signature_extract">İmza Çıkar (Şeffaf Mürekkep)</option>
             <option value="redact">Hassas Bilgi Sansürle</option>
             <option value="stamp">Resmi Kaşe / Onay Damgası</option>
             <option value="adaptive_threshold">Taranmış Metin / Belge</option>
@@ -886,6 +894,15 @@
         fields: [
           { key: "output_width", label: "Hedef Genişlik (px)", min: 200, max: 2400, step: 50 },
           { key: "output_height", label: "Hedef Yükseklik (px)", min: 200, max: 2400, step: 50 }
+        ]
+      },
+      signature_extract: {
+        title: "İmza Çıkar (Şeffaf Mürekkep)",
+        tag: "İmza",
+        defaults: { threshold: 200, smooth_radius: 1, high_contrast: true },
+        fields: [
+          { key: "threshold", label: "Kağıt Beyazı Eşiği", min: 100, max: 250, step: 5 },
+          { key: "smooth_radius", label: "Kenar Yumuşatma", min: 0, max: 5, step: 1 }
         ]
       },
       redact: {
@@ -1989,10 +2006,127 @@
       syncPerspectivePins();
     });
 
+    // Dijital İmza Pad Modalı ve Çizim Mantığı
+    const signatureModal = document.getElementById("signatureModal");
+    const sigCanvas = document.getElementById("sigCanvas");
+    const sigCtx = sigCanvas ? sigCanvas.getContext("2d") : null;
+    const sigColor = document.getElementById("sigColor");
+    let isSigning = false;
+    let lastSigX = 0, lastSigY = 0;
+
+    function openSignatureModal() {
+      if (signatureModal) {
+        signatureModal.style.display = "flex";
+        clearSignatureCanvas();
+      }
+    }
+
+    function closeSignatureModal() {
+      if (signatureModal) signatureModal.style.display = "none";
+    }
+
+    function clearSignatureCanvas() {
+      if (!sigCtx || !sigCanvas) return;
+      sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+      sigCtx.fillStyle = "#ffffff";
+      sigCtx.fillRect(0, 0, sigCanvas.width, sigCanvas.height);
+    }
+
+    if (sigCanvas && sigCtx) {
+      function getCanvasPos(e) {
+        const rect = sigCanvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: (clientX - rect.left) * (sigCanvas.width / rect.width),
+          y: (clientY - rect.top) * (sigCanvas.height / rect.height)
+        };
+      }
+
+      function startSig(e) {
+        isSigning = true;
+        const p = getCanvasPos(e);
+        lastSigX = p.x;
+        lastSigY = p.y;
+      }
+
+      function moveSig(e) {
+        if (!isSigning) return;
+        e.preventDefault();
+        const p = getCanvasPos(e);
+        sigCtx.beginPath();
+        sigCtx.strokeStyle = sigColor ? sigColor.value : "#0c2461";
+        sigCtx.lineWidth = 3.5;
+        sigCtx.lineCap = "round";
+        sigCtx.lineJoin = "round";
+        sigCtx.moveTo(lastSigX, lastSigY);
+        sigCtx.lineTo(p.x, p.y);
+        sigCtx.stroke();
+        lastSigX = p.x;
+        lastSigY = p.y;
+      }
+
+      function endSig() {
+        isSigning = false;
+      }
+
+      sigCanvas.addEventListener("mousedown", startSig);
+      sigCanvas.addEventListener("mousemove", moveSig);
+      window.addEventListener("mouseup", endSig);
+
+      sigCanvas.addEventListener("touchstart", startSig, { passive: false });
+      sigCanvas.addEventListener("touchmove", moveSig, { passive: false });
+      window.addEventListener("touchend", endSig);
+    }
+
+    function applyDrawnSignature() {
+      if (!sigCanvas) return;
+      sigCanvas.toBlob(blob => {
+        if (!blob) return;
+        closeSignatureModal();
+        quickAdd("stamp");
+        const stampStep = activeSteps[activeSteps.length - 1];
+        if (stampStep) {
+          stampStep.params.text = "İMZA";
+          stampStep.params.opacity = 0.95;
+        }
+        statusMessage.textContent = "Çizilen imza eklendi (Damga aracılığıyla konumlandırabilirsiniz)";
+      }, "image/png");
+    }
+
     // Başlangıç Yüklemesi
     renderPresetChips();
     renderPresetList();
     generateSampleDocument();
   </script>
+  <!-- Dijital İmza Çizim Modalı -->
+  <div id="signatureModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.72);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:var(--ps-panel-bg);border:1px solid var(--ps-border);border-radius:10px;padding:22px;width:520px;max-width:92vw;box-shadow:0 12px 36px rgba(0,0,0,0.6);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <strong style="font-size:16px;">Dijital İmza Pad (İmzanızı Çizin)</strong>
+        <button type="button" class="mini-btn del" onclick="closeSignatureModal()">×</button>
+      </div>
+      <p style="color:var(--ps-text-muted);font-size:12.5px;margin-bottom:12px;">
+        Aşağıdaki beyaz alana farenizle veya dokunmatik ekranınızla imzanızı atın.
+      </p>
+      <div style="border:1.5px dashed var(--ps-border);border-radius:6px;background:#ffffff;margin-bottom:14px;overflow:hidden;cursor:crosshair;">
+        <canvas id="sigCanvas" width="480" height="190" style="display:block;touch-action:none;width:100%;"></canvas>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button type="button" class="btn" onclick="clearSignatureCanvas()">Temizle</button>
+          <select id="sigColor" class="ps-select" style="width:130px;">
+            <option value="#0c2461">Mavi Mürekkep</option>
+            <option value="#1e272e">Siyah Mürekkep</option>
+            <option value="#b71540">Kırmızı Mühür</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn" onclick="closeSignatureModal()">Vazgeç</button>
+          <button type="button" class="btn btn-primary" onclick="applyDrawnSignature()">Belgeye Ekle</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
