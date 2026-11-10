@@ -830,6 +830,7 @@
           </optgroup>
           <optgroup label="Fotoğraf &amp; Ayarlama">
             <option value="background_removal">Arka Planı Kaldır (Dekupe)</option>
+            <option value="curves">Renk Eğrileri (Curves)</option>
             <option value="brightness_contrast">Parlaklık &amp; Kontrast</option>
             <option value="gamma">Gama Ton Eğrisi</option>
             <option value="histogram_equalization">Otomatik HDR (CLAHE)</option>
@@ -849,6 +850,14 @@
       </div>
 
       <div class="panel-content" id="panelLayers">
+        <div style="background:var(--ps-canvas-bg);border:1px solid var(--ps-border);border-radius:6px;padding:8px;margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:11.5px;font-weight:600;color:var(--ps-text-muted);text-transform:uppercase;">Canlı Histogram (RGB)</span>
+            <span id="histStats" style="font-size:11px;color:var(--ps-text-muted);">256 Seviye</span>
+          </div>
+          <canvas id="histCanvas" width="256" height="64" style="width:100%;height:64px;display:block;border-radius:4px;background:#0f172a;"></canvas>
+        </div>
+
         <div class="quick-preset-chips" id="quickPresetChips">
           <!-- Mod'a göre dinamik dolar -->
         </div>
@@ -969,6 +978,15 @@
           { key: "brightness", label: "Parlaklık", min: -0.8, max: 0.8, step: 0.05 },
           { key: "contrast", label: "Kontrast", min: 0.4, max: 2.5, step: 0.05 }
         ]
+      },
+      curves: {
+        title: "Renk & Ton Eğrileri (Curves)",
+        tag: "Ton",
+        defaults: { channel: "all", points: [[0, 0], [64, 45], [192, 215], [255, 255]] },
+        selectFields: [
+          { key: "channel", label: "Kanal", options: [["all", "RGB (Tüm Kanallar)"], ["r", "Kırmızı (R)"], ["g", "Yeşil (G)"], ["b", "Mavi (B)"]] }
+        ],
+        fields: []
       },
       gamma: {
         title: "Gama Ton Eğrisi",
@@ -1416,6 +1434,7 @@
         imgAfter.onload = () => {
           metaAfter.textContent = `${imgAfter.naturalWidth} × ${imgAfter.naturalHeight} px`;
           canvasDims.textContent = `${imgAfter.naturalWidth} × ${imgAfter.naturalHeight} piksel`;
+          drawLiveHistogram(imgAfter);
         };
         imgAfter.src = outUrl;
         imgAfter.style.display = "block";
@@ -2108,6 +2127,57 @@
         }
         statusMessage.textContent = "Çizilen imza eklendi (Damga aracılığıyla konumlandırabilirsiniz)";
       }, "image/png");
+    }
+
+    function drawLiveHistogram(img) {
+      const canvas = document.getElementById("histCanvas");
+      if (!canvas || !img || !img.naturalWidth) return;
+      const ctx = canvas.getContext("2d");
+      const sampleCanvas = document.createElement("canvas");
+      const sampleW = 160;
+      const sampleH = Math.max(1, Math.round((img.naturalHeight / img.naturalWidth) * sampleW));
+      sampleCanvas.width = sampleW;
+      sampleCanvas.height = sampleH;
+      const sCtx = sampleCanvas.getContext("2d");
+      sCtx.drawImage(img, 0, 0, sampleW, sampleH);
+      const imgData = sCtx.getImageData(0, 0, sampleW, sampleH).data;
+
+      const rHist = new Uint32Array(256);
+      const gHist = new Uint32Array(256);
+      const bHist = new Uint32Array(256);
+      let maxVal = 1;
+
+      for (let i = 0; i < imgData.length; i += 4) {
+        const r = imgData[i], g = imgData[i + 1], b = imgData[i + 2];
+        rHist[r]++; gHist[g]++; bHist[b]++;
+        if (rHist[r] > maxVal) maxVal = rHist[r];
+        if (gHist[g] > maxVal) maxVal = gHist[g];
+        if (bHist[b] > maxVal) maxVal = bHist[b];
+      }
+
+      ctx.clearRect(0, 0, 256, 64);
+      ctx.fillStyle = "#090d16";
+      ctx.fillRect(0, 0, 256, 64);
+
+      function drawCurve(hist, strokeColor, fillColor) {
+        ctx.strokeStyle = strokeColor;
+        ctx.fillStyle = fillColor;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(0, 64);
+        for (let x = 0; x < 256; x++) {
+          const y = 64 - (hist[x] / maxVal) * 58;
+          ctx.lineTo(x, y);
+        }
+        ctx.lineTo(255, 64);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      drawCurve(rHist, "rgba(239, 68, 68, 0.9)", "rgba(239, 68, 68, 0.15)");
+      drawCurve(gHist, "rgba(34, 197, 94, 0.9)", "rgba(34, 197, 94, 0.15)");
+      drawCurve(bHist, "rgba(59, 130, 246, 0.9)", "rgba(59, 130, 246, 0.15)");
     }
 
     // Başlangıç Yüklemesi
