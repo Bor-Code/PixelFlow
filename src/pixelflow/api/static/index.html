@@ -8,25 +8,25 @@
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
     :root {
-      --pf-bg-base: #0f1115;
-      --pf-bg-sidebar: #15181e;
-      --pf-bg-drawer: #1a1e26;
-      --pf-bg-card: #222733;
-      --pf-bg-card-hover: #2b3242;
-      --pf-border: #2c3342;
-      --pf-border-light: #3a4457;
+      --pf-bg-base: #0c0e12;
+      --pf-bg-sidebar: #13161c;
+      --pf-bg-drawer: #181c24;
+      --pf-bg-card: #202530;
+      --pf-bg-card-hover: #293040;
+      --pf-border: #282f3d;
+      --pf-border-light: #384255;
       --pf-accent: #22c55e;
       --pf-accent-hover: #16a34a;
-      --pf-accent-soft: rgba(34, 197, 94, 0.15);
+      --pf-accent-soft: rgba(34, 197, 94, 0.16);
       --pf-blue: #0084ff;
-      --pf-blue-soft: rgba(0, 132, 255, 0.15);
+      --pf-blue-soft: rgba(0, 132, 255, 0.16);
       --pf-text: #e2e8f0;
-      --pf-text-muted: #8e9bb0;
+      --pf-text-muted: #8a97ac;
       --pf-text-white: #ffffff;
       --pf-danger: #ef4444;
       --radius-sm: 6px;
       --radius-md: 10px;
-      --radius-lg: 14px;
+      --radius-lg: 16px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
@@ -41,7 +41,7 @@
       font-size: 13.5px;
     }
 
-    /* Üst Gezinme Çubuğu (Fotor Style) */
+    /* Üst Gezinme Çubuğu (Fotor Style - 2. Resim) */
     .topbar {
       height: 56px;
       background: var(--pf-bg-sidebar);
@@ -49,8 +49,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 18px;
-      z-index: 100;
+      padding: 0 20px;
+      z-index: 150;
       flex-shrink: 0;
     }
     .topbar-left, .topbar-center, .topbar-right {
@@ -61,8 +61,8 @@
     .brand-logo {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 19px;
+      gap: 10px;
+      font-size: 20px;
       font-weight: 800;
       letter-spacing: -0.5px;
       color: var(--pf-text-white);
@@ -74,16 +74,16 @@
       color: var(--pf-accent);
     }
     .btn-upload-pill {
-      background: var(--pf-card);
+      background: var(--pf-bg-card);
       border: 1px solid var(--pf-border);
       color: var(--pf-text-white);
-      padding: 7px 14px;
+      padding: 7px 16px;
       border-radius: 20px;
       font-size: 13px;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
@@ -96,8 +96,8 @@
       background: transparent;
       border: 1px solid transparent;
       color: var(--pf-text-muted);
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border-radius: var(--radius-sm);
       display: inline-flex;
       align-items: center;
@@ -106,7 +106,7 @@
       transition: all 0.15s ease;
     }
     .btn-icon:hover:not(:disabled) {
-      background: var(--pf-card);
+      background: var(--pf-bg-card);
       color: var(--pf-text-white);
       border-color: var(--pf-border);
     }
@@ -118,27 +118,27 @@
       background: var(--pf-accent);
       border: 1px solid var(--pf-accent);
       color: #0c1b0e;
-      padding: 8px 18px;
+      padding: 8px 22px;
       border-radius: 20px;
       font-size: 13.5px;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
+      box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
       transition: all 0.15s ease;
     }
     .btn-download-main:hover {
       background: var(--pf-accent-hover);
-      box-shadow: 0 6px 18px rgba(34, 197, 94, 0.45);
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
       transform: translateY(-1px);
     }
     .select-format {
-      background: var(--pf-card);
+      background: var(--pf-bg-card);
       border: 1px solid var(--pf-border);
       color: var(--pf-text-white);
-      padding: 7px 10px;
+      padding: 7px 12px;
       border-radius: var(--radius-sm);
       font-size: 12.5px;
       font-weight: 600;
@@ -146,52 +146,84 @@
       cursor: pointer;
     }
 
-    /* Ana Çalışma Alanı */
+    /* Ana Alan */
     .app-main {
       flex: 1;
       display: flex;
-      overflow: hidden;
       position: relative;
+      overflow: hidden;
     }
 
-    /* 1. Resimdeki Açılır / Kayar Sol Menü (Expandable Left Sidebar) */
+    /* 1. RESİMDEKİ KAYARAK AÇILAN SOL MENÜ (Slide-Out Expandable Left Sidebar) */
     .sidebar-dock {
-      width: 66px;
+      width: 72px;
       background: var(--pf-bg-sidebar);
       border-right: 1px solid var(--pf-border);
       display: flex;
       flex-direction: column;
-      transition: width 0.26s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow-x: hidden;
-      z-index: 60;
-      position: relative;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 120;
+      overflow: hidden;
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+      transition: width 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.28s ease;
+    }
+    .sidebar-dock:hover, .sidebar-dock.pinned {
+      width: 235px;
+      box-shadow: 12px 0 36px rgba(0, 0, 0, 0.7);
+    }
+    .sidebar-header-toggle {
+      height: 52px;
+      padding: 0 22px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--pf-text-white);
+      font-weight: 700;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .sidebar-header-toggle svg {
+      width: 22px;
+      height: 22px;
       flex-shrink: 0;
     }
-    .sidebar-dock:hover {
-      width: 215px;
-      box-shadow: 6px 0 24px rgba(0, 0, 0, 0.55);
+    .sidebar-header-toggle span {
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity 0.22s ease 0.04s, transform 0.22s ease 0.04s;
     }
+    .sidebar-dock:hover .sidebar-header-toggle span,
+    .sidebar-dock.pinned .sidebar-header-toggle span {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
     .sidebar-nav {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
       padding: 10px 8px;
     }
     .nav-item {
       display: flex;
       align-items: center;
-      height: 48px;
-      padding: 0 14px;
+      height: 50px;
+      padding: 0 16px;
       border-radius: var(--radius-md);
       cursor: pointer;
       color: var(--pf-text-muted);
-      transition: all 0.15s ease;
+      transition: background 0.15s ease, color 0.15s ease;
       white-space: nowrap;
       position: relative;
-      gap: 14px;
+      gap: 16px;
     }
     .nav-item:hover {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.06);
       color: var(--pf-text-white);
     }
     .nav-item.active {
@@ -210,8 +242,8 @@
       border-radius: 0 4px 4px 0;
     }
     .nav-item svg {
-      width: 22px;
-      height: 22px;
+      width: 23px;
+      height: 23px;
       flex-shrink: 0;
       stroke: currentColor;
       fill: none;
@@ -219,47 +251,52 @@
     }
     .nav-item span.label {
       font-size: 13.5px;
+      font-weight: 500;
+      color: var(--pf-text);
       opacity: 0;
-      transform: translateX(-6px);
-      transition: opacity 0.2s ease, transform 0.2s ease;
+      transform: translateX(-10px);
+      transition: opacity 0.24s ease 0.04s, transform 0.24s ease 0.04s;
       pointer-events: none;
     }
-    .sidebar-dock:hover .nav-item span.label {
+    .sidebar-dock:hover .nav-item span.label,
+    .sidebar-dock.pinned .nav-item span.label {
       opacity: 1;
       transform: translateX(0);
     }
     .nav-badge-ai {
       background: linear-gradient(135deg, #0084ff, #8b5cf6);
       color: #fff;
-      font-size: 9.5px;
+      font-size: 10px;
       font-weight: 800;
       padding: 2px 6px;
       border-radius: 8px;
       margin-left: auto;
       opacity: 0;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.22s ease 0.04s;
     }
-    .sidebar-dock:hover .nav-badge-ai {
+    .sidebar-dock:hover .nav-badge-ai,
+    .sidebar-dock.pinned .nav-badge-ai {
       opacity: 1;
     }
 
-    /* 2. Resimdeki İkincil Araç Paneli (Drawer / Cards / Sliders) */
+    /* 2. RESİMDEKİ İKİNCİL ÇEKMECE PANELİ (Fotor Style Category Drawer) */
     .drawer-panel {
-      width: 320px;
+      width: 330px;
+      margin-left: 72px; /* Sol menünün kapalı genişliği kadar boşluk */
       background: var(--pf-bg-drawer);
       border-right: 1px solid var(--pf-border);
       display: flex;
       flex-direction: column;
       overflow-y: auto;
       flex-shrink: 0;
-      z-index: 40;
+      z-index: 60;
     }
     .drawer-header {
-      padding: 16px 18px 12px;
+      padding: 18px 20px 14px;
       border-bottom: 1px solid var(--pf-border);
     }
     .drawer-title {
-      font-size: 15px;
+      font-size: 15.5px;
       font-weight: 700;
       color: var(--pf-text-white);
       display: flex;
@@ -274,7 +311,7 @@
 
     /* Fotor Tarzı Önerilen Araç Kartları Izgarası */
     .cards-section {
-      padding: 14px 16px;
+      padding: 16px 18px;
     }
     .section-headline {
       font-size: 11.5px;
@@ -282,44 +319,46 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--pf-text-muted);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 14px;
+      gap: 11px;
+      margin-bottom: 16px;
     }
     .tool-card {
       background: var(--pf-bg-card);
       border: 1px solid var(--pf-border);
       border-radius: var(--radius-md);
-      padding: 12px 10px;
+      padding: 14px 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      gap: 8px;
+      gap: 9px;
       cursor: pointer;
       position: relative;
-      transition: all 0.15s ease;
+      transition: all 0.16s ease;
     }
     .tool-card:hover {
       background: var(--pf-bg-card-hover);
       border-color: var(--pf-accent);
       transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     }
     .tool-card.active {
       border-color: var(--pf-accent);
       background: var(--pf-accent-soft);
     }
     .tool-card-icon {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.06);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -351,7 +390,7 @@
 
     /* Ayar Sürgüleri & Katman Kartları */
     .controls-section {
-      padding: 0 16px 20px;
+      padding: 0 18px 24px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -360,10 +399,10 @@
       background: var(--pf-bg-card);
       border: 1px solid var(--pf-border);
       border-radius: var(--radius-md);
-      padding: 12px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
     .step-header {
       display: flex;
@@ -374,7 +413,7 @@
     }
     .step-title {
       font-weight: 700;
-      font-size: 12.5px;
+      font-size: 13px;
       color: var(--pf-text-white);
     }
     .step-remove {
@@ -382,7 +421,7 @@
       border: none;
       color: var(--pf-text-muted);
       cursor: pointer;
-      font-size: 15px;
+      font-size: 16px;
       line-height: 1;
       padding: 2px 6px;
       border-radius: 4px;
@@ -394,12 +433,12 @@
     .slider-row {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
     }
     .slider-meta {
       display: flex;
       justify-content: space-between;
-      font-size: 11.5px;
+      font-size: 12px;
       color: var(--pf-text-muted);
       font-weight: 500;
     }
@@ -410,36 +449,36 @@
     input[type="range"] {
       -webkit-appearance: none;
       width: 100%;
-      height: 4px;
-      border-radius: 2px;
+      height: 5px;
+      border-radius: 3px;
       background: #2b3242;
       outline: none;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 15px;
-      height: 15px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       background: var(--pf-accent);
       cursor: pointer;
-      box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
       transition: transform 0.1s;
     }
     input[type="range"]::-webkit-slider-thumb:hover {
       transform: scale(1.25);
     }
 
-    /* Orta Kanvas Alanı (Center Canvas Workspace) */
+    /* ORTA KANVAS ALANI (Center Canvas Workspace) */
     .canvas-workspace {
       flex: 1;
-      background: #0a0c10;
+      background: #090b0e;
       position: relative;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
-    /* Boş Durum (Empty State / Fotor Tarzı) */
+    /* 2. Resimdeki Fotor Tarzı Boş Durum (Empty State Dropzone) */
     .empty-state-view {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -448,37 +487,37 @@
       align-items: center;
       justify-content: center;
       padding: 30px;
-      z-index: 20;
+      z-index: 30;
     }
     .empty-drop-card {
-      background: rgba(26, 30, 38, 0.6);
-      border: 2px dashed #2f3647;
+      background: rgba(22, 26, 34, 0.7);
+      border: 2px dashed #2c3445;
       border-radius: var(--radius-lg);
-      padding: 40px 48px;
+      padding: 44px 50px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      max-width: 540px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+      max-width: 560px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     }
     .empty-icon-circle {
-      width: 72px;
-      height: 72px;
+      width: 76px;
+      height: 76px;
       border-radius: 50%;
-      background: rgba(34, 197, 94, 0.1);
+      background: rgba(34, 197, 94, 0.12);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--pf-accent);
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
     .empty-icon-circle svg {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
     }
     .empty-headline {
-      font-size: 19px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--pf-text-white);
       margin-bottom: 8px;
@@ -486,7 +525,7 @@
     .empty-sub {
       font-size: 13.5px;
       color: var(--pf-text-muted);
-      margin-bottom: 24px;
+      margin-bottom: 26px;
       line-height: 1.5;
     }
     .btn-big-upload {
@@ -495,13 +534,13 @@
       border: none;
       font-size: 15px;
       font-weight: 700;
-      padding: 12px 30px;
+      padding: 13px 32px;
       border-radius: 24px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 9px;
-      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+      box-shadow: 0 6px 22px rgba(34, 197, 94, 0.4);
       transition: all 0.15s ease;
     }
     .btn-big-upload:hover {
@@ -514,15 +553,15 @@
       margin-top: 26px;
     }
     .sample-photo-chip {
-      background: var(--pf-card);
+      background: var(--pf-bg-card);
       border: 1px solid var(--pf-border);
       border-radius: var(--radius-sm);
-      padding: 8px 12px;
+      padding: 9px 14px;
       display: flex;
       align-items: center;
       gap: 8px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 600;
       color: var(--pf-text);
       transition: all 0.15s ease;
@@ -541,7 +580,7 @@
       overflow: hidden;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 20px;
     }
     .canvas-viewport {
       position: relative;
@@ -551,23 +590,23 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
-      border-radius: 4px;
+      border-radius: 6px;
       overflow: hidden;
     }
     .canvas-viewport img {
-      max-width: calc(100vw - 420px);
+      max-width: calc(100vw - 440px);
       max-height: calc(100vh - 120px);
       object-fit: contain;
       display: block;
     }
 
-    /* Karşılaştırma Araç Çubuğu (Canvas Floating Toolbar) */
+    /* Karşılaştırma Araç Çubuğu (Canvas Floating Bar) */
     .canvas-floating-bar {
       position: absolute;
       top: 18px;
       display: flex;
       gap: 8px;
-      background: rgba(21, 24, 30, 0.85);
+      background: rgba(21, 24, 30, 0.88);
       backdrop-filter: blur(8px);
       border: 1px solid var(--pf-border);
       padding: 4px 6px;
@@ -587,12 +626,12 @@
     }
     .floating-btn:hover { color: #fff; }
     .floating-btn.active {
-      background: var(--pf-card);
+      background: var(--pf-bg-card);
       color: var(--pf-text-white);
       border: 1px solid var(--pf-border-light);
     }
 
-    /* Seçim Kutusu (Marquee Selection) */
+    /* Seçim Kutusu & Pinler */
     .selection-marquee {
       position: absolute;
       border: 2px dashed #0084ff;
@@ -622,13 +661,13 @@
 
     /* Alt Durum Çubuğu */
     .bottom-status-bar {
-      height: 30px;
+      height: 32px;
       background: var(--pf-bg-sidebar);
       border-top: 1px solid var(--pf-border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 18px;
+      padding: 0 20px;
       font-size: 12px;
       color: var(--pf-text-muted);
       flex-shrink: 0;
@@ -640,8 +679,8 @@
       gap: 14px;
     }
     .status-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: var(--pf-accent);
     }
@@ -715,8 +754,13 @@
 
   <!-- Ana Çalışma Masası -->
   <main class="app-main">
-    <!-- 1. RESİMDEKİ KAYAR VE AÇILIR SOL MENÜ (Hover Expandable Sidebar) -->
+    <!-- 1. RESİMDEKİ KAYARAK AÇILAN SOL MENÜ (Slide-Out Expandable Left Sidebar) -->
     <aside class="sidebar-dock" id="mainSidebar">
+      <div class="sidebar-header-toggle" onclick="toggleSidebarPin()" title="Menüyü Sabitle / Kapat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <span>Fotoğraf Stüdyosu</span>
+      </div>
+
       <div class="sidebar-nav">
         <div class="nav-item active" data-category="ai" onclick="switchCategory('ai')">
           <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -780,13 +824,13 @@
       </div>
 
       <!-- Canlı 256 Histogram -->
-      <div style="padding:0 16px 12px;">
-        <div style="background:var(--pf-bg-card);border:1px solid var(--pf-border);border-radius:var(--radius-sm);padding:8px;">
+      <div style="padding:0 18px 14px;">
+        <div style="background:var(--pf-bg-card);border:1px solid var(--pf-border);border-radius:var(--radius-sm);padding:9px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;font-weight:700;color:var(--pf-text-muted);">
             <span>CANLI HISTOGRAM (RGB)</span>
             <span style="color:var(--pf-accent);">256 Seviye</span>
           </div>
-          <canvas id="histCanvas" width="256" height="58" style="width:100%;height:58px;display:block;border-radius:4px;background:#090d16;"></canvas>
+          <canvas id="histCanvas" width="256" height="58" style="width:100%;height:58px;display:block;border-radius:4px;background:#080a0f;"></canvas>
         </div>
       </div>
 
@@ -1161,7 +1205,7 @@
       }
     };
 
-    // Kategori Kart Tanımları (Fotor Style)
+    // Kategori Kart Tanımları (Fotor Style - 2. Resim)
     const CATEGORY_CARDS = {
       ai: {
         title: "Akıllı & AI Araçlar",
@@ -1260,6 +1304,11 @@
     const drawerSubText = document.getElementById("drawerSubText");
     const filePicker = document.getElementById("filePicker");
     const exportFormat = document.getElementById("exportFormat");
+    const mainSidebar = document.getElementById("mainSidebar");
+
+    function toggleSidebarPin() {
+      if (mainSidebar) mainSidebar.classList.toggle("pinned");
+    }
 
     function switchCategory(catKey) {
       activeCategory = catKey;
