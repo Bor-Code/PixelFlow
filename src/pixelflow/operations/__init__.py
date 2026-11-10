@@ -36,6 +36,10 @@ from pixelflow.operations.document import (
     ShadowRemovalOperation,
     ShadowRemovalParams,
 )
+from pixelflow.operations.duotone import (
+    DuotoneOperation,
+    DuotoneParams,
+)
 from pixelflow.operations.edges import (
     CannyOperation,
     CannyParams,
@@ -134,6 +138,8 @@ __all__ = [
     "DenoiseParams",
     "DeskewOperation",
     "DeskewParams",
+    "DuotoneOperation",
+    "DuotoneParams",
     "FaceBlurOperation",
     "FaceBlurParams",
     "FlipOperation",
