@@ -118,6 +118,10 @@ from pixelflow.operations.vibrance import (
     VibranceOperation,
     VibranceParams,
 )
+from pixelflow.operations.vignette import (
+    VignetteOperation,
+    VignetteParams,
+)
 
 __all__ = [
     "AdaptiveThresholdOperation",
@@ -190,6 +194,8 @@ __all__ = [
     "TiltShiftParams",
     "VibranceOperation",
     "VibranceParams",
+    "VignetteOperation",
+    "VignetteParams",
     "WatermarkOperation",
     "WatermarkParams",
 ]
