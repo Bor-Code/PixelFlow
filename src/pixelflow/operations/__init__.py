@@ -98,6 +98,10 @@ from pixelflow.operations.threshold import (
     OtsuThresholdOperation,
     OtsuThresholdParams,
 )
+from pixelflow.operations.tilt_shift import (
+    TiltShiftOperation,
+    TiltShiftParams,
+)
 from pixelflow.operations.vibrance import (
     VibranceOperation,
     VibranceParams,
@@ -164,6 +168,8 @@ __all__ = [
     "SobelParams",
     "StampOperation",
     "StampParams",
+    "TiltShiftOperation",
+    "TiltShiftParams",
     "VibranceOperation",
     "VibranceParams",
     "WatermarkOperation",

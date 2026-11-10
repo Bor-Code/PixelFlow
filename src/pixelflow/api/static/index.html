@@ -1272,6 +1272,28 @@
           { key: "desaturate_level", label: "Arka Plan Renkliliği", min: 0.0, max: 0.8, step: 0.1 }
         ]
       },
+      tilt_shift: {
+        title: "Tilt-Shift (Minyatür Alan Derinliği)",
+        tag: "Efekt",
+        defaults: { orientation: "horizontal", focus_position: 0.5, focus_width: 0.25, transition_width: 0.2, blur_amount: 15, saturation_boost: 1.2 },
+        selectFields: [
+          {
+            key: "orientation",
+            label: "Odak Ekseni Yönü",
+            options: [
+              ["horizontal", "Yatay Odak Bandı"],
+              ["vertical", "Dikey Odak Bandı"]
+            ]
+          }
+        ],
+        fields: [
+          { key: "focus_position", label: "Odak Çizgisi Konumu", min: 0.1, max: 0.9, step: 0.05 },
+          { key: "focus_width", label: "Net Alan Genişliği", min: 0.05, max: 0.6, step: 0.05 },
+          { key: "transition_width", label: "Bulanıklık Geçiş Yumuşaklığı", min: 0.05, max: 0.5, step: 0.05 },
+          { key: "blur_amount", label: "Bulanıklık Seviyesi", min: 3, max: 45, step: 2 },
+          { key: "saturation_boost", label: "Minyatür Renk Canlılığı", min: 1.0, max: 1.8, step: 0.1 }
+        ]
+      },
       sharpen: {
         title: "Netleştir (Unblur / Keskinlik)",
         tag: "Filtre",
@@ -1453,6 +1475,7 @@
         cards: [
           { op: "preset", name: "Sinematik LUT Preset", tag: "Sinema", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z"/></svg>' },
           { op: "color_splash", name: "Color Splash", tag: "Popüler", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>' },
+          { op: "tilt_shift", name: "Tilt-Shift Minyatür", tag: "Minyatür", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>' },
           { op: "sharpen", name: "Keskinleştir (Unsharp)", tag: "Netlik", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>' },
           { op: "gaussian_blur", name: "Gauss Bulanıklık", tag: "Yumuşak", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>' },
           { op: "canny", name: "Karakalem Çizim", tag: "Sanat", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>' }
