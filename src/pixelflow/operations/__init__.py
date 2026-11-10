@@ -70,6 +70,10 @@ from pixelflow.operations.geometry import (
     RotateOperation,
     RotateParams,
 )
+from pixelflow.operations.glitch import (
+    GlitchOperation,
+    GlitchParams,
+)
 from pixelflow.operations.inpaint import (
     InpaintOperation,
     InpaintParams,
@@ -156,6 +160,8 @@ __all__ = [
     "GammaParams",
     "GaussianBlurOperation",
     "GaussianBlurParams",
+    "GlitchOperation",
+    "GlitchParams",
     "GrayscaleOperation",
     "GrayscaleParams",
     "HistogramEqualizationOperation",
