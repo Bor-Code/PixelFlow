@@ -8,6 +8,7 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, File, Form, Request, Response, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 import pixelflow.operations
 from pixelflow import __version__
@@ -20,7 +21,7 @@ from pixelflow.api.schemas import (
     ValidateRequestModel,
     ValidateResponseModel,
 )
-from pixelflow.api.ui import load_studio_html
+from pixelflow.api.ui import STATIC_DIR, load_studio_html
 from pixelflow.core.io import (
     FORMAT_TO_MIME,
     MIME_TO_FORMAT,
@@ -207,4 +208,5 @@ def create_app(settings_override: ApiSettings | None = None) -> FastAPI:
     _register_exception_handlers(app)
     _register_health_routes(app)
     _register_v1_routes(app)
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
     return app
