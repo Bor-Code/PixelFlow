@@ -52,6 +52,10 @@ from pixelflow.operations.enhancement import (
     SharpenOperation,
     SharpenParams,
 )
+from pixelflow.operations.film_grain import (
+    FilmGrainOperation,
+    FilmGrainParams,
+)
 from pixelflow.operations.filters import (
     BilateralFilterOperation,
     BilateralFilterParams,
@@ -154,6 +158,8 @@ __all__ = [
     "DuotoneParams",
     "FaceBlurOperation",
     "FaceBlurParams",
+    "FilmGrainOperation",
+    "FilmGrainParams",
     "FlipOperation",
     "FlipParams",
     "GammaOperation",
