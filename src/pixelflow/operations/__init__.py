@@ -90,6 +90,10 @@ from pixelflow.operations.preset import (
     PresetOperation,
     PresetParams,
 )
+from pixelflow.operations.qr_overlay import (
+    QROverlayOperation,
+    QROverlayParams,
+)
 from pixelflow.operations.redact import (
     RedactOperation,
     RedactParams,
@@ -164,6 +168,8 @@ __all__ = [
     "PerspectiveWarpParams",
     "PresetOperation",
     "PresetParams",
+    "QROverlayOperation",
+    "QROverlayParams",
     "RedactOperation",
     "RedactParams",
     "ResizeOperation",
