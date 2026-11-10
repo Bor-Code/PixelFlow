@@ -1,3 +1,7 @@
+from pixelflow.operations.background import (
+    BackgroundRemovalOperation,
+    BackgroundRemovalParams,
+)
 from pixelflow.operations.color import (
     BrightnessContrastOperation,
     BrightnessContrastParams,
@@ -82,6 +86,8 @@ from pixelflow.operations.vibrance import (
 __all__ = [
     "AdaptiveThresholdOperation",
     "AdaptiveThresholdParams",
+    "BackgroundRemovalOperation",
+    "BackgroundRemovalParams",
     "BilateralFilterOperation",
     "BilateralFilterParams",
     "BrightnessContrastOperation",
