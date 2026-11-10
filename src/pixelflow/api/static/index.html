@@ -1416,6 +1416,30 @@
         ],
         fields: [{ key: "opacity", label: "Opaklık Oranı", min: 0.1, max: 1.0, step: 0.05 }]
       },
+      qr_overlay: {
+        title: "Dinamik QR Kod & Damgalama",
+        tag: "Damga",
+        defaults: { data: "https://pixelflow.dev", position: "bottom-right", size: 120, margin: 20, opacity: 0.95 },
+        textFields: [{ key: "data", label: "QR Kod İçeriği (URL / Metin)" }],
+        selectFields: [
+          {
+            key: "position",
+            label: "QR Konumu",
+            options: [
+              ["bottom-right", "Sağ Alt Köşe"],
+              ["bottom-left", "Sol Alt Köşe"],
+              ["top-right", "Sağ Üst Köşe"],
+              ["top-left", "Sol Üst Köşe"],
+              ["center", "Ortala"]
+            ]
+          }
+        ],
+        fields: [
+          { key: "size", label: "QR Boyutu (px)", min: 40, max: 350, step: 10 },
+          { key: "margin", label: "Kenar Boşluğu (px)", min: 0, max: 80, step: 5 },
+          { key: "opacity", label: "Görünürlük (Opaklık)", min: 0.2, max: 1.0, step: 0.05 }
+        ]
+      },
       stamp: {
         title: "Resmi Kaşe / Damga",
         tag: "Onay",
@@ -1540,6 +1564,7 @@
         title: "Yazı & Dijital İmza",
         sub: "Filigran, damga ve dokunmatik imza ekleme",
         cards: [
+          { op: "qr_overlay", name: "QR Kod Filigranı", tag: "QR", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>' },
           { op: "watermark", name: "Yazı / Filigran", tag: "Metin", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>' },
           { op: "stamp", name: "Resmi Kaşe / Damga", tag: "Onay", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>' },
           { op: "signature_pad", name: "İmza Çiz (İmza Pad)", tag: "Çizim", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-2-2-12 12v4h4z"/></svg>', action: "openSigModal" },
