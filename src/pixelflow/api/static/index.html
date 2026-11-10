@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PixelFlow — Profesyonel Fotoğraf ve Belge Düzenleyici</title>
+  <title>PixeFlow — Profesyonel Fotoğraf ve Belge Düzenleyici (PixelFlow Engine)</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
@@ -15,11 +15,12 @@
       --pf-bg-card-hover: #293040;
       --pf-border: #282f3d;
       --pf-border-light: #384255;
-      --pf-accent: #22c55e;
-      --pf-accent-hover: #16a34a;
-      --pf-accent-soft: rgba(34, 197, 94, 0.16);
-      --pf-blue: #0084ff;
-      --pf-blue-soft: rgba(0, 132, 255, 0.16);
+      --pf-accent: #38bdf8;
+      --pf-accent-hover: #0ea5e9;
+      --pf-accent-soft: rgba(56, 189, 248, 0.16);
+      --pf-accent-glow: rgba(56, 189, 248, 0.4);
+      --pf-blue: #38bdf8;
+      --pf-blue-soft: rgba(56, 189, 248, 0.16);
       --pf-text: #e2e8f0;
       --pf-text-muted: #8a97ac;
       --pf-text-white: #ffffff;
@@ -62,13 +63,33 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 20px;
+      font-size: 25px;
       font-weight: 800;
       letter-spacing: -0.5px;
       color: var(--pf-text-white);
       text-decoration: none;
       cursor: pointer;
-      margin-right: 8px;
+      margin-right: 12px;
+      transition: opacity 0.15s ease;
+    }
+    .brand-logo:hover {
+      opacity: 0.92;
+    }
+    .brand-logo .brand-name {
+      display: inline-flex;
+      align-items: baseline;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+    .brand-logo .brand-x {
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--pf-accent);
+      line-height: 0.75;
+      margin: 0 1px;
+      display: inline-block;
+      transform: translateY(1.5px);
+      text-shadow: 0 0 16px rgba(56, 189, 248, 0.5);
     }
     .brand-logo span.accent {
       color: var(--pf-accent);
@@ -117,7 +138,7 @@
     .btn-download-main {
       background: var(--pf-accent);
       border: 1px solid var(--pf-accent);
-      color: #0c1b0e;
+      color: #061826;
       padding: 8px 22px;
       border-radius: 20px;
       font-size: 13.5px;
@@ -126,12 +147,12 @@
       align-items: center;
       gap: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
       transition: all 0.15s ease;
     }
     .btn-download-main:hover {
       background: var(--pf-accent-hover);
-      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
       transform: translateY(-1px);
     }
     .select-format {
@@ -386,7 +407,7 @@
       color: #fff;
     }
     .card-tag.new { background: #ec4899; }
-    .card-tag.ai { background: #22c55e; color: #000; }
+    .card-tag.ai { background: #38bdf8; color: #061826; }
 
     /* Ayar Sürgüleri & Katman Kartları */
     .controls-section {
@@ -461,7 +482,7 @@
       border-radius: 50%;
       background: var(--pf-accent);
       cursor: pointer;
-      box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
       transition: transform 0.1s;
     }
     input[type="range"]::-webkit-slider-thumb:hover {
@@ -505,7 +526,7 @@
       width: 76px;
       height: 76px;
       border-radius: 50%;
-      background: rgba(34, 197, 94, 0.12);
+      background: rgba(56, 189, 248, 0.14);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -530,7 +551,7 @@
     }
     .btn-big-upload {
       background: var(--pf-accent);
-      color: #0b1c0e;
+      color: #061826;
       border: none;
       font-size: 15px;
       font-weight: 700;
@@ -540,7 +561,7 @@
       display: inline-flex;
       align-items: center;
       gap: 9px;
-      box-shadow: 0 6px 22px rgba(34, 197, 94, 0.4);
+      box-shadow: 0 6px 22px rgba(56, 189, 248, 0.4);
       transition: all 0.15s ease;
     }
     .btn-big-upload:hover {
@@ -634,8 +655,8 @@
     /* Seçim Kutusu & Pinler */
     .selection-marquee {
       position: absolute;
-      border: 2px dashed #0084ff;
-      background: rgba(0, 132, 255, 0.15);
+      border: 2px dashed #38bdf8;
+      background: rgba(56, 189, 248, 0.16);
       pointer-events: none;
       display: none;
       z-index: 35;
@@ -644,9 +665,9 @@
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      background: #0084ff;
+      background: #38bdf8;
       border: 3px solid #ffffff;
-      box-shadow: 0 0 12px rgba(0, 132, 255, 0.9);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.9);
       position: absolute;
       cursor: crosshair;
       transform: translate(-50%, -50%);
@@ -710,18 +731,14 @@
   <!-- Üst Gezinme Çubuğu -->
   <header class="topbar">
     <div class="topbar-left">
-      <div class="brand-logo" onclick="location.reload()">
-        <svg style="width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;color:#22c55e" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-        Pixel<span class="accent">Flow</span>
+      <div class="brand-logo" onclick="location.reload()" title="PixeFlow Ana Sayfa">
+        <svg style="width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2.3;color:var(--pf-accent)" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        <span class="brand-name">Pi<span class="brand-x">x</span>e<span class="accent">Flow</span></span>
       </div>
 
       <input type="file" id="filePicker" accept="image/*,.pdf,application/pdf" style="display:none" />
-      <button type="button" class="btn-upload-pill" id="btnTopUpload">
-        <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        + Görsel Yükle
-      </button>
 
-      <div style="display:flex;gap:4px;margin-left:8px;">
+      <div style="display:flex;gap:4px;margin-left:4px;">
         <button type="button" class="btn-icon" id="btnUndo" title="Geri Al (Ctrl+Z)" onclick="undo()" disabled>
           <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
         </button>
@@ -875,33 +892,29 @@
         </div>
       </div>
 
-      <!-- Aktif Kanvas Alanı -->
+      <!-- Aktif Kanvas Alanı (Tek Görünüm: Yalnızca Düzenlenen Belge / Fotoğraf) -->
       <div class="active-canvas-container" id="activeCanvasContainer">
-        <!-- Üstte Yüzen Karşılaştırma Düğmeleri -->
-        <div class="canvas-floating-bar">
-          <button type="button" class="floating-btn active" data-view="split" onclick="setComparisonMode('split')">Öncesi &amp; Sonrası</button>
-          <button type="button" class="floating-btn" data-view="after" onclick="setComparisonMode('after')">Yalnızca İşlenen</button>
-          <button type="button" class="floating-btn" data-view="before" onclick="setComparisonMode('before')">Yalnızca Orijinal</button>
+        <!-- İsteğe Bağlı Orijinal Karşılaştırma Düğmesi (Basılı Tut) -->
+        <div class="canvas-floating-bar" id="canvasFloatingBar">
+          <button type="button" class="floating-btn" id="btnPeekOriginal" title="Orijinal görseli görmek için basılı tutun">
+            <svg style="width:14px;height:14px;display:inline-block;vertical-align:-2px;margin-right:5px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Orijinali Gör (Basılı Tut)
+          </button>
         </div>
 
-        <div style="display:flex;gap:16px;align-items:center;justify-content:center;max-width:100%;max-height:100%;">
-          <!-- Orijinal Görüntü (Sol / Öncesi) -->
-          <div class="canvas-viewport" id="boxBefore" style="position:relative;">
-            <img id="imgBefore" alt="Orijinal" style="display:none;user-select:none;pointer-events:none;" />
-            <svg id="perspectiveSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:25;display:none;">
-              <polygon id="polyCorners" fill="rgba(0, 132, 255, 0.18)" stroke="#0084ff" stroke-width="2.5" stroke-dasharray="6,4" />
-            </svg>
-            <div class="corner-pin" id="pin_tl" title="Sol Üst Köşe" style="display:none;"></div>
-            <div class="corner-pin" id="pin_tr" title="Sağ Üst Köşe" style="display:none;"></div>
-            <div class="corner-pin" id="pin_br" title="Sağ Alt Köşe" style="display:none;"></div>
-            <div class="corner-pin" id="pin_bl" title="Sol Alt Köşe" style="display:none;"></div>
-          </div>
+        <img id="imgBefore" alt="Orijinal" style="display:none;user-select:none;pointer-events:none;" />
 
-          <!-- İşlenen Görüntü (Sağ / Sonrası) -->
-          <div class="canvas-viewport" id="boxAfter" style="position:relative;cursor:crosshair;">
-            <img id="imgAfter" alt="İşlenen" style="display:none;user-select:none;pointer-events:none;" />
-            <div class="selection-marquee" id="selectionMarquee"></div>
-          </div>
+        <!-- Tek Düzenlenen Belge / Fotoğraf Kanvası -->
+        <div class="canvas-viewport" id="boxAfter" style="position:relative;cursor:crosshair;">
+          <img id="imgAfter" alt="Düzenlenen Belge / Fotoğraf" style="display:none;user-select:none;pointer-events:none;" />
+          <svg id="perspectiveSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:25;display:none;">
+            <polygon id="polyCorners" fill="rgba(56, 189, 248, 0.18)" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="6,4" />
+          </svg>
+          <div class="corner-pin" id="pin_tl" title="Sol Üst Köşe" style="display:none;"></div>
+          <div class="corner-pin" id="pin_tr" title="Sağ Üst Köşe" style="display:none;"></div>
+          <div class="corner-pin" id="pin_br" title="Sağ Alt Köşe" style="display:none;"></div>
+          <div class="corner-pin" id="pin_bl" title="Sol Alt Köşe" style="display:none;"></div>
+          <div class="selection-marquee" id="selectionMarquee"></div>
         </div>
       </div>
 
@@ -1548,11 +1561,13 @@
       if (!currentBlob) return;
       if (activeSteps.length === 0) {
         const url = URL.createObjectURL(currentBlob);
+        lastProcessedUrl = url;
         imgAfter.src = url;
         imgAfter.style.display = "block";
         timingBadge.textContent = "Orijinal";
-        statusMessage.textContent = "Orijinal görsel görüntüleniyor";
+        statusMessage.textContent = "Görsel hazır • Düzenlemeye başlayabilirsiniz";
         drawLiveHistogram(imgAfter);
+        syncPerspectivePins();
         return;
       }
 
@@ -1582,9 +1597,11 @@
         }
         const outBlob = await resp.blob();
         const outUrl = URL.createObjectURL(outBlob);
+        lastProcessedUrl = outUrl;
         imgAfter.onload = () => {
           canvasDims.textContent = `${imgAfter.naturalWidth} × ${imgAfter.naturalHeight} px`;
           drawLiveHistogram(imgAfter);
+          syncPerspectivePins();
         };
         imgAfter.src = outUrl;
         imgAfter.style.display = "block";
@@ -1602,32 +1619,16 @@
       activeCanvasContainer.style.display = "flex";
 
       const url = URL.createObjectURL(blob);
+      lastProcessedUrl = url;
       imgBefore.onload = () => {
         canvasDims.textContent = `${imgBefore.naturalWidth} × ${imgBefore.naturalHeight} px`;
-        syncPerspectivePins();
       };
       imgBefore.src = url;
-      imgBefore.style.display = "block";
       executePipeline();
     }
 
     function setComparisonMode(mode) {
       comparisonMode = mode;
-      document.querySelectorAll(".floating-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.view === mode);
-      });
-      const boxB = document.getElementById("boxBefore");
-      const boxA = document.getElementById("boxAfter");
-      if (mode === "split") {
-        boxB.style.display = "flex";
-        boxA.style.display = "flex";
-      } else if (mode === "after") {
-        boxB.style.display = "none";
-        boxA.style.display = "flex";
-      } else {
-        boxB.style.display = "flex";
-        boxA.style.display = "none";
-      }
     }
 
     // Canlı 256 Histogram
@@ -1678,7 +1679,7 @@
       }
 
       drawCurve(rHist, "rgba(239, 68, 68, 0.9)", "rgba(239, 68, 68, 0.15)");
-      drawCurve(gHist, "rgba(34, 197, 94, 0.9)", "rgba(34, 197, 94, 0.15)");
+      drawCurve(gHist, "rgba(56, 189, 248, 0.9)", "rgba(56, 189, 248, 0.15)");
       drawCurve(bHist, "rgba(59, 130, 246, 0.9)", "rgba(59, 130, 246, 0.15)");
     }
 
@@ -1692,29 +1693,34 @@
     const pins = [pinTL, pinTR, pinBR, pinBL];
     let activePin = null;
 
-    function getImgBeforeMetrics() {
-      if (!imgBefore || imgBefore.style.display === "none" || !imgBefore.naturalWidth) return null;
-      const imgRect = imgBefore.getBoundingClientRect();
-      const viewRect = document.getElementById("boxBefore").getBoundingClientRect();
+    function getImgMetrics() {
+      const targetImg = (imgAfter && imgAfter.style.display !== "none" && imgAfter.naturalWidth) ? imgAfter : imgBefore;
+      if (!targetImg || !targetImg.naturalWidth) return null;
+      const box = document.getElementById("boxAfter");
+      if (!box) return null;
+      const imgRect = targetImg.getBoundingClientRect();
+      const viewRect = box.getBoundingClientRect();
       return {
         offsetX: imgRect.left - viewRect.left,
         offsetY: imgRect.top - viewRect.top,
-        scaleX: imgRect.width / imgBefore.naturalWidth,
-        scaleY: imgRect.height / imgBefore.naturalHeight
+        scaleX: imgRect.width / targetImg.naturalWidth,
+        scaleY: imgRect.height / targetImg.naturalHeight,
+        img: targetImg
       };
     }
 
     function syncPerspectivePins() {
       const step = activeSteps.find(s => s.op === "perspective_warp");
-      if (!step || !imgBefore.naturalWidth || imgBefore.style.display === "none") {
+      const targetImg = (imgAfter && imgAfter.style.display !== "none" && imgAfter.naturalWidth) ? imgAfter : imgBefore;
+      if (!step || !targetImg || !targetImg.naturalWidth) {
         if (perspectiveSvg) perspectiveSvg.style.display = "none";
         pins.forEach(p => { if (p) p.style.display = "none"; });
         return;
       }
-      const m = getImgBeforeMetrics();
+      const m = getImgMetrics();
       if (!m) return;
-      const w = imgBefore.naturalWidth;
-      const h = imgBefore.naturalHeight;
+      const w = targetImg.naturalWidth;
+      const h = targetImg.naturalHeight;
       if (!step.params.src_points || !Array.isArray(step.params.src_points) || step.params.src_points.length !== 4) {
         step.params.src_points = [
           [Math.round(w * 0.08), Math.round(h * 0.08)],
@@ -1750,9 +1756,9 @@
       if (activePin === null) return;
       const step = activeSteps.find(s => s.op === "perspective_warp");
       if (!step) return;
-      const m = getImgBeforeMetrics();
+      const m = getImgMetrics();
       if (!m) return;
-      const viewRect = document.getElementById("boxBefore").getBoundingClientRect();
+      const viewRect = document.getElementById("boxAfter").getBoundingClientRect();
       const curX = e.clientX - viewRect.left;
       const curY = e.clientY - viewRect.top;
       pins[activePin].style.left = `${curX}px`;
@@ -1767,15 +1773,16 @@
       activePin = null;
       const step = activeSteps.find(s => s.op === "perspective_warp");
       if (!step) return;
-      const m = getImgBeforeMetrics();
+      const m = getImgMetrics();
       if (!m) return;
-      const viewRect = document.getElementById("boxBefore").getBoundingClientRect();
+      const viewRect = document.getElementById("boxAfter").getBoundingClientRect();
       const curX = e.clientX - viewRect.left;
       const curY = e.clientY - viewRect.top;
-      const imgX = Math.round(Math.max(0, Math.min(imgBefore.naturalWidth, (curX - m.offsetX) / m.scaleX)));
-      const imgY = Math.round(Math.max(0, Math.min(imgBefore.naturalHeight, (curY - m.offsetY) / m.scaleY)));
+      const targetImg = m.img;
+      const imgX = Math.round(Math.max(0, Math.min(targetImg.naturalWidth, (curX - m.offsetX) / m.scaleX)));
+      const imgY = Math.round(Math.max(0, Math.min(targetImg.naturalHeight, (curY - m.offsetY) / m.scaleY)));
       if (!step.params.src_points) {
-        step.params.src_points = [[0, 0], [imgBefore.naturalWidth, 0], [imgBefore.naturalWidth, imgBefore.naturalHeight], [0, imgBefore.naturalHeight]];
+        step.params.src_points = [[0, 0], [targetImg.naturalWidth, 0], [targetImg.naturalWidth, targetImg.naturalHeight], [0, targetImg.naturalHeight]];
       }
       step.params.src_points[pinIndex] = [imgX, imgY];
       pushHistory();
@@ -2116,7 +2123,8 @@
     }
 
     async function runOcrRecognition() {
-      if (!imgBefore || !imgBefore.src || imgBefore.style.display === "none") {
+      const targetImg = (imgAfter && imgAfter.src && imgAfter.style.display !== "none") ? imgAfter : imgBefore;
+      if (!targetImg || !targetImg.src) {
         statusMessage.textContent = "Lütfen önce bir görsel veya belge yükleyin";
         return;
       }
@@ -2125,7 +2133,7 @@
       ocrOutputText.value = "Taranıyor...";
       if (typeof Tesseract !== "undefined") {
         try {
-          const res = await Tesseract.recognize(imgBefore.src, "tur+eng");
+          const res = await Tesseract.recognize(targetImg.src, "tur+eng");
           ocrOutputText.value = res.data.text || "(Metin tespit edilemedi)";
           ocrStatusMsg.textContent = `Tamamlandı • Güven: %${Math.round(res.data.confidence)}`;
           return;
@@ -2138,7 +2146,8 @@
     }
 
     async function runAutoPiiRedaction() {
-      if (!imgBefore || !imgBefore.src || imgBefore.style.display === "none") {
+      const targetImg = (imgAfter && imgAfter.src && imgAfter.style.display !== "none") ? imgAfter : imgBefore;
+      if (!targetImg || !targetImg.src) {
         statusMessage.textContent = "Lütfen önce bir görsel veya belge yükleyin";
         return;
       }
@@ -2146,7 +2155,7 @@
       let boxes = [];
       if (typeof Tesseract !== "undefined") {
         try {
-          const res = await Tesseract.recognize(imgBefore.src, "tur+eng");
+          const res = await Tesseract.recognize(targetImg.src, "tur+eng");
           (res.data.words || []).forEach(w => {
             const clean = w.text.trim().replace(/[-_.: ]/g, "");
             if (/^[1-9]\d{10}$/.test(clean) || /^TR\d{2}/i.test(clean) || /^(?:\+90|0)?5\d{2}/.test(clean)) {
@@ -2161,8 +2170,8 @@
         } catch (e) { console.warn(e); }
       }
       if (boxes.length === 0) {
-        const w = imgBefore.naturalWidth;
-        const h = imgBefore.naturalHeight;
+        const w = targetImg.naturalWidth || 800;
+        const h = targetImg.naturalHeight || 600;
         boxes = [{ x: Math.round(w * 0.26), y: Math.round(h * 0.36), width: Math.round(w * 0.28), height: Math.round(h * 0.06) }];
       }
       boxes.forEach(b => {
@@ -2182,11 +2191,33 @@
 
     // Olay Dinleyicileri
     const openPicker = () => filePicker.click();
-    document.getElementById("btnTopUpload").addEventListener("click", openPicker);
+    const btnTop = document.getElementById("btnTopUpload");
+    if (btnTop) btnTop.addEventListener("click", openPicker);
     document.getElementById("btnBigUpload").addEventListener("click", openPicker);
     filePicker.addEventListener("change", (e) => {
       if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
     });
+
+    const btnPeek = document.getElementById("btnPeekOriginal");
+    if (btnPeek) {
+      const showOrig = () => {
+        if (imgBefore && imgBefore.src && imgAfter) {
+          imgAfter.src = imgBefore.src;
+          timingBadge.textContent = "Orijinal Önizleme";
+        }
+      };
+      const restoreProc = () => {
+        if (lastProcessedUrl && imgAfter) {
+          imgAfter.src = lastProcessedUrl;
+          timingBadge.textContent = activeSteps.length === 0 ? "Orijinal" : `İşlendi (${activeSteps.length} katman)`;
+        }
+      };
+      btnPeek.addEventListener("mousedown", showOrig);
+      btnPeek.addEventListener("mouseup", restoreProc);
+      btnPeek.addEventListener("mouseleave", restoreProc);
+      btnPeek.addEventListener("touchstart", (e) => { e.preventDefault(); showOrig(); });
+      btnPeek.addEventListener("touchend", restoreProc);
+    }
 
     document.getElementById("btnSamplePhoto").addEventListener("click", generateLandscape);
     document.getElementById("btnSampleDoc").addEventListener("click", generateDocument);
