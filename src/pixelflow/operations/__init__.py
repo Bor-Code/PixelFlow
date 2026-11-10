@@ -14,6 +14,10 @@ from pixelflow.operations.color import (
     GrayscaleOperation,
     GrayscaleParams,
 )
+from pixelflow.operations.color_splash import (
+    ColorSplashOperation,
+    ColorSplashParams,
+)
 from pixelflow.operations.curves import (
     CurvesOperation,
     CurvesParams,
@@ -112,6 +116,8 @@ __all__ = [
     "BrightnessContrastParams",
     "CannyOperation",
     "CannyParams",
+    "ColorSplashOperation",
+    "ColorSplashParams",
     "CropOperation",
     "CropParams",
     "CurvesOperation",
