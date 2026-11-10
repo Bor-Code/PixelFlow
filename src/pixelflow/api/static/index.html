@@ -167,6 +167,73 @@
       cursor: pointer;
     }
 
+    /* Photoshop Tarzı Üst Menü Çubuğu (PS Menubar) */
+    .ps-menubar {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 6px;
+    }
+    .ps-menu-item {
+      position: relative;
+      padding: 5px 9px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #c5d1de;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+    .ps-menu-item:hover, .ps-menu-item.open {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+    }
+    .ps-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      min-width: 220px;
+      background: #181d24;
+      border: 1px solid #2e3846;
+      border-radius: 6px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+      padding: 5px 0;
+      z-index: 1000;
+    }
+    .ps-dropdown.show {
+      display: block;
+    }
+    .ps-menu-action {
+      padding: 6px 14px;
+      font-size: 11.5px;
+      color: #d1d9e2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.12s;
+    }
+    .ps-menu-action:hover {
+      background: #0084ff;
+      color: #ffffff;
+    }
+    .ps-menu-action .ps-shortcut {
+      font-size: 10px;
+      color: #798b9e;
+      margin-left: 18px;
+    }
+    .ps-menu-action:hover .ps-shortcut {
+      color: rgba(255, 255, 255, 0.85);
+    }
+    .ps-menu-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.07);
+      margin: 4px 0;
+    }
+
     /* Ana Alan */
     .app-main {
       flex: 1;
@@ -799,13 +866,13 @@
   </style>
 </head>
 <body>
-  <!-- Üst Gezinme Çubuğu -->
+  <!-- Üst Gezinme Çubuğu (Photoshop Stili Menü Barı) -->
   <header class="topbar">
     <div class="topbar-left">
       <div class="brand-logo" onclick="location.reload()" title="PixelFlow" id="brandLogoContainer">
         <div class="brand-logo-frame" title="Logo">
           <img id="brandLogoImg" src="" alt="Logo" style="display:none;" />
-          <svg id="brandSvgIcon" style="width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;color:var(--pf-accent)" viewBox="0 0 24 24">
+          <svg id="brandSvgIcon" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;color:var(--pf-accent)" viewBox="0 0 24 24">
             <polygon points="12 2 2 7 12 12 22 7 12 2"/>
             <polyline points="2 17 12 22 22 17"/>
             <polyline points="2 12 12 17 22 12"/>
@@ -813,19 +880,186 @@
         </div>
       </div>
 
+      <nav class="ps-menubar" id="psMenuBar">
+        <!-- Dosya -->
+        <div class="ps-menu-item" onclick="togglePsMenu(event, 'menuFile')">
+          <span class="ps-menu-label" data-tr="Dosya" data-en="File">Dosya</span>
+          <div class="ps-dropdown" id="menuFile">
+            <div class="ps-menu-action" onclick="document.getElementById('filePicker').click()">
+              <span data-tr="Görsel Yükle..." data-en="Open Image...">Görsel Yükle...</span>
+              <span class="ps-shortcut">Ctrl+O</span>
+            </div>
+            <div class="ps-menu-divider"></div>
+            <div class="ps-menu-action" onclick="downloadCurrentFormat('PNG')">
+              <span data-tr="PNG Olarak Kaydet" data-en="Save as PNG">PNG Olarak Kaydet</span>
+              <span class="ps-shortcut">PNG</span>
+            </div>
+            <div class="ps-menu-action" onclick="downloadCurrentFormat('JPEG')">
+              <span data-tr="JPEG Olarak Kaydet" data-en="Save as JPEG">JPEG Olarak Kaydet</span>
+              <span class="ps-shortcut">JPEG</span>
+            </div>
+            <div class="ps-menu-action" onclick="downloadCurrentFormat('PDF')">
+              <span data-tr="PDF Olarak Dışa Aktar" data-en="Export as PDF">PDF Olarak Dışa Aktar</span>
+              <span class="ps-shortcut">PDF</span>
+            </div>
+            <div class="ps-menu-divider"></div>
+            <div class="ps-menu-action" onclick="resetToOriginal()">
+              <span data-tr="Orijinal Görsele Dön" data-en="Revert to Original">Orijinal Görsele Dön</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Düzen -->
+        <div class="ps-menu-item" onclick="togglePsMenu(event, 'menuEdit')">
+          <span class="ps-menu-label" data-tr="Düzen" data-en="Edit">Düzen</span>
+          <div class="ps-dropdown" id="menuEdit">
+            <div class="ps-menu-action" onclick="undo()">
+              <span data-tr="Geri Al" data-en="Undo">Geri Al</span>
+              <span class="ps-shortcut">Ctrl+Z</span>
+            </div>
+            <div class="ps-menu-action" onclick="redo()">
+              <span data-tr="Yinele" data-en="Redo">Yinele</span>
+              <span class="ps-shortcut">Ctrl+Y</span>
+            </div>
+            <div class="ps-menu-divider"></div>
+            <div class="ps-menu-action" onclick="activeSteps=[];renderStepsUI();scheduleRender();">
+              <span data-tr="Tüm Katmanları Temizle" data-en="Clear All Layers">Tüm Katmanları Temizle</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Görüntü -->
+        <div class="ps-menu-item" onclick="togglePsMenu(event, 'menuImage')">
+          <span class="ps-menu-label" data-tr="Görüntü" data-en="Image">Görüntü</span>
+          <div class="ps-dropdown" id="menuImage">
+            <div class="ps-menu-action" onclick="quickAdd('auto_enhance')">
+              <span data-tr="Otomatik Renk & Kontrast" data-en="Auto Tone & Contrast">Otomatik Renk & Kontrast</span>
+              <span class="ps-shortcut">Auto</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('grayscale')">
+              <span data-tr="Siyah & Beyaz (Grayscale)" data-en="Black & White (Grayscale)">Siyah & Beyaz (Grayscale)</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('brightness_contrast')">
+              <span data-tr="Parlaklık / Kontrast" data-en="Brightness / Contrast">Parlaklık / Kontrast</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('curves')">
+              <span data-tr="Renk Eğrileri (Curves)" data-en="Curves">Renk Eğrileri (Curves)</span>
+            </div>
+            <div class="ps-menu-divider"></div>
+            <div class="ps-menu-action" onclick="rotateCanvas()">
+              <span data-tr="90° Saat Yönünde Döndür" data-en="Rotate 90° Clockwise">90° Saat Yönünde Döndür</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('flip')">
+              <span data-tr="Yatay Aynala (Flip Horizontal)" data-en="Flip Horizontal">Yatay Aynala</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('resize')">
+              <span data-tr="Boyutlandır..." data-en="Resize...">Boyutlandır...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtre -->
+        <div class="ps-menu-item" onclick="togglePsMenu(event, 'menuFilter')">
+          <span class="ps-menu-label" data-tr="Filtre" data-en="Filter">Filtre</span>
+          <div class="ps-dropdown" id="menuFilter">
+            <div class="ps-menu-action" onclick="quickAdd('preset')">
+              <span data-tr="Sinematik LUT Presetleri..." data-en="Cinematic LUT Presets...">Sinematik LUT Presetleri...</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('duotone')">
+              <span data-tr="Duotone Gradyan Eşleme" data-en="Duotone Gradient Map">Duotone Gradyan Eşleme</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('color_splash')">
+              <span data-tr="Color Splash (Seçici Renk)" data-en="Color Splash">Color Splash (Seçici Renk)</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('vignette')">
+              <span data-tr="Vinyet (Odak Çerçevesi)" data-en="Vignette">Vinyet (Odak Çerçevesi)</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('glitch')">
+              <span data-tr="Glitch & RGB Split" data-en="Glitch & RGB Split">Glitch & RGB Split</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('film_grain')">
+              <span data-tr="Analog Film Greni" data-en="Film Grain">Analog Film Greni</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('tilt_shift')">
+              <span data-tr="Tilt-Shift Minyatür" data-en="Tilt-Shift Miniature">Tilt-Shift Minyatür</span>
+            </div>
+            <div class="ps-menu-divider"></div>
+            <div class="ps-menu-action" onclick="quickAdd('denoise')">
+              <span data-tr="Gece Parazit Giderme (Denoise)" data-en="Denoise">Gece Parazit Giderme</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('sharpen')">
+              <span data-tr="Keskinleştir (Unsharp)" data-en="Sharpen">Keskinleştir (Unsharp)</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('gaussian_blur')">
+              <span data-tr="Gauss Bulanıklığı" data-en="Gaussian Blur">Gauss Bulanıklığı</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Görünüm -->
+        <div class="ps-menu-item" onclick="togglePsMenu(event, 'menuView')">
+          <span class="ps-menu-label" data-tr="Görünüm" data-en="View">Görünüm</span>
+          <div class="ps-dropdown" id="menuView">
+            <div class="ps-menu-action" onclick="fitCanvas()">
+              <span data-tr="Ekrana Sığdır" data-en="Fit on Screen">Ekrana Sığdır</span>
+              <span class="ps-shortcut">Ctrl+0</span>
+            </div>
+            <div class="ps-menu-action" onclick="resetZoom()">
+              <span data-tr="%100 Gerçek Boyut" data-en="100% Actual Size">%100 Gerçek Boyut</span>
+              <span class="ps-shortcut">100%</span>
+            </div>
+            <div class="ps-menu-action" onclick="zoomCanvas(0.2)">
+              <span data-tr="Yakınlaştır (+)" data-en="Zoom In (+)">Yakınlaştır (+)</span>
+            </div>
+            <div class="ps-menu-action" onclick="zoomCanvas(-0.2)">
+              <span data-tr="Uzaklaştır (−)" data-en="Zoom Out (−)">Uzaklaştır (−)</span>
+            </div>
+            <div class="ps-menu-divider"></div>
+            <div class="ps-menu-action" onclick="setComparisonMode('split')">
+              <span data-tr="Perde Karşılaştırma (Split)" data-en="Curtain Split View">Perde Karşılaştırma (Split)</span>
+            </div>
+            <div class="ps-menu-action" onclick="setComparisonMode('after')">
+              <span data-tr="Sadece Düzenlenen (After)" data-en="Processed Only (After)">Sadece Düzenlenen</span>
+            </div>
+            <div class="ps-menu-action" onclick="setComparisonMode('before')">
+              <span data-tr="Sadece Orijinal (Before)" data-en="Original Only (Before)">Sadece Orijinal</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Araçlar -->
+        <div class="ps-menu-item" onclick="togglePsMenu(event, 'menuTools')">
+          <span class="ps-menu-label" data-tr="Araçlar" data-en="Tools">Araçlar</span>
+          <div class="ps-dropdown" id="menuTools">
+            <div class="ps-menu-action" onclick="quickAdd('inpaint')">
+              <span data-tr="Sihirli Silgi (Magic Eraser)" data-en="Magic Eraser (Inpaint)">Sihirli Silgi</span>
+            </div>
+            <div class="ps-menu-action" onclick="quickAdd('qr_overlay')">
+              <span data-tr="QR Kod Filigranı" data-en="QR Code Watermark">QR Kod Filigranı</span>
+            </div>
+            <div class="ps-menu-action" onclick="openSignatureModal()">
+              <span data-tr="Dijital İmza Çiz..." data-en="Draw Digital Signature...">Dijital İmza Çiz...</span>
+            </div>
+            <div class="ps-menu-action" onclick="runAutoPiiRedaction()">
+              <span data-tr="TC / IBAN Otomatik Maskele" data-en="Auto Mask PII (ID/IBAN)">TC / IBAN Otomatik Maskele</span>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       <input type="file" id="filePicker" accept="image/*,.pdf,application/pdf" style="display:none" />
 
-      <button type="button" class="btn-upload-pill" id="btnTopUpload" title="Yeni Görsel veya Belge Yükle">
-        <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        + Yeni Görsel
+      <button type="button" class="btn-upload-pill" id="btnTopUpload" title="Yeni Görsel veya Belge Yükle" style="margin-left:8px;">
+        <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span data-tr="Görsel Aç" data-en="Open Image">Görsel Aç</span>
       </button>
 
-      <div style="display:flex;gap:4px;margin-left:4px;">
+      <div style="display:flex;gap:3px;margin-left:4px;">
         <button type="button" class="btn-icon" id="btnUndo" title="Geri Al (Ctrl+Z)" onclick="undo()" disabled>
-          <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
         </button>
         <button type="button" class="btn-icon" id="btnRedo" title="İleri Al (Ctrl+Y)" onclick="redo()" disabled>
-          <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
         </button>
       </div>
     </div>
@@ -1625,6 +1859,30 @@
     const filePicker = document.getElementById("filePicker");
     const exportFormat = document.getElementById("exportFormat");
     const mainSidebar = document.getElementById("mainSidebar");
+
+    function togglePsMenu(event, menuId) {
+      event.stopPropagation();
+      const menu = document.getElementById(menuId);
+      if (!menu) return;
+      const isAlreadyOpen = menu.classList.contains("show");
+      document.querySelectorAll(".ps-dropdown").forEach(d => d.classList.remove("show"));
+      document.querySelectorAll(".ps-menu-item").forEach(m => m.classList.remove("open"));
+      if (!isAlreadyOpen) {
+        menu.classList.add("show");
+        if (menu.parentElement) menu.parentElement.classList.add("open");
+      }
+    }
+
+    window.addEventListener("click", () => {
+      document.querySelectorAll(".ps-dropdown").forEach(d => d.classList.remove("show"));
+      document.querySelectorAll(".ps-menu-item").forEach(m => m.classList.remove("open"));
+    });
+
+    function downloadCurrentFormat(fmt) {
+      if (exportFormat) exportFormat.value = fmt;
+      const dlBtn = document.getElementById("btnDownload");
+      if (dlBtn) dlBtn.click();
+    }
 
     function toggleSidebarPin() {
       if (mainSidebar) mainSidebar.classList.toggle("pinned");
