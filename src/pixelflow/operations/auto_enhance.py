@@ -44,7 +44,7 @@ def _apply_unsharp(rgb: np.ndarray, strength: float) -> np.ndarray:
     blurred = cv2.GaussianBlur(rgb, (0, 0), 1.5)
     weight = float(strength * 0.4)
     res = cv2.addWeighted(rgb, 1.0 + weight, blurred, -weight, 0)
-    return cast(np.ndarray, np.clip(res, 0, 255).astype(np.uint8))
+    return np.clip(res, 0, 255).astype(np.uint8)
 
 
 @register_operation("auto_enhance")
