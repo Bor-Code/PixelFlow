@@ -22,6 +22,10 @@ from pixelflow.operations.curves import (
     CurvesOperation,
     CurvesParams,
 )
+from pixelflow.operations.denoise import (
+    DenoiseOperation,
+    DenoiseParams,
+)
 from pixelflow.operations.detection import (
     FaceBlurOperation,
     FaceBlurParams,
@@ -126,6 +130,8 @@ __all__ = [
     "CropParams",
     "CurvesOperation",
     "CurvesParams",
+    "DenoiseOperation",
+    "DenoiseParams",
     "DeskewOperation",
     "DeskewParams",
     "FaceBlurOperation",
