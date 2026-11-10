@@ -749,6 +749,9 @@
       <div class="tool-btn" title="Otomatik Yüz Sansürü" onclick="quickAdd('face_blur')">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
       </div>
+      <div class="tool-btn" title="Arka Planı Kaldır (Dekupe / Cutout)" onclick="quickAdd('background_removal')">
+        <svg viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 18l4-4-4-4"/><path d="M2 18h4"/><path d="M2 14h4"/><path d="M2 10h4"/></svg>
+      </div>
       <div class="tool-divider"></div>
       <div class="tool-btn" title="Boyutlandır" onclick="quickAdd('resize')">
         <svg viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
@@ -826,6 +829,7 @@
             <option value="adaptive_threshold">Taranmış Metin / Belge</option>
           </optgroup>
           <optgroup label="Fotoğraf &amp; Ayarlama">
+            <option value="background_removal">Arka Planı Kaldır (Dekupe)</option>
             <option value="brightness_contrast">Parlaklık &amp; Kontrast</option>
             <option value="gamma">Gama Ton Eğrisi</option>
             <option value="histogram_equalization">Otomatik HDR (CLAHE)</option>
@@ -903,6 +907,18 @@
         fields: [
           { key: "threshold", label: "Kağıt Beyazı Eşiği", min: 100, max: 250, step: 5 },
           { key: "smooth_radius", label: "Kenar Yumuşatma", min: 0, max: 5, step: 1 }
+        ]
+      },
+      background_removal: {
+        title: "Arka Planı Kaldır (Cutout)",
+        tag: "Dekupe",
+        defaults: { method: "grabcut", iterations: 3, margin: 8 },
+        selectFields: [
+          { key: "method", label: "Dekupe Yöntemi", options: [["grabcut", "Yapay Zeka / GrabCut"], ["threshold", "Beyaz Fon Temizleme"]] }
+        ],
+        fields: [
+          { key: "iterations", label: "Hassasiyet Turu", min: 1, max: 8, step: 1 },
+          { key: "margin", label: "Kenar Güvenlik Payı", min: 2, max: 40, step: 2 }
         ]
       },
       redact: {
