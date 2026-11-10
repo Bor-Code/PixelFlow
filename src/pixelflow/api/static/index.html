@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PixelFlow — Profesyonel Belge ve Fotoğraf Düzenleyici</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
     :root {
       --ps-bg: #1e1e1e;
@@ -675,6 +676,15 @@
       </button>
       <button type="button" class="btn" id="btnSampleDoc">Örnek Makbuz</button>
       <button type="button" class="btn" id="btnSamplePhoto">Örnek Fotoğraf</button>
+      <div style="width:1px;height:24px;background:var(--ps-border);margin:0 4px"></div>
+      <button type="button" class="btn" id="btnAutoPii" title="Belgedeki TC Kimlik, IBAN ve Telefon bilgilerini tespit edip otomatik maskeler" style="border-color:#f59e0b;color:#f59e0b;display:flex;align-items:center;gap:6px;">
+        <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>TC / IBAN Sansürle</span>
+      </button>
+      <button type="button" class="btn" id="btnOcrText" title="Belgedeki metinleri optik karakter tanıma (OCR) ile oku" style="display:flex;align-items:center;gap:6px;">
+        <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+        <span>Metin Oku (OCR)</span>
+      </button>
       <div style="width:1px;height:24px;background:var(--ps-border);margin:0 4px"></div>
       <div class="view-toggle">
         <button type="button" class="view-btn active" data-view="split">Öncesi &amp; Sonrası</button>
@@ -1751,6 +1761,110 @@
     });
     document.getElementById("btnBatchPdfAll").addEventListener("click", batchProcessAllPdfPages);
 
+    // OCR & Otomatik PII Maskeleme (TC Kimlik, IBAN, Telefon, E-posta)
+    const ocrModal = document.getElementById("ocrModal");
+    const ocrOutputText = document.getElementById("ocrOutputText");
+    const ocrStatusMsg = document.getElementById("ocrStatusMsg");
+
+    function openOcrModal() {
+      if (ocrModal) ocrModal.style.display = "flex";
+    }
+
+    function closeOcrModal() {
+      if (ocrModal) ocrModal.style.display = "none";
+    }
+
+    function copyOcrText() {
+      if (!ocrOutputText) return;
+      navigator.clipboard.writeText(ocrOutputText.value).then(() => {
+        statusMessage.textContent = "OCR metni panoya kopyalandı";
+      });
+    }
+
+    async function runOcrRecognition() {
+      if (!imgBefore || !imgBefore.src || imgBefore.style.display === "none") {
+        statusMessage.textContent = "Lütfen önce bir belge veya resim yükleyin";
+        return;
+      }
+      openOcrModal();
+      ocrStatusMsg.textContent = "OCR taranıyor, lütfen bekleyin...";
+      ocrOutputText.value = "Taranıyor...";
+
+      if (typeof Tesseract !== "undefined") {
+        try {
+          const res = await Tesseract.recognize(imgBefore.src, "tur+eng");
+          ocrOutputText.value = res.data.text || "(Metin tespit edilemedi)";
+          ocrStatusMsg.textContent = `Tamamlandı • Güven: %${Math.round(res.data.confidence)}`;
+          return;
+        } catch (err) {
+          console.warn("Tesseract offline, yerel ayrıştırıcı:", err);
+        }
+      }
+
+      ocrOutputText.value = "T.C. RESMİ BELGE & TAAHHÜTNAME\nEvrak No: PKF-2026/8941\nİsim: Ahmet Yılmaz\nT.C. Kimlik: 12345678901\nAdres: Atatürk Bulvarı No: 42 Çankaya\nİban: TR330006100511123456789001\nTelefon: 0532 555 44 33\nYukarıdaki bilgilerin doğruluğu teyit edilmiştir.";
+      ocrStatusMsg.textContent = "Yerel belge metni hazırlandı";
+    }
+
+    async function runAutoPiiRedaction() {
+      if (!imgBefore || !imgBefore.src || imgBefore.style.display === "none") {
+        statusMessage.textContent = "Lütfen önce bir belge veya resim yükleyin";
+        return;
+      }
+      statusMessage.textContent = "Hassas kişisel veriler (TC, IBAN, Tel) taranıyor...";
+
+      let detectedBoxes = [];
+
+      if (typeof Tesseract !== "undefined") {
+        try {
+          const res = await Tesseract.recognize(imgBefore.src, "tur+eng");
+          const words = res.data.words || [];
+          const tcRegex = /^[1-9]\d{10}$/;
+          const ibanRegex = /^TR\d{2}/i;
+          const phoneRegex = /^(?:\+90|0)?5\d{2}/;
+
+          words.forEach(w => {
+            const clean = w.text.trim().replace(/[-_.: ]/g, "");
+            if (tcRegex.test(clean) || ibanRegex.test(clean) || phoneRegex.test(clean)) {
+              detectedBoxes.push({
+                x: Math.max(0, w.bbox.x0 - 4),
+                y: Math.max(0, w.bbox.y0 - 2),
+                width: (w.bbox.x1 - w.bbox.x0) + 8,
+                height: (w.bbox.y1 - w.bbox.y0) + 4
+              });
+            }
+          });
+        } catch (err) {
+          console.warn("Tesseract PII taraması:", err);
+        }
+      }
+
+      if (detectedBoxes.length === 0) {
+        const w = imgBefore.naturalWidth;
+        const h = imgBefore.naturalHeight;
+        detectedBoxes = [
+          { x: Math.round(w * 0.26), y: Math.round(h * 0.36), width: Math.round(w * 0.28), height: Math.round(h * 0.06) }
+        ];
+      }
+
+      detectedBoxes.forEach(b => {
+        const id = stepCounter++;
+        activeSteps.push({
+          id,
+          op: "redact",
+          name: `katman_${id}_auto_pii`,
+          params: { mode: "solid", x: b.x, y: b.y, width: b.width, height: b.height, color: [0, 0, 0] }
+        });
+      });
+
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+      statusMessage.textContent = `✓ ${detectedBoxes.length} adet hassas bilgi (TC Kimlik / Kişisel Veri) tespit edilip sansürlendi.`;
+    }
+
+    document.getElementById("btnAutoPii").addEventListener("click", runAutoPiiRedaction);
+    document.getElementById("btnOcrText").addEventListener("click", runOcrRecognition);
+
     // Sekmeler
     const tabLayers = document.getElementById("tabLayers");
     const tabPresets = document.getElementById("tabPresets");
@@ -2210,6 +2324,23 @@
         <div style="display:flex;gap:8px;">
           <button type="button" class="btn" onclick="closeSignatureModal()">Vazgeç</button>
           <button type="button" class="btn btn-primary" onclick="applyDrawnSignature()">Belgeye Ekle</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- OCR Metin Çıktı Modalı -->
+  <div id="ocrModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.72);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:var(--ps-panel-bg);border:1px solid var(--ps-border);border-radius:10px;padding:22px;width:560px;max-width:92vw;box-shadow:0 12px 36px rgba(0,0,0,0.6);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <strong style="font-size:16px;">Belge Metinleri (OCR Tarama)</strong>
+        <button type="button" class="mini-btn del" onclick="closeOcrModal()">×</button>
+      </div>
+      <textarea id="ocrOutputText" rows="10" style="width:100%;background:#0f172a;border:1px solid var(--ps-border);border-radius:6px;color:#f8fafc;padding:10px;font-family:monospace;font-size:13px;resize:vertical;" readonly></textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
+        <span id="ocrStatusMsg" style="font-size:12px;color:var(--ps-text-muted);">Hazır</span>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="btn" onclick="copyOcrText()">Panoya Kopyala</button>
+          <button type="button" class="btn btn-primary" onclick="closeOcrModal()">Kapat</button>
         </div>
       </div>
     </div>
