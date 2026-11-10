@@ -633,6 +633,46 @@
       color: var(--pf-danger);
     }
 
+    .tool-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 12px;
+      background: var(--pf-bg-card);
+      border: 1px solid var(--pf-border);
+      color: var(--pf-text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tool-pill:hover {
+      border-color: var(--pf-accent);
+      color: var(--pf-text-white);
+    }
+
+    .tool-pill.active {
+      background: rgba(56, 189, 248, 0.14);
+      border-color: var(--pf-accent);
+      color: var(--pf-accent);
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.2);
+    }
+
+    .tool-pill .pill-close {
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+      opacity: 0.6;
+      transition: opacity 0.15s ease, color 0.15s ease;
+    }
+
+    .tool-pill .pill-close:hover {
+      opacity: 1;
+      color: var(--pf-danger);
+    }
+
     .slider-row {
       display: flex;
       flex-direction: column;
@@ -1067,8 +1107,8 @@
               <span class="ps-shortcut">Ctrl+Y</span>
             </div>
             <div class="ps-menu-divider"></div>
-            <div class="ps-menu-action" onclick="activeSteps=[];renderStepsUI();scheduleRender();">
-              <span data-tr="Tüm Katmanları Temizle" data-en="Clear All Layers">Tüm Katmanları Temizle</span>
+            <div class="ps-menu-action" onclick="resetAllSteps()">
+              <span data-tr="Tüm Efektleri Sıfırla" data-en="Reset All Effects">Tüm Efektleri Sıfırla</span>
             </div>
           </div>
         </div>
@@ -1423,28 +1463,14 @@
         </div>
       </div>
 
-      <!-- Canlı 256 Histogram -->
-      <div style="padding:0 18px 14px;">
-        <div
-          style="background:var(--pf-bg-card);border:1px solid var(--pf-border);border-radius:var(--radius-sm);padding:9px;">
-          <div
-            style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;font-weight:700;color:var(--pf-text-muted);">
-            <span data-tr="CANLI HISTOGRAM (RGB)" data-en="LIVE HISTOGRAM (RGB)">CANLI HISTOGRAM (RGB)</span>
-            <span style="color:var(--pf-accent);" data-tr="256 Seviye" data-en="256 Levels">256 Seviye</span>
-          </div>
-          <canvas id="histCanvas" width="256" height="58"
-            style="width:100%;height:58px;display:block;border-radius:4px;background:#080a0f;"></canvas>
-        </div>
-      </div>
-
-      <!-- Aktif İşlem Sürgüleri & Katmanlar -->
+      <!-- Aktif İşlem Sürgüleri & Ayar Paneli -->
       <div class="controls-section">
         <div class="section-headline">
-          <span data-tr="Uygulanan Katmanlar" data-en="Applied Layers">Uygulanan Katmanlar</span>
-          <span id="activeLayersCount" style="color:var(--pf-text-white)">0 Katman</span>
+          <span data-tr="Ayar Paneli" data-en="Adjustment Panel">Ayar Paneli</span>
+          <span id="activeLayersCount" style="color:var(--pf-accent);font-size:11px;font-weight:600;"></span>
         </div>
         <div id="stepsList" style="display:flex;flex-direction:column;gap:10px;">
-          <!-- Dinamik Katman Kartları -->
+          <!-- Dinamik Araç Ayarları -->
         </div>
       </div>
     </aside>
@@ -2216,6 +2242,7 @@
 
     let activeCategory = "ai";
     let activeSteps = [];
+    let selectedStepId = null;
     let stepCounter = 1;
     let currentBlob = null;
     let currentFileName = "gorsel.png";
@@ -2315,6 +2342,14 @@
       cat.cards.forEach(c => {
         const div = document.createElement("div");
         div.className = "tool-card";
+        const isSelected = activeSteps.some(s => s.op === c.op && s.id === selectedStepId);
+        const isActive = activeSteps.some(s => s.op === c.op);
+        if (isSelected) {
+          div.style.borderColor = "var(--pf-accent)";
+          div.style.background = "rgba(56, 189, 248, 0.08)";
+        } else if (isActive) {
+          div.style.borderColor = "rgba(56, 189, 248, 0.35)";
+        }
         const cName = (typeof c.name === "object") ? (c.name[currentLang] || c.name.tr) : c.name;
         const cTag = (typeof c.tag === "object") ? (c.tag[currentLang] || c.tag.tr) : c.tag;
         div.innerHTML = `
@@ -2350,10 +2385,14 @@
       if (historyIndex > 0) {
         historyIndex--;
         activeSteps = JSON.parse(historyStack[historyIndex]);
+        if (!activeSteps.some(s => s.id === selectedStepId)) {
+          selectedStepId = activeSteps.length > 0 ? activeSteps[activeSteps.length - 1].id : null;
+        }
+        renderCategoryDrawer();
         renderStepsUI();
         scheduleRender();
         updateUndoRedoButtons();
-        statusMessage.textContent = "Geri alındı (Undo)";
+        statusMessage.textContent = (currentLang === "en") ? "Action undone (Undo)" : "Geri alındı (Undo)";
       }
     }
 
@@ -2361,10 +2400,14 @@
       if (historyIndex < historyStack.length - 1) {
         historyIndex++;
         activeSteps = JSON.parse(historyStack[historyIndex]);
+        if (!activeSteps.some(s => s.id === selectedStepId)) {
+          selectedStepId = activeSteps.length > 0 ? activeSteps[activeSteps.length - 1].id : null;
+        }
+        renderCategoryDrawer();
         renderStepsUI();
         scheduleRender();
         updateUndoRedoButtons();
-        statusMessage.textContent = "İleri alındı (Redo)";
+        statusMessage.textContent = (currentLang === "en") ? "Action redone (Redo)" : "İleri alındı (Redo)";
       }
     }
 
@@ -2378,10 +2421,12 @@
     function resetAllSteps() {
       if (activeSteps.length === 0) return;
       activeSteps = [];
+      selectedStepId = null;
       pushHistory();
+      renderCategoryDrawer();
       renderStepsUI();
       scheduleRender();
-      statusMessage.textContent = "Tüm efektler sıfırlandı";
+      statusMessage.textContent = (currentLang === "en") ? "All effects reset" : "Tüm efektler sıfırlandı";
     }
 
     function quickAdd(opKey) {
@@ -2390,150 +2435,248 @@
 
       if (def.isPreset && def.ops) {
         def.ops.forEach(item => {
-          const id = stepCounter++;
-          activeSteps.push({
-            id,
-            op: item.op,
-            name: `katman_${id}_${item.op}`,
-            params: JSON.parse(JSON.stringify(item.params))
-          });
+          let existing = activeSteps.find(s => s.op === item.op);
+          if (existing) {
+            existing.params = JSON.parse(JSON.stringify(item.params));
+            selectedStepId = existing.id;
+          } else {
+            const id = stepCounter++;
+            activeSteps.push({
+              id,
+              op: item.op,
+              name: `katman_${id}_${item.op}`,
+              params: JSON.parse(JSON.stringify(item.params))
+            });
+            selectedStepId = id;
+          }
         });
         statusMessage.textContent = `✓ ${def.title} uygulandı`;
       } else {
-        const id = stepCounter++;
-        activeSteps.push({
-          id,
-          op: opKey,
-          name: `katman_${id}_${opKey}`,
-          params: JSON.parse(JSON.stringify(def.defaults))
-        });
-        statusMessage.textContent = `+ ${def.title} eklendi`;
+        let existing = activeSteps.find(s => s.op === opKey);
+        if (existing) {
+          selectedStepId = existing.id;
+          statusMessage.textContent = `${def.title} ayarlanıyor`;
+        } else {
+          const id = stepCounter++;
+          activeSteps.push({
+            id,
+            op: opKey,
+            name: `katman_${id}_${opKey}`,
+            params: JSON.parse(JSON.stringify(def.defaults || {}))
+          });
+          selectedStepId = id;
+          statusMessage.textContent = `+ ${def.title} eklendi`;
+        }
       }
       pushHistory();
+      renderCategoryDrawer();
       renderStepsUI();
       scheduleRender();
+    }
+
+    function selectStep(stepId) {
+      selectedStepId = stepId;
+      renderCategoryDrawer();
+      renderStepsUI();
+    }
+
+    function deleteStep(target) {
+      const idx = (typeof target === "number" && target < activeSteps.length && !activeSteps.some(s => s.id === target))
+        ? target
+        : activeSteps.findIndex(s => s.id === target);
+      if (idx !== -1) {
+        const removed = activeSteps[idx];
+        activeSteps.splice(idx, 1);
+        if (selectedStepId === (removed ? removed.id : target)) {
+          selectedStepId = activeSteps.length > 0 ? activeSteps[activeSteps.length - 1].id : null;
+        }
+        pushHistory();
+        renderCategoryDrawer();
+        renderStepsUI();
+        scheduleRender();
+      }
+    }
+
+    function resetStepParams(stepId) {
+      const step = activeSteps.find(s => s.id === stepId);
+      if (!step) return;
+      const def = EFFECT_DEFS[step.op];
+      if (def && def.defaults) {
+        step.params = JSON.parse(JSON.stringify(def.defaults));
+        pushHistory();
+        renderStepsUI();
+        scheduleRender();
+      }
     }
 
     function renderStepsUI() {
       if (!stepsList || !activeLayersCount) return;
       stepsList.innerHTML = "";
-      activeLayersCount.textContent = (currentLang === "en")
-        ? `${activeSteps.length} ${activeSteps.length === 1 ? "Layer" : "Layers"}`
-        : `${activeSteps.length} Katman`;
 
       if (activeSteps.length === 0) {
+        activeLayersCount.textContent = (currentLang === "en") ? "No Active Tool" : "Aktif Araç Yok";
         stepsList.innerHTML = `
-          <div style="text-align:center;padding:24px 10px;color:var(--pf-text-muted);font-size:12px;border:1px dashed var(--pf-border);border-radius:var(--radius-sm);line-height:1.5;">
+          <div style="text-align:center;padding:26px 14px;color:var(--pf-text-muted);font-size:12px;border:1px dashed var(--pf-border);border-radius:var(--radius-sm);line-height:1.6;">
             ${(currentLang === "en")
-            ? "No effect layers applied yet.<br/>Click any card above to add an operation."
-            : "Henüz efekt katmanı eklenmedi.<br/>Yukarıdaki kartlara tıklayarak işlem ekleyebilirsiniz."}
+            ? "No active tool selected.<br/><span style='color:var(--pf-accent)'>Click any tool card above</span> to open its adjustments."
+            : "Henüz bir araç seçilmedi.<br/><span style='color:var(--pf-accent)'>Yukarıdaki araç kartlarına tıklayarak</span> ayarlarını açabilirsiniz."}
           </div>
         `;
         syncPerspectivePins();
         return;
       }
 
-      activeSteps.forEach((step, idx) => {
-        const def = EFFECT_DEFS[step.op] || { title: step.op, tag: "Özel", fields: [] };
-        const localizedTitle = (currentLang === "en" && EFFECT_TITLE_EN[step.op]) ? EFFECT_TITLE_EN[step.op] : def.title;
-        const removeTitle = (currentLang === "en") ? "Remove Layer" : "Katmanı Kaldır";
-        const card = document.createElement("div");
-        card.className = "active-step-card";
+      if (!activeSteps.some(s => s.id === selectedStepId)) {
+        selectedStepId = activeSteps[activeSteps.length - 1].id;
+      }
 
-        const header = document.createElement("div");
-        header.className = "step-header";
-        header.innerHTML = `
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:11px;font-weight:700;color:var(--pf-accent);background:var(--pf-accent-soft);padding:2px 5px;border-radius:4px;">#${idx + 1}</span>
-            <span class="step-title">${localizedTitle}</span>
-          </div>
-          <button type="button" class="step-remove" title="${removeTitle}" onclick="deleteStep(${idx})">×</button>
-        `;
-        card.appendChild(header);
+      activeLayersCount.textContent = (currentLang === "en")
+        ? `${activeSteps.length} ${activeSteps.length === 1 ? "Tool" : "Tools"}`
+        : `${activeSteps.length} Araç`;
 
-        (def.textFields || []).forEach(f => {
-          const row = document.createElement("div");
-          row.style.display = "flex";
-          row.style.flexDirection = "column";
-          row.style.gap = "4px";
-          row.innerHTML = `<span style="font-size:11.5px;color:var(--pf-text-muted);font-weight:600">${f.label}</span>`;
-          const input = document.createElement("input");
-          input.type = "text";
-          input.value = step.params[f.key] || "";
-          input.style.background = "#0c0e12";
-          input.style.border = "1px solid var(--pf-border)";
-          input.style.color = "#fff";
-          input.style.padding = "6px 8px";
-          input.style.borderRadius = "4px";
-          input.addEventListener("input", (e) => {
-            step.params[f.key] = e.target.value;
-            scheduleRender();
-          });
-          row.appendChild(input);
-          card.appendChild(row);
-        });
+      const activeStep = activeSteps.find(s => s.id === selectedStepId) || activeSteps[activeSteps.length - 1];
 
-        (def.selectFields || []).forEach(f => {
-          const row = document.createElement("div");
-          row.style.display = "flex";
-          row.style.flexDirection = "column";
-          row.style.gap = "4px";
-          row.innerHTML = `<span style="font-size:11.5px;color:var(--pf-text-muted);font-weight:600">${f.label}</span>`;
-          const sel = document.createElement("select");
-          sel.className = "select-format";
-          sel.style.width = "100%";
-          f.options.forEach(([optVal, optLabel]) => {
-            const opt = document.createElement("option");
-            opt.value = optVal;
-            opt.textContent = optLabel;
-            if (step.params[f.key] === optVal) opt.selected = true;
-            sel.appendChild(opt);
-          });
-          sel.addEventListener("change", (e) => {
-            step.params[f.key] = e.target.value;
-            scheduleRender();
-          });
-          row.appendChild(sel);
-          card.appendChild(row);
-        });
+      // Birden fazla araç aktifse, aralarında tek tıkla geçiş sağlayan kompakt chip/pill barı
+      if (activeSteps.length > 1) {
+        const pillsRow = document.createElement("div");
+        pillsRow.className = "tool-pills-row";
+        pillsRow.style.display = "flex";
+        pillsRow.style.flexWrap = "wrap";
+        pillsRow.style.gap = "6px";
+        pillsRow.style.marginBottom = "4px";
 
-        (def.fields || []).forEach(f => {
-          const row = document.createElement("div");
-          row.className = "slider-row";
-          const currentVal = step.params[f.key];
-          row.innerHTML = `
-            <div class="slider-meta">
-              <span>${f.label}</span>
-              <span class="val" id="lbl_${step.id}_${f.key}">${currentVal}</span>
-            </div>
+        activeSteps.forEach(s => {
+          const sDef = EFFECT_DEFS[s.op] || { title: s.op };
+          const sTitle = (currentLang === "en" && EFFECT_TITLE_EN[s.op]) ? EFFECT_TITLE_EN[s.op] : sDef.title;
+          const isCur = (s.id === activeStep.id);
+          const pill = document.createElement("div");
+          pill.className = `tool-pill ${isCur ? "active" : ""}`;
+          pill.innerHTML = `
+            <span onclick="selectStep(${s.id})" style="cursor:pointer;">${sTitle}</span>
+            <span class="pill-close" onclick="event.stopPropagation();deleteStep(${s.id});" title="${currentLang === 'en' ? 'Remove' : 'Kaldır'}">×</span>
           `;
-          const range = document.createElement("input");
-          range.type = "range";
-          range.min = f.min;
-          range.max = f.max;
-          range.step = f.step;
-          range.value = currentVal;
-          range.addEventListener("input", (e) => {
-            const val = Number(e.target.value);
-            step.params[f.key] = val;
-            const lbl = document.getElementById(`lbl_${step.id}_${f.key}`);
-            if (lbl) lbl.textContent = val;
-            scheduleRender();
-          });
-          row.appendChild(range);
-          card.appendChild(row);
+          pillsRow.appendChild(pill);
         });
+        stepsList.appendChild(pillsRow);
+      }
 
-        stepsList.appendChild(card);
+      // Tek aktif aracın ayar paneli (artık katman katman alt alta sıralanmaz!)
+      const def = EFFECT_DEFS[activeStep.op] || { title: activeStep.op, tag: "Özel", fields: [] };
+      const localizedTitle = (currentLang === "en" && EFFECT_TITLE_EN[activeStep.op]) ? EFFECT_TITLE_EN[activeStep.op] : def.title;
+      const resetLabel = (currentLang === "en") ? "Reset" : "Sıfırla";
+      const removeTitle = (currentLang === "en") ? "Remove Tool" : "Aracı Kaldır";
+
+      const card = document.createElement("div");
+      card.className = "active-step-card";
+
+      const header = document.createElement("div");
+      header.className = "step-header";
+      header.innerHTML = `
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:11px;font-weight:700;color:var(--pf-accent);background:var(--pf-accent-soft);padding:2px 6px;border-radius:4px;">${def.tag || "Ayar"}</span>
+          <span class="step-title" style="font-size:12px;">${localizedTitle}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button type="button" class="btn-step-reset" onclick="resetStepParams(${activeStep.id})" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);font-size:10.5px;padding:2px 7px;border-radius:4px;cursor:pointer;transition:all 0.15s ease;" onmouseenter="this.style.color='#fff';this.style.borderColor='var(--pf-accent)'" onmouseleave="this.style.color='var(--pf-text-muted)';this.style.borderColor='var(--pf-border)'">
+            ${resetLabel}
+          </button>
+          <button type="button" class="step-remove" title="${removeTitle}" onclick="deleteStep(${activeStep.id})">×</button>
+        </div>
+      `;
+      card.appendChild(header);
+
+      let hasControls = false;
+
+      (def.textFields || []).forEach(f => {
+        hasControls = true;
+        const row = document.createElement("div");
+        row.style.display = "flex";
+        row.style.flexDirection = "column";
+        row.style.gap = "4px";
+        row.innerHTML = `<span style="font-size:11.5px;color:var(--pf-text-muted);font-weight:600">${f.label}</span>`;
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = activeStep.params[f.key] || "";
+        input.style.background = "#0c0e12";
+        input.style.border = "1px solid var(--pf-border)";
+        input.style.color = "#fff";
+        input.style.padding = "6px 8px";
+        input.style.borderRadius = "4px";
+        input.addEventListener("input", (e) => {
+          activeStep.params[f.key] = e.target.value;
+          scheduleRender();
+        });
+        row.appendChild(input);
+        card.appendChild(row);
       });
-      syncPerspectivePins();
-    }
 
-    function deleteStep(idx) {
-      activeSteps.splice(idx, 1);
-      pushHistory();
-      renderStepsUI();
-      scheduleRender();
+      (def.selectFields || []).forEach(f => {
+        hasControls = true;
+        const row = document.createElement("div");
+        row.style.display = "flex";
+        row.style.flexDirection = "column";
+        row.style.gap = "4px";
+        row.innerHTML = `<span style="font-size:11.5px;color:var(--pf-text-muted);font-weight:600">${f.label}</span>`;
+        const sel = document.createElement("select");
+        sel.className = "select-format";
+        sel.style.width = "100%";
+        f.options.forEach(([optVal, optLabel]) => {
+          const opt = document.createElement("option");
+          opt.value = optVal;
+          opt.textContent = optLabel;
+          if (activeStep.params[f.key] === optVal) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        sel.addEventListener("change", (e) => {
+          activeStep.params[f.key] = e.target.value;
+          scheduleRender();
+        });
+        row.appendChild(sel);
+        card.appendChild(row);
+      });
+
+      (def.fields || []).forEach(f => {
+        hasControls = true;
+        const row = document.createElement("div");
+        row.className = "slider-row";
+        const currentVal = activeStep.params[f.key];
+        row.innerHTML = `
+          <div class="slider-meta">
+            <span>${f.label}</span>
+            <span class="val" id="lbl_${activeStep.id}_${f.key}">${currentVal}</span>
+          </div>
+        `;
+        const range = document.createElement("input");
+        range.type = "range";
+        range.min = f.min;
+        range.max = f.max;
+        range.step = f.step;
+        range.value = currentVal;
+        range.addEventListener("input", (e) => {
+          const val = Number(e.target.value);
+          activeStep.params[f.key] = val;
+          const lbl = document.getElementById(`lbl_${activeStep.id}_${f.key}`);
+          if (lbl) lbl.textContent = val;
+          scheduleRender();
+        });
+        row.appendChild(range);
+        card.appendChild(row);
+      });
+
+      if (!hasControls) {
+        const info = document.createElement("div");
+        info.style.fontSize = "11.5px";
+        info.style.color = "var(--pf-text-muted)";
+        info.style.padding = "6px 2px";
+        info.style.lineHeight = "1.4";
+        info.textContent = (currentLang === "en")
+          ? "Preset effect applied. No additional parameters required."
+          : "Efekt otomatik uygulandı. İlave parametre gerektirmez.";
+        card.appendChild(info);
+      }
+
+      stepsList.appendChild(card);
+      syncPerspectivePins();
     }
 
     function scheduleRender() {
@@ -2710,57 +2853,8 @@
       executePipeline();
     }
 
-    // Canlı 256 Histogram
-    function drawLiveHistogram(img) {
-      const canvas = document.getElementById("histCanvas");
-      if (!canvas || !img || !img.naturalWidth) return;
-      const ctx = canvas.getContext("2d");
-      const sampleCanvas = document.createElement("canvas");
-      const sampleW = 160;
-      const sampleH = Math.max(1, Math.round((img.naturalHeight / img.naturalWidth) * sampleW));
-      sampleCanvas.width = sampleW;
-      sampleCanvas.height = sampleH;
-      const sCtx = sampleCanvas.getContext("2d");
-      sCtx.drawImage(img, 0, 0, sampleW, sampleH);
-      const imgData = sCtx.getImageData(0, 0, sampleW, sampleH).data;
-
-      const rHist = new Uint32Array(256);
-      const gHist = new Uint32Array(256);
-      const bHist = new Uint32Array(256);
-      let maxVal = 1;
-
-      for (let i = 0; i < imgData.length; i += 4) {
-        const r = imgData[i], g = imgData[i + 1], b = imgData[i + 2];
-        rHist[r]++; gHist[g]++; bHist[b]++;
-        if (rHist[r] > maxVal) maxVal = rHist[r];
-        if (gHist[g] > maxVal) maxVal = gHist[g];
-        if (bHist[b] > maxVal) maxVal = bHist[b];
-      }
-
-      ctx.clearRect(0, 0, 256, 58);
-      ctx.fillStyle = "#090d16";
-      ctx.fillRect(0, 0, 256, 58);
-
-      function drawCurve(hist, strokeColor, fillColor) {
-        ctx.strokeStyle = strokeColor;
-        ctx.fillStyle = fillColor;
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.moveTo(0, 58);
-        for (let x = 0; x < 256; x++) {
-          const y = 58 - (hist[x] / maxVal) * 52;
-          ctx.lineTo(x, y);
-        }
-        ctx.lineTo(255, 58);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-      }
-
-      drawCurve(rHist, "rgba(239, 68, 68, 0.9)", "rgba(239, 68, 68, 0.15)");
-      drawCurve(gHist, "rgba(56, 189, 248, 0.9)", "rgba(56, 189, 248, 0.15)");
-      drawCurve(bHist, "rgba(59, 130, 246, 0.9)", "rgba(59, 130, 246, 0.15)");
-    }
+    // Canlı histogram kaldırıldı (no-op)
+    function drawLiveHistogram(img) {}
 
     // 4-Köşe Perspektif Pinleri (CamScanner)
     const perspectiveSvg = document.getElementById("perspectiveSvg");
