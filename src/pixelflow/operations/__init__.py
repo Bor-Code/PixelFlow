@@ -33,6 +33,8 @@ from pixelflow.operations.detection import (
 from pixelflow.operations.document import (
     DeskewOperation,
     DeskewParams,
+    MagicColorOperation,
+    MagicColorParams,
     ShadowRemovalOperation,
     ShadowRemovalParams,
 )
@@ -174,6 +176,8 @@ __all__ = [
     "HistogramEqualizationParams",
     "InpaintOperation",
     "InpaintParams",
+    "MagicColorOperation",
+    "MagicColorParams",
     "MedianBlurOperation",
     "MedianBlurParams",
     "MorphologyOperation",
