@@ -11,6 +11,7 @@ from pixelflow.operations.document import (
     DeskewParams,
     ShadowRemovalOperation,
     ShadowRemovalParams,
+    detect_document_corners,
 )
 
 
@@ -87,3 +88,22 @@ def test_deskew_params_validation() -> None:
         DeskewParams(max_angle=95.0)
     with pytest.raises(ValidationError):
         DeskewParams(fill_value=300)
+
+
+def test_detect_document_corners() -> None:
+    canvas = np.zeros((300, 400, 3), dtype=np.uint8)
+    cv2.rectangle(canvas, (50, 50), (350, 250), (255, 255, 255), -1)
+    corners = detect_document_corners(canvas)
+    assert len(corners) == 4
+    for pt in corners:
+        assert len(pt) == 2
+        assert 40 <= pt[0] <= 360
+        assert 40 <= pt[1] <= 260
+
+    plain = np.full((100, 100), 128, dtype=np.uint8)
+    fallback = detect_document_corners(plain)
+    assert fallback == [[0, 0], [100, 0], [100, 100], [0, 100]]
+
+    rgba = cv2.cvtColor(canvas, cv2.COLOR_BGR2BGRA)
+    rgba_corners = detect_document_corners(rgba)
+    assert len(rgba_corners) == 4

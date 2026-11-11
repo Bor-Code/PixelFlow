@@ -104,3 +104,39 @@ class DeskewOperation(ImageOperation[DeskewParams]):
             return image.copy()
         rotated = _rotate_bound(image, angle, self.params.fill_value)
         return cast(ImageArray, rotated.astype(image.dtype))
+
+
+def _order_corners(pts: np.ndarray) -> list[list[int]]:
+    s = pts.sum(axis=1)
+    diff = np.diff(pts, axis=1)
+    ordered = np.zeros((4, 2), dtype=int)
+    ordered[0] = pts[np.argmin(s)]
+    ordered[2] = pts[np.argmax(s)]
+    ordered[1] = pts[np.argmin(diff)]
+    ordered[3] = pts[np.argmax(diff)]
+    return ordered.tolist()
+
+
+def detect_document_corners(image: np.ndarray) -> list[list[int]]:
+    h, w = image.shape[:2]
+    fallback = [[0, 0], [w, 0], [w, h], [0, h]]
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) if image.ndim == 3 else image
+    if gray.ndim == 3 and gray.shape[2] == 4:
+        gray = cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges = cv2.Canny(blurred, 50, 150)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    edges = cv2.dilate(edges, kernel, iterations=1)
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)
+    min_area = (h * w) * 0.05
+    for c in contours:
+        area = cv2.contourArea(c)
+        if area < min_area:
+            break
+        peri = cv2.arcLength(c, True)
+        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+        if len(approx) == 4:
+            pts = approx.reshape(4, 2)
+            return _order_corners(pts)
+    return fallback

@@ -44,9 +44,7 @@ def test_qr_overlay_all_positions() -> None:
     img = np.full((200, 200, 3), 100, dtype=np.uint8)
     positions = ["top-left", "top-right", "bottom-left", "center"]
     for pos in positions:
-        op = QROverlayOperation(
-            params={"data": "test", "position": pos, "size": 50, "margin": 5}
-        )
+        op = QROverlayOperation(params={"data": "test", "position": pos, "size": 50, "margin": 5})
         res = op.apply(img)
         assert res.shape == (200, 200, 3)
 

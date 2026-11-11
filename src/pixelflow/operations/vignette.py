@@ -20,9 +20,7 @@ class VignetteParams(OperationParams):
     center_y: float = Field(default=0.5, ge=0.0, le=1.0)
 
 
-def _compute_vignette_mask(
-    h: int, w: int, params: VignetteParams
-) -> np.ndarray:
+def _compute_vignette_mask(h: int, w: int, params: VignetteParams) -> np.ndarray:
     y_coords = (np.arange(h, dtype=np.float32) - (params.center_y * (h - 1))) / (h / 2.0)
     x_coords = (np.arange(w, dtype=np.float32) - (params.center_x * (w - 1))) / (w / 2.0)
     grid_x, grid_y = np.meshgrid(x_coords, y_coords)

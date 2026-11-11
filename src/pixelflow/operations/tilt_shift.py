@@ -20,9 +20,7 @@ class TiltShiftParams(OperationParams):
     saturation_boost: float = Field(default=1.2, ge=1.0, le=2.0)
 
 
-def _compute_1d_blur_weight(
-    size: int, pos: float, focus_w: float, trans_w: float
-) -> np.ndarray:
+def _compute_1d_blur_weight(size: int, pos: float, focus_w: float, trans_w: float) -> np.ndarray:
     coords = np.arange(size, dtype=np.float32)
     center = pos * (size - 1)
     half_focus = (focus_w * size) / 2.0
@@ -33,9 +31,7 @@ def _compute_1d_blur_weight(
     return clipped * clipped * (3.0 - 2.0 * clipped)
 
 
-def _build_blur_weight_mask(
-    shape: tuple[int, int], params: TiltShiftParams
-) -> np.ndarray:
+def _build_blur_weight_mask(shape: tuple[int, int], params: TiltShiftParams) -> np.ndarray:
     h, w = shape
     if params.orientation == "horizontal":
         w1d = _compute_1d_blur_weight(

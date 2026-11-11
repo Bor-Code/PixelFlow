@@ -12,9 +12,9 @@ from pixelflow.core.registry import register_operation
 
 
 class DuotoneParams(OperationParams):
-    preset: Literal[
-        "spotify", "sunset", "cyberpunk", "amber", "ocean", "neon_mint", "custom"
-    ] = "spotify"
+    preset: Literal["spotify", "sunset", "cyberpunk", "amber", "ocean", "neon_mint", "custom"] = (
+        "spotify"
+    )
     shadow_color: str = "#0d1b2a"
     highlight_color: str = "#1db954"
     intensity: float = Field(default=1.0, ge=0.0, le=1.0)
@@ -103,4 +103,3 @@ class DuotoneOperation(ImageOperation[DuotoneParams]):
         if alpha is not None:
             return merge_alpha(out_rgb, alpha)
         return cast(ImageArray, out_rgb)
-
