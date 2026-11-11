@@ -944,6 +944,26 @@
       color: var(--pf-danger);
     }
 
+    .btn-filter-pill {
+      background: #111520;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.12s ease;
+    }
+
+    .btn-filter-pill:hover,
+    .btn-filter-pill.active {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: var(--pf-accent);
+      color: #fff;
+    }
+
     .active-step-card {
       background: #111622;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1818,7 +1838,7 @@
             <circle cx="12" cy="12" r="5" />
             <path d="M12 7v2m0 6v2m-5-5h2m6 0h2" />
           </svg>
-          <span data-tr="Damgalar" data-en="Stamps">Damgalar</span>
+          <span data-tr="Tipografi &amp; Damga" data-en="Type &amp; Stamp">Tipografi &amp; Damga</span>
         </button>
         <button type="button" class="seg-tab" id="segTabArtfx" onclick="switchLeftTab('artfx')">
           <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
@@ -1892,16 +1912,46 @@
       </div>
 
       <!-- Tab: Damga & Kaşe Kütüphanesi -->
+      <!-- Tab 4: Tipografi, Retro Tarih & Damgalar -->
       <div class="tab-content-pro" id="tabContentStamps" style="display:none;">
+        <!-- Kategori Filtre Butonları -->
+        <div style="display:flex;gap:4px;margin-bottom:8px;overflow-x:auto;padding-bottom:2px;">
+          <button type="button" class="btn-filter-pill active" onclick="filterStampCategory('all', this)">Tümü</button>
+          <button type="button" class="btn-filter-pill" onclick="filterStampCategory('date', this)">Retro Tarih</button>
+          <button type="button" class="btn-filter-pill" onclick="filterStampCategory('editorial', this)">Editoryal</button>
+          <button type="button" class="btn-filter-pill" onclick="filterStampCategory('copyright', this)">Telif &amp; İmza</button>
+          <button type="button" class="btn-filter-pill" onclick="filterStampCategory('stamp', this)">Resmi Kaşe</button>
+        </div>
+
+        <!-- Hızlı Metin / Tarih Giriş Kutusu -->
         <div style="margin-bottom:10px;padding:8px;background:rgba(255,255,255,0.03);border:1px solid var(--pf-border);border-radius:6px;">
-          <div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:4px;" data-tr="ÖZEL METİNLİ KAŞE" data-en="CUSTOM TEXT STAMP">ÖZEL METİNLİ KAŞE</div>
-          <div style="display:flex;gap:4px;">
-            <input type="text" id="customStampTextInput" placeholder="Örn: ONAYLANDI / DRAFT" style="flex:1;font-size:11px;padding:4px 6px;background:#0d1117;border:1px solid var(--pf-border);border-radius:4px;color:#f1f5f9;" value="GİZLİDİR" />
-            <button type="button" class="btn btn-primary" style="font-size:10px;padding:4px 8px;" onclick="applyCustomTextStamp()">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:10px;font-weight:700;color:#94a3b8;" data-tr="ÖZEL METİN / TARİH" data-en="CUSTOM TEXT / DATE">ÖZEL METİN / TARİH</span>
+            <button type="button" onclick="insertTodayRetroDate()" style="font-size:9.5px;color:var(--pf-accent);background:transparent;border:none;cursor:pointer;">📅 90s Tarih</button>
+          </div>
+          <div style="display:flex;gap:4px;margin-bottom:6px;">
+            <input type="text" id="customStampTextInput" placeholder="Örn: '98 11 04 veya © 2026" style="flex:1;font-size:11px;padding:5px 6px;background:#0d1117;border:1px solid var(--pf-border);border-radius:4px;color:#f1f5f9;" value="'98 11 04" />
+            <button type="button" class="btn btn-primary" style="font-size:10px;padding:4px 10px;" onclick="applyCustomTextStamp()">
               <span data-tr="Bas" data-en="Apply">Bas</span>
             </button>
           </div>
+          <div style="display:flex;gap:4px;">
+            <select id="customStampFontStyle" class="select-format" style="flex:1;font-size:10px;padding:3px 4px;">
+              <option value="mono">Retro Daktilo &amp; LED Mono</option>
+              <option value="sans">Modern Sans-Serif</option>
+              <option value="serif">Zarif Editoryal Serif</option>
+              <option value="bold">Kalın Başlık (Bold)</option>
+            </select>
+            <select id="customStampColorPreset" class="select-format" style="flex:1;font-size:10px;padding:3px 4px;">
+              <option value="amber">Turuncu Amber LED</option>
+              <option value="green">Neon Yeşil Camcorder</option>
+              <option value="white">Saf Beyaz</option>
+              <option value="red">Resmi Kırmızı</option>
+              <option value="blue">Resmi Lacivert</option>
+            </select>
+          </div>
         </div>
+
         <div class="preset-cards-grid" id="stampsVitrinGrid">
           <!-- JS tarafından doldurulur -->
         </div>
@@ -3129,14 +3179,37 @@
 
       // Yazı & İmza
       watermark: {
-        title: "Yazı / Filigran",
+        title: "Tipografi & Metin Damgası",
         tag: "Metin",
-        defaults: { text: "PixelFlow", position: "bottom-right", opacity: 0.65, scale: 0.4 },
-        textFields: [{ key: "text", label: "Yazılacak Metin" }],
+        defaults: { text: "PixelFlow Studio", position: "bottom-right", opacity: 0.85, scale: 0.35, font_style: "sans", box_background: false },
+        textFields: [{ key: "text", label: "Yazılacak Metin / Başlık / Tarih" }],
         selectFields: [
-          { key: "position", label: "Konum", options: [["bottom-right", "Sağ Alt"], ["bottom-left", "Sol Alt"], ["top-right", "Sağ Üst"], ["top-left", "Sol Üst"], ["center", "Merkez"]] }
+          {
+            key: "font_style",
+            label: "Yazı Tipi & Tarzı",
+            options: [
+              ["sans", "Modern Sans-Serif"],
+              ["serif", "Zarif Editoryal Serif"],
+              ["mono", "Retro Daktilo & LED Mono"],
+              ["bold", "Kalın Başlık (Bold)"]
+            ]
+          },
+          {
+            key: "position",
+            label: "Metin Konumu",
+            options: [
+              ["bottom-right", "Sağ Alt Köşe (Tarih / İmza)"],
+              ["bottom-left", "Sol Alt Köşe (Editoryal)"],
+              ["top-right", "Sağ Üst Köşe (Referans)"],
+              ["top-left", "Sol Üst Köşe (VHS / Kayıt)"],
+              ["center", "Merkez (Başlık)"]
+            ]
+          }
         ],
-        fields: [{ key: "opacity", label: "Opaklık Oranı", min: 0.1, max: 1.0, step: 0.05 }]
+        fields: [
+          { key: "opacity", label: "Opaklık Oranı", min: 0.1, max: 1.0, step: 0.05 },
+          { key: "scale", label: "Yazı Boyutu (Ölçek)", min: 0.1, max: 1.5, step: 0.05 }
+        ]
       },
       qr_overlay: {
         title: "Dinamik QR Kod & Damgalama",
@@ -5623,6 +5696,7 @@
       { id: "inpaint", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Sihirli Silgi (İstenmeyen Nesneyi Sil)", nameEn: "Magic Eraser (Inpaint Object)", action: () => quickAdd("inpaint") },
       { id: "preset", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Sinematik LUT Renk Presetleri", nameEn: "Cinematic LUT Color Presets", action: () => quickAdd("preset") },
       { id: "blend_layer", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Katman Karışım Modu & Opaklık (Blend)", nameEn: "Layer Blend Mode & Opacity", action: () => quickAdd("blend") },
+      { id: "typography_studio", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Tipografi, Retro Tarih & Telif Damgası", nameEn: "Typography, Retro Date & Copyright Stamp", action: () => { switchLeftTab("stamps"); if (document.getElementById("proLeftPanel")?.classList.contains("collapsed")) toggleLeftPanel(); } },
       { id: "duotone", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Duotone İki Renkli Gradyan Eşleme", nameEn: "Duotone Two-Tone Gradient Map", action: () => quickAdd("duotone") },
       { id: "brightness_contrast", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Parlaklık & Kontrast Ayarı", nameEn: "Brightness & Contrast Adjustment", action: () => quickAdd("brightness_contrast") },
       { id: "vibrance", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Canlılık & Doygunluk (Vibrance)", nameEn: "Vibrance & Saturation", action: () => quickAdd("vibrance") },
@@ -6003,26 +6077,300 @@
       }
     }
 
-    const PRO_STAMP_PRESETS = [
-      { id: "confidential", name: "GİZLİDİR", nameEn: "CONFIDENTIAL", text: "GİZLİDİR", desc: "Kırmızı Resmi Gizlilik Kaşesi", descEn: "Official Red Confidential Seal", color: [220, 38, 38], angle: -14, opacity: 0.9, scale: 0.9 },
-      { id: "certified", name: "ASLI GİBİDİR", nameEn: "CERTIFIED COPY", text: "ASLI GİBİDİR", desc: "Mavi Resmi Onay & Suret Kaşesi", descEn: "Official Blue Certified Copy Seal", color: [29, 78, 216], angle: -8, opacity: 0.9, scale: 0.9 },
-      { id: "approved", name: "ONAYLANDI", nameEn: "APPROVED", text: "ONAYLANDI", desc: "Yeşil Kabul & Tasdik Damgası", descEn: "Green Approval Verification Seal", color: [22, 163, 74], angle: -10, opacity: 0.9, scale: 0.9 },
-      { id: "draft", name: "TASLAK / DRAFT", nameEn: "DRAFT", text: "TASLAK", desc: "Turuncu Çalışma Taslağı Filigranı", descEn: "Orange Working Draft Stamp", color: [217, 119, 6], angle: -18, opacity: 0.8, scale: 0.95 },
-      { id: "paid", name: "ÖDENDİ / PAID", nameEn: "PAID IN FULL", text: "ÖDENDİ", desc: "Maliye & Muhasebe Tahsilat Kaşesi", descEn: "Accounting Payment Receipt Stamp", color: [13, 148, 136], angle: -12, opacity: 0.88, scale: 0.9 },
-      { id: "cancelled", name: "İPTAL EDİLDİ", nameEn: "CANCELLED / VOID", text: "İPTAL EDİLDİ", desc: "Kırmızı İptal & Hükümsüz Kaşesi", descEn: "Red Void & Nullified Stamp", color: [185, 28, 28], angle: -15, opacity: 0.9, scale: 0.9 }
+    let currentStampCategory = "all";
+
+    const PRO_TYPOGRAPHY_PRESETS = [
+      // Retro LED Tarih Damgaları
+      {
+        id: "led_date_amber",
+        cat: "date",
+        type: "typography",
+        name: "'98 11 04 Retro Amber Tarih",
+        nameEn: "'98 11 04 90s Amber LED Date",
+        text: "'98 11 04",
+        desc: "90'lar analog kompakt makine turuncu LED tarih damgası",
+        descEn: "90s analog compact camera orange LED timestamp",
+        color: [255, 140, 0],
+        font_style: "mono",
+        position: "bottom-right",
+        opacity: 0.95,
+        scale: 0.28,
+        swatchText: "'98 11 04",
+        swatchBg: "#0d0a05",
+        swatchColor: "#ff8c00"
+      },
+      {
+        id: "led_date_green",
+        cat: "date",
+        type: "typography",
+        name: "'04 08 21 Camcorder Yeşil",
+        nameEn: "'04 08 21 Camcorder Green LED",
+        text: "'04 08 21",
+        desc: "Y2K dijital el kamerası fosforlu yeşil tarih",
+        descEn: "Y2K digital camcorder phosphor green timestamp",
+        color: [34, 197, 94],
+        font_style: "mono",
+        position: "bottom-right",
+        opacity: 0.95,
+        scale: 0.28,
+        swatchText: "'04 08 21",
+        swatchBg: "#061208",
+        swatchColor: "#22c55e"
+      },
+      {
+        id: "vhs_rec_timecode",
+        cat: "date",
+        type: "typography",
+        name: "REC ● 00:14:32:09 VHS",
+        nameEn: "REC ● 00:14:32:09 VHS Timecode",
+        text: "REC ● 00:14:32:09",
+        desc: "Analog video kaset kayıt zaman kodu",
+        descEn: "Analog tape video recording timecode",
+        color: [255, 255, 255],
+        font_style: "mono",
+        position: "top-left",
+        opacity: 0.9,
+        scale: 0.25,
+        swatchText: "REC ● 00:14",
+        swatchBg: "#0a0a0a",
+        swatchColor: "#ffffff"
+      },
+
+      // Editoryal & Sinematik Tipografi
+      {
+        id: "editorial_cinematique",
+        cat: "editorial",
+        type: "typography",
+        name: "CINEMATIQUE • 35MM",
+        nameEn: "CINEMATIQUE • 35MM CUT",
+        text: "CINEMATIQUE • 35MM DIRECTORS CUT",
+        desc: "Geniş harf aralıklı minimalist sinematik alt yazı",
+        descEn: "Wide-tracking minimalist cinematic subtitle",
+        color: [240, 240, 240],
+        font_style: "sans",
+        position: "bottom-left",
+        opacity: 0.85,
+        scale: 0.32,
+        swatchText: "CINEMATIQUE",
+        swatchBg: "#080c14",
+        swatchColor: "#e2e8f0"
+      },
+      {
+        id: "editorial_vogue",
+        cat: "editorial",
+        type: "typography",
+        name: "EDİTORYAL DERGİ BAŞLIĞI",
+        nameEn: "EDITORIAL MAGAZINE TITLE",
+        text: "VOGUE ARCHIVE • AUTUMN / WINTER",
+        desc: "Zarif serif yüksek moda editoryal başlığı",
+        descEn: "Elegant serif high fashion editorial headline",
+        color: [255, 255, 255],
+        font_style: "serif",
+        position: "center",
+        opacity: 0.9,
+        scale: 0.38,
+        swatchText: "EDITORIAL",
+        swatchBg: "#0b0c10",
+        swatchColor: "#f8fafc"
+      },
+      {
+        id: "camera_shot_info",
+        cat: "editorial",
+        type: "typography",
+        name: "KAMERA ÇEKİM BİLGİSİ (EXIF)",
+        nameEn: "SHOT INFO METADATA TAG",
+        text: "50MM F/1.4 • 1/500s • ISO 100",
+        desc: "Fotoğraf altı teknik lens ve çekim parametresi etiketi",
+        descEn: "Technical lens and camera shooting parameter tag",
+        color: [148, 163, 184],
+        font_style: "mono",
+        position: "bottom-left",
+        opacity: 0.8,
+        scale: 0.26,
+        swatchText: "50MM F/1.4",
+        swatchBg: "#090d16",
+        swatchColor: "#94a3b8"
+      },
+
+      // Telif & İmza Damgası
+      {
+        id: "copyright_clean",
+        cat: "copyright",
+        type: "typography",
+        name: "© 2026 Studio • All Rights",
+        nameEn: "© 2026 Studio Copyright",
+        text: "© 2026 Studio • All Rights Reserved",
+        desc: "Minimalist telif ve portfolyo koruma damgası",
+        descEn: "Minimalist copyright and portfolio protection seal",
+        color: [255, 255, 255],
+        font_style: "sans",
+        position: "bottom-right",
+        opacity: 0.8,
+        scale: 0.3,
+        swatchText: "© 2026 Studio",
+        swatchBg: "#0b0f19",
+        swatchColor: "#ffffff"
+      },
+      {
+        id: "archive_ref_serial",
+        cat: "copyright",
+        type: "typography",
+        name: "REF: PKF-2026 // ARŞİV KODU",
+        nameEn: "REF: PKF-2026 SERIAL CODE",
+        text: "REF: PKF-2026-X89 // ARCHIVE APPROVED",
+        desc: "Koyu rozet zeminli arşiv & evrak takip referansı",
+        descEn: "Dark badge background archive and tracking reference",
+        color: [56, 189, 248],
+        font_style: "mono",
+        position: "top-right",
+        opacity: 0.9,
+        scale: 0.26,
+        box_background: true,
+        box_color: [10, 15, 25],
+        swatchText: "REF: PKF-26",
+        swatchBg: "#070b14",
+        swatchColor: "#38bdf8"
+      },
+
+      // Klasik Resmi Evrak Kaşeleri
+      {
+        id: "confidential",
+        cat: "stamp",
+        type: "stamp",
+        name: "GİZLİDİR",
+        nameEn: "CONFIDENTIAL",
+        text: "GİZLİDİR",
+        desc: "Kırmızı Resmi Gizlilik Kaşesi",
+        descEn: "Official Red Confidential Seal",
+        color: [220, 38, 38],
+        angle: -14,
+        opacity: 0.9,
+        scale: 0.9,
+        swatchText: "GİZLİDİR",
+        swatchBg: "#170a0a",
+        swatchColor: "#dc2626"
+      },
+      {
+        id: "certified",
+        cat: "stamp",
+        type: "stamp",
+        name: "ASLI GİBİDİR",
+        nameEn: "CERTIFIED COPY",
+        text: "ASLI GİBİDİR",
+        desc: "Mavi Resmi Onay & Suret Kaşesi",
+        descEn: "Official Blue Certified Copy Seal",
+        color: [29, 78, 216],
+        angle: -8,
+        opacity: 0.9,
+        scale: 0.9,
+        swatchText: "ASLI GİBİ",
+        swatchBg: "#0a0f1d",
+        swatchColor: "#1d4ed8"
+      },
+      {
+        id: "approved",
+        cat: "stamp",
+        type: "stamp",
+        name: "ONAYLANDI",
+        nameEn: "APPROVED",
+        text: "ONAYLANDI",
+        desc: "Yeşil Kabul & Tasdik Damgası",
+        descEn: "Green Approval Verification Seal",
+        color: [22, 163, 74],
+        angle: -10,
+        opacity: 0.9,
+        scale: 0.9,
+        swatchText: "ONAYLANDI",
+        swatchBg: "#07140a",
+        swatchColor: "#16a34a"
+      },
+      {
+        id: "draft",
+        cat: "stamp",
+        type: "stamp",
+        name: "TASLAK / DRAFT",
+        nameEn: "DRAFT",
+        text: "TASLAK",
+        desc: "Turuncu Çalışma Taslağı Filigranı",
+        descEn: "Orange Working Draft Stamp",
+        color: [217, 119, 6],
+        angle: -18,
+        opacity: 0.8,
+        scale: 0.95,
+        swatchText: "TASLAK",
+        swatchBg: "#140e05",
+        swatchColor: "#d97706"
+      },
+      {
+        id: "paid",
+        cat: "stamp",
+        type: "stamp",
+        name: "ÖDENDİ / PAID",
+        nameEn: "PAID IN FULL",
+        text: "ÖDENDİ",
+        desc: "Maliye & Muhasebe Tahsilat Kaşesi",
+        descEn: "Accounting Payment Receipt Stamp",
+        color: [13, 148, 136],
+        angle: -12,
+        opacity: 0.88,
+        scale: 0.9,
+        swatchText: "ÖDENDİ",
+        swatchBg: "#051312",
+        swatchColor: "#0d9488"
+      },
+      {
+        id: "cancelled",
+        cat: "stamp",
+        type: "stamp",
+        name: "İPTAL EDİLDİ",
+        nameEn: "CANCELLED / VOID",
+        text: "İPTAL EDİLDİ",
+        desc: "Kırmızı İptal & Hükümsüz Kaşesi",
+        descEn: "Red Void & Nullified Stamp",
+        color: [185, 28, 28],
+        angle: -15,
+        opacity: 0.9,
+        scale: 0.9,
+        swatchText: "İPTAL",
+        swatchBg: "#160909",
+        swatchColor: "#b91c1c"
+      }
     ];
+
+    function filterStampCategory(cat, btn) {
+      currentStampCategory = cat;
+      const pills = document.querySelectorAll("#tabContentStamps .btn-filter-pill");
+      pills.forEach(p => p.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      renderStampsVitrin();
+    }
+
+    function insertTodayRetroDate() {
+      const input = document.getElementById("customStampTextInput");
+      const d = new Date();
+      const yy = String(d.getFullYear()).slice(-2);
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const sample = `'${yy} ${mm} ${dd}`;
+      if (input) input.value = sample;
+      if (statusMessage) statusMessage.textContent = `Tarih şablonu eklendi: ${sample}`;
+    }
 
     function renderStampsVitrin() {
       const grid = document.getElementById("stampsVitrinGrid");
       if (!grid) return;
-      grid.innerHTML = PRO_STAMP_PRESETS.map(s => {
+      const filtered = PRO_TYPOGRAPHY_PRESETS.filter(s => currentStampCategory === "all" || s.cat === currentStampCategory);
+      grid.innerHTML = filtered.map(s => {
         const title = currentLang === "en" ? s.nameEn : s.name;
         const sub = currentLang === "en" ? s.descEn : s.desc;
-        const rgb = `rgb(${s.color[0]}, ${s.color[1]}, ${s.color[2]})`;
+        const isStamp = (s.type === "stamp");
+        const angle = s.angle || 0;
         return `
-          <div class="preset-vitrin-card" onclick="applyStampPreset('${s.id}')">
-            <div class="preset-swatch" style="background:#0d1117;border:1px solid var(--pf-border);display:flex;align-items:center;justify-content:center;">
-              <div style="border:1.5px solid ${rgb};padding:2px 4px;font-size:7.5px;font-weight:800;color:${rgb};transform:rotate(${s.angle}deg);border-radius:2px;letter-spacing:0.5px;">${s.text.slice(0, 8)}</div>
+          <div class="preset-vitrin-card" onclick="applyTypographyOrStampPreset('${s.id}')">
+            <div class="preset-swatch" style="background:${s.swatchBg || '#0d1117'};border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;">
+              <div style="${isStamp ? 'border:1.5px solid ' + s.swatchColor + ';' : ''}padding:2px 4px;font-size:7.5px;font-weight:800;color:${s.swatchColor};transform:rotate(${angle}deg);border-radius:2px;letter-spacing:0.5px;white-space:nowrap;font-family:${s.font_style === 'mono' ? 'monospace' : 'inherit'};">
+                ${s.swatchText || s.text.slice(0, 10)}
+              </div>
             </div>
             <div>
               <div class="preset-card-title">${title}</div>
@@ -6033,16 +6381,76 @@
       }).join("");
     }
 
-    function applyStampPreset(presetId) {
-      const preset = PRO_STAMP_PRESETS.find(p => p.id === presetId);
+    function applyTypographyOrStampPreset(presetId) {
+      const preset = PRO_TYPOGRAPHY_PRESETS.find(p => p.id === presetId);
       if (!preset) return;
-      applyStampWithParams(preset.text, preset.color, preset.angle, preset.opacity, preset.scale);
+      if (preset.type === "stamp") {
+        applyStampWithParams(preset.text, preset.color, preset.angle || -12, preset.opacity || 0.9, preset.scale || 0.9);
+      } else {
+        applyWatermarkWithParams({
+          text: preset.text,
+          color: preset.color,
+          font_style: preset.font_style || "sans",
+          position: preset.position || "bottom-right",
+          opacity: preset.opacity || 0.85,
+          scale: preset.scale || 0.35,
+          box_background: !!preset.box_background,
+          box_color: preset.box_color || [0, 0, 0]
+        });
+      }
     }
 
     function applyCustomTextStamp() {
       const input = document.getElementById("customStampTextInput");
-      const text = (input?.value || "ONAYLANDI").trim();
-      applyStampWithParams(text, [220, 38, 38], -12, 0.88, 0.9);
+      const fontSel = document.getElementById("customStampFontStyle");
+      const colorSel = document.getElementById("customStampColorPreset");
+      const text = (input?.value || "PixelFlow").trim();
+      const fontStyle = fontSel?.value || "mono";
+      const colorKey = colorSel?.value || "amber";
+
+      const colorMap = {
+        amber: [255, 140, 0],
+        green: [34, 197, 94],
+        white: [255, 255, 255],
+        red: [220, 38, 38],
+        blue: [29, 78, 216]
+      };
+      const color = colorMap[colorKey] || [255, 255, 255];
+
+      applyWatermarkWithParams({
+        text,
+        color,
+        font_style: fontStyle,
+        position: (fontStyle === "mono" || colorKey === "amber") ? "bottom-right" : "bottom-left",
+        opacity: 0.9,
+        scale: 0.32,
+        box_background: false,
+        box_color: [0, 0, 0]
+      });
+    }
+
+    function applyWatermarkWithParams(params) {
+      let step = activeSteps.find(s => s.op === "watermark");
+      if (step) {
+        step.params = { ...step.params, ...params };
+        step.name = `katman_${step.id}_yazi_${params.text.replace(/\s+/g, '_').slice(0, 10)}`;
+        selectedStepId = step.id;
+      } else {
+        const id = stepCounter++;
+        activeSteps.push({
+          id,
+          op: "watermark",
+          name: `katman_${id}_yazi_${params.text.replace(/\s+/g, '_').slice(0, 10)}`,
+          params: { ...params }
+        });
+        selectedStepId = id;
+      }
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+      statusMessage.textContent = (currentLang === "en")
+        ? `✓ Typography applied: "${params.text}"`
+        : `✓ Tipografi uygulandı: "${params.text}"`;
     }
 
     function applyStampWithParams(text, color, angle, opacity, scale) {
