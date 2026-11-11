@@ -238,6 +238,78 @@
       letter-spacing: 0.3px;
     }
 
+    /* Photoshop Tarzı Kanvas Sağ Tık Menüsü */
+    .canvas-context-menu {
+      position: fixed;
+      z-index: 1000;
+      background: #0f141d;
+      border: 1px solid var(--pf-border);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.1);
+      padding: 4px;
+      min-width: 195px;
+      display: none;
+      user-select: none;
+      backdrop-filter: blur(12px);
+    }
+
+    .canvas-context-menu.show {
+      display: block;
+      animation: menuFadeIn 0.12s ease-out;
+    }
+
+    .context-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 10px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--pf-text-white);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.1s ease, color 0.1s ease;
+    }
+
+    .context-item:hover {
+      background: var(--pf-accent);
+      color: #081b2a;
+    }
+
+    .context-item:hover .context-icon,
+    .context-item:hover .context-shortcut {
+      color: #081b2a;
+    }
+
+    .context-item .context-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .context-item .context-icon {
+      width: 14px;
+      height: 14px;
+      color: var(--pf-text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .context-item .context-shortcut {
+      font-size: 10px;
+      color: var(--pf-text-muted);
+      font-family: monospace;
+    }
+
+    .context-divider {
+      height: 1px;
+      background: var(--pf-border);
+      margin: 4px 0;
+    }
+
     /* Photoshop Tarzı Üst Menü Çubuğu (PS Menubar) */
     .ps-menubar {
       display: flex;
@@ -1646,6 +1718,56 @@
       </div>
     </section>
   </main>
+
+  <!-- Kanvas Sağ Tık Bağlam Menüsü -->
+  <div id="canvasContextMenu" class="canvas-context-menu" role="menu">
+    <div class="context-item" onclick="copyProcessedImageToClipboard()">
+      <div class="context-left">
+        <span class="context-icon">📋</span>
+        <span data-tr="Görseli Kopyala" data-en="Copy Image">Görseli Kopyala</span>
+      </div>
+      <span class="context-shortcut">Ctrl+C</span>
+    </div>
+    <div class="context-item" onclick="hideContextMenu();exportAs(exportFormat ? exportFormat.value : 'PNG');">
+      <div class="context-left">
+        <span class="context-icon">💾</span>
+        <span data-tr="Görseli İndir" data-en="Download Image">Görseli İndir</span>
+      </div>
+      <span class="context-shortcut">Ctrl+S</span>
+    </div>
+    <div class="context-divider"></div>
+    <div class="context-item" onclick="hideContextMenu();setViewMode(currentViewMode === 'curtain' ? 'split' : (currentViewMode === 'split' ? 'single' : 'curtain'))">
+      <div class="context-left">
+        <span class="context-icon">🌓</span>
+        <span data-tr="Görünüm Modunu Değiştir" data-en="Cycle View Mode">Görünüm Modunu Değiştir</span>
+      </div>
+    </div>
+    <div class="context-item" onclick="hideContextMenu();fitCanvas()">
+      <div class="context-left">
+        <span class="context-icon">⛶</span>
+        <span data-tr="Ekrana Sığdır" data-en="Fit to Screen">Ekrana Sığdır</span>
+      </div>
+    </div>
+    <div class="context-item" onclick="hideContextMenu();resetZoom()">
+      <div class="context-left">
+        <span class="context-icon">🔍</span>
+        <span data-tr="%100 Gerçek Boyut" data-en="100% Actual Size">%100 Gerçek Boyut</span>
+      </div>
+    </div>
+    <div class="context-item" onclick="hideContextMenu();rotateCanvas()">
+      <div class="context-left">
+        <span class="context-icon">↻</span>
+        <span data-tr="90° Saat Yönünde Döndür" data-en="Rotate 90° Clockwise">90° Saat Yönünde Döndür</span>
+      </div>
+    </div>
+    <div class="context-divider"></div>
+    <div class="context-item" onclick="hideContextMenu();resetAllSteps()">
+      <div class="context-left">
+        <span class="context-icon">🔄</span>
+        <span data-tr="Tüm Efektleri Sıfırla" data-en="Reset All Effects">Tüm Efektleri Sıfırla</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Dijital İmza Çizim Modalı -->
   <div id="signatureModal" class="pf-modal">
@@ -3531,6 +3653,68 @@
         e.preventDefault();
         redo();
       }
+    });
+
+    // Kanvas Sağ Tık Bağlam Menüsü
+    const contextMenuEl = document.getElementById("canvasContextMenu");
+    function hideContextMenu() {
+      if (contextMenuEl) contextMenuEl.classList.remove("show");
+    }
+
+    async function copyProcessedImageToClipboard() {
+      hideContextMenu();
+      if (!imgAfter || !imgAfter.src || imgAfter.style.display === "none") return;
+      try {
+        const resp = await fetch(imgAfter.src);
+        const blob = await resp.blob();
+        if (blob.type === "image/png" && window.ClipboardItem) {
+          await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        } else {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.src = imgAfter.src;
+          await img.decode();
+          const c = document.createElement("canvas");
+          c.width = img.naturalWidth;
+          c.height = img.naturalHeight;
+          const ctx = c.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          c.toBlob(async (pngBlob) => {
+            if (pngBlob && window.ClipboardItem) {
+              await navigator.clipboard.write([new ClipboardItem({ "image/png": pngBlob })]);
+            }
+          }, "image/png");
+        }
+        statusMessage.textContent = (currentLang === "en") ? "✓ Image copied to clipboard!" : "✓ Görsel panoya kopyalandı!";
+      } catch (err) {
+        statusMessage.textContent = (currentLang === "en") ? "Copy failed: " + err : "Kopyalama hatası: " + err;
+      }
+    }
+
+    const canvasWorkspace = document.getElementById("canvasWorkspace");
+    if (canvasWorkspace) {
+      canvasWorkspace.addEventListener("contextmenu", (e) => {
+        if (!currentBlob) return;
+        e.preventDefault();
+        if (!contextMenuEl) return;
+        const menuW = 205;
+        const menuH = 260;
+        const posX = (e.clientX + menuW > window.innerWidth) ? (e.clientX - menuW) : e.clientX;
+        const posY = (e.clientY + menuH > window.innerHeight) ? (e.clientY - menuH) : e.clientY;
+        contextMenuEl.style.left = `${posX}px`;
+        contextMenuEl.style.top = `${posY}px`;
+        contextMenuEl.classList.add("show");
+      });
+    }
+
+    window.addEventListener("click", (e) => {
+      if (contextMenuEl && !contextMenuEl.contains(e.target)) {
+        hideContextMenu();
+      }
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") hideContextMenu();
     });
 
     // Başlangıç Yüklemesi (Dil Tercihi ve Çekmece)
