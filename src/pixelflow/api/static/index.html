@@ -1232,6 +1232,10 @@
               <span data-tr="Toplu İşlem & ZIP..." data-en="Batch Process & ZIP...">Toplu İşlem & ZIP...</span>
               <span class="ps-shortcut">Ctrl+B</span>
             </div>
+            <div class="ps-menu-action" onclick="openMultipageModal()">
+              <span data-tr="Çok Sayfalı PDF..." data-en="Multi-Page PDF...">Çok Sayfalı PDF...</span>
+              <span class="ps-shortcut">Ctrl+M</span>
+            </div>
             <div class="ps-menu-divider"></div>
             <div class="ps-menu-action" onclick="resetToOriginal()">
               <span data-tr="Orijinal Görsele Dön" data-en="Revert to Original">Orijinal Görsele Dön</span>
@@ -1829,6 +1833,13 @@
       </div>
       <span class="context-shortcut">Ctrl+B</span>
     </div>
+    <div class="context-item" onclick="hideContextMenu();openMultipageModal();">
+      <div class="context-left">
+        <span class="context-icon">📑</span>
+        <span data-tr="Çok Sayfalı PDF Birleştir" data-en="Multi-Page PDF Merge">Çok Sayfalı PDF Birleştir</span>
+      </div>
+      <span class="context-shortcut">Ctrl+M</span>
+    </div>
     <div class="context-divider"></div>
     <div class="context-item" onclick="hideContextMenu();resetAllSteps()">
       <div class="context-left">
@@ -1881,6 +1892,61 @@
       <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
         <button type="button" onclick="closeBatchModal()" class="action-btn" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);" data-tr="Vazgeç" data-en="Cancel">Vazgeç</button>
         <button type="button" id="btnRunBatch" onclick="runBatchProcessing()" class="action-btn" style="background:var(--pf-accent);color:#081b2a;font-weight:700;" data-tr="İşle ve ZIP İndir" data-en="Process & Download ZIP">İşle ve ZIP İndir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Çok Sayfalı Belge Yöneticisi & PDF Birleştirme Modalı -->
+  <div class="modal-backdrop" id="multipageModalBackdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1150;align-items:center;justify-content:center;backdrop-filter:blur(6px);">
+    <div style="background:#0f141d;border:1px solid var(--pf-border);border-radius:var(--radius-sm);width:90%;max-width:580px;padding:22px;box-shadow:0 16px 40px rgba(0,0,0,0.8);display:flex;flex-direction:column;gap:14px;color:var(--pf-text-white);max-height:85vh;overflow-y:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--pf-border);padding-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:16px;">📑</span>
+          <span style="font-weight:700;font-size:14px;" data-tr="Çok Sayfalı Belge Yöneticisi & PDF Birleştirme" data-en="Multi-Page Document Manager & PDF Merge">Çok Sayfalı Belge Yöneticisi & PDF Birleştirme</span>
+        </div>
+        <button type="button" onclick="closeMultipageModal()" style="background:none;border:none;color:var(--pf-text-muted);font-size:18px;cursor:pointer;line-height:1;">×</button>
+      </div>
+
+      <div style="font-size:12px;color:var(--pf-text-muted);line-height:1.5;" data-tr="Belgenizin tüm sayfalarını yükleyin, sırasını düzenleyin ve tek tıkla yüksek çözünürlüklü tek bir PDF belgesinde birleştirin." data-en="Upload all pages of your document, organize their sequence, and merge them into a single crisp PDF document in one click.">
+        Belgenizin tüm sayfalarını yükleyin, sırasını düzenleyin ve tek tıkla yüksek çözünürlüklü tek bir PDF belgesinde birleştirin.
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button type="button" onclick="document.getElementById('multipageFileInput').click()" class="btn btn-outline" style="font-size:12px;padding:6px 12px;gap:6px;display:flex;align-items:center;">
+          <span data-tr="+ Sayfa Ekle" data-en="+ Add Pages">+ Sayfa Ekle</span>
+        </button>
+        <button type="button" id="btnAddCurrentCanvasPage" onclick="addCurrentCanvasToMultipage()" class="btn btn-outline" style="font-size:12px;padding:6px 12px;gap:6px;display:flex;align-items:center;">
+          <span data-tr="Mevcut Görseli Sayfa Olarak Ekle" data-en="Add Current Canvas Image">Mevcut Görseli Sayfa Olarak Ekle</span>
+        </button>
+        <input type="file" multiple id="multipageFileInput" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="handleMultipageFileSelect(event)">
+      </div>
+
+      <!-- Sayfa Küçük Resim Izgarası (Thumbnail list) -->
+      <div id="multipagePagesGrid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(110px, 1fr));gap:10px;min-height:120px;max-height:260px;overflow-y:auto;background:#090d14;border:1px solid var(--pf-border);border-radius:var(--radius-sm);padding:10px;">
+        <!-- Sayfa kartları dinamik eklenecek -->
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;background:#141923;padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--pf-border);font-size:12px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="checkbox" id="multipageApplyPipeline" checked style="accent-color:var(--pf-accent);">
+          <span data-tr="Mevcut Pipeline Efektlerini Uygula" data-en="Apply Active Pipeline Effects">Mevcut Pipeline Efektlerini Uygula</span>
+        </label>
+        <span id="multipagePageCountBadge" style="font-size:11.5px;color:var(--pf-accent);font-weight:600;">0 Sayfa</span>
+      </div>
+
+      <div id="multipageProgressContainer" style="display:none;flex-direction:column;gap:6px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--pf-text-muted);">
+          <span id="multipageProgressStatus">PDF Oluşturuluyor...</span>
+          <span id="multipageProgressPercent">0%</span>
+        </div>
+        <div style="width:100%;height:6px;background:#0c0e12;border-radius:3px;overflow:hidden;border:1px solid var(--pf-border);">
+          <div id="multipageProgressBar" style="width:0%;height:100%;background:var(--pf-accent);transition:width 0.2s ease;"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
+        <button type="button" onclick="closeMultipageModal()" class="action-btn" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);" data-tr="Vazgeç" data-en="Cancel">Vazgeç</button>
+        <button type="button" id="btnRunMultipage" onclick="runMultipagePdfGeneration()" class="action-btn" style="background:var(--pf-accent);color:#081b2a;font-weight:700;" data-tr="Tek PDF Olarak Birleştir ve İndir" data-en="Merge & Download as Single PDF">Tek PDF Olarak Birleştir ve İndir</button>
       </div>
     </div>
   </div>
@@ -2451,6 +2517,7 @@
         title: { tr: "Belge & Evrak Araçları", en: "Document & Paper Tools" },
         sub: { tr: "Gölge giderme, eğrilik düzeltme ve kişisel veri maskeleme", en: "Shadow removal, deskewing, and PII masking" },
         cards: [
+          { op: "multipage_pdf", name: { tr: "Çok Sayfalı PDF", en: "Multi-Page PDF" }, tag: { tr: "PDF", en: "PDF" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>', action: "multipagePdf" },
           { op: "magic_color", name: { tr: "Sihirli Renk", en: "Magic Color" }, tag: { tr: "CamScan", en: "CamScan" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>' },
           { op: "shadow_removal", name: { tr: "Gölge Temizle", en: "Remove Document Shadows" }, tag: { tr: "Aydınlat", en: "Clean" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/></svg>' },
           { op: "deskew", name: { tr: "Otomatik Doğrult", en: "Auto Deskew Document" }, tag: "Deskew", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="2" y1="12" x2="22" y2="12"/></svg>' },
@@ -2654,6 +2721,8 @@
         div.onclick = () => {
           if (c.action === "openSigModal") {
             openSignatureModal();
+          } else if (c.action === "multipagePdf") {
+            openMultipageModal();
           } else if (c.action === "autoPii") {
             runAutoPiiRedaction();
           } else if (c.action === "ocrRead") {
@@ -3869,6 +3938,9 @@
       } else if ((e.ctrlKey || e.metaKey) && (e.key === "b" || e.key === "B")) {
         e.preventDefault();
         openBatchModal();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === "m" || e.key === "M")) {
+        e.preventDefault();
+        openMultipageModal();
       }
     });
 
@@ -4026,6 +4098,176 @@
         statusMessage.textContent = (currentLang === "en")
           ? `✓ Batch completed: ${selectedBatchFiles.length} images exported as ZIP!`
           : `✓ Toplu işlem: ${selectedBatchFiles.length} görsel ZIP olarak indirildi!`;
+      } catch (err) {
+        alert("Hata: " + err);
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    // Çok Sayfalı Belge Yöneticisi & PDF Birleştirme
+    let selectedMultipagePages = [];
+
+    function openMultipageModal() {
+      const modal = document.getElementById("multipageModalBackdrop");
+      if (modal) {
+        modal.style.display = "flex";
+        if (selectedMultipagePages.length === 0 && currentBlob) {
+          addCurrentCanvasToMultipage();
+        } else {
+          renderMultipageGrid();
+        }
+      }
+    }
+
+    function closeMultipageModal() {
+      const modal = document.getElementById("multipageModalBackdrop");
+      if (modal) modal.style.display = "none";
+    }
+
+    function addCurrentCanvasToMultipage() {
+      if (!currentBlob) return;
+      const url = lastProcessedUrl || URL.createObjectURL(currentBlob);
+      selectedMultipagePages.push({
+        id: "p_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
+        name: currentFileName || "Sayfa 1",
+        blob: currentBlob,
+        url: url
+      });
+      renderMultipageGrid();
+    }
+
+    function handleMultipageFileSelect(e) {
+      if (!e.target.files || e.target.files.length === 0) return;
+      Array.from(e.target.files).forEach(f => {
+        selectedMultipagePages.push({
+          id: "p_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
+          name: f.name,
+          blob: f,
+          url: URL.createObjectURL(f)
+        });
+      });
+      e.target.value = "";
+      renderMultipageGrid();
+    }
+
+    function moveMultipagePage(index, dir) {
+      const targetIndex = index + dir;
+      if (targetIndex < 0 || targetIndex >= selectedMultipagePages.length) return;
+      const tmp = selectedMultipagePages[index];
+      selectedMultipagePages[index] = selectedMultipagePages[targetIndex];
+      selectedMultipagePages[targetIndex] = tmp;
+      renderMultipageGrid();
+    }
+
+    function removeMultipagePage(index) {
+      selectedMultipagePages.splice(index, 1);
+      renderMultipageGrid();
+    }
+
+    function renderMultipageGrid() {
+      const grid = document.getElementById("multipagePagesGrid");
+      const badge = document.getElementById("multipagePageCountBadge");
+      if (!grid) return;
+      grid.innerHTML = "";
+      if (badge) {
+        badge.textContent = (currentLang === "en")
+          ? `${selectedMultipagePages.length} ${selectedMultipagePages.length === 1 ? "Page" : "Pages"}`
+          : `${selectedMultipagePages.length} Sayfa`;
+      }
+
+      if (selectedMultipagePages.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:26px 10px;color:var(--pf-text-muted);font-size:12px;">
+            ${currentLang === "en" ? "No pages added yet. Click '+ Add Pages' above." : "Henüz sayfa eklenmedi. Yukarıdaki '+ Sayfa Ekle' düğmesine tıklayın."}
+          </div>
+        `;
+        return;
+      }
+
+      selectedMultipagePages.forEach((p, idx) => {
+        const card = document.createElement("div");
+        card.style.cssText = "background:#141923;border:1px solid var(--pf-border);border-radius:4px;overflow:hidden;position:relative;display:flex;flex-direction:column;font-size:11px;";
+        card.innerHTML = `
+          <div style="position:relative;width:100%;height:100px;background:#05070a;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+            <img src="${p.url}" style="max-width:100%;max-height:100%;object-fit:contain;" alt="Page ${idx + 1}" />
+            <span style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.75);color:var(--pf-accent);font-weight:700;font-size:10px;padding:2px 5px;border-radius:3px;border:1px solid rgba(56,189,248,0.3);">
+              ${idx + 1}
+            </span>
+            <button type="button" onclick="removeMultipagePage(${idx})" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.75);color:#ef4444;border:none;border-radius:3px;width:18px;height:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:12px;">×</button>
+          </div>
+          <div style="padding:4px 6px;display:flex;justify-content:space-between;align-items:center;background:#0f141d;border-top:1px solid var(--pf-border);">
+            <span style="color:var(--pf-text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55px;" title="${p.name}">
+              ${p.name}
+            </span>
+            <div style="display:flex;gap:2px;">
+              <button type="button" onclick="moveMultipagePage(${idx}, -1)" ${idx === 0 ? "disabled" : ""} style="background:none;border:none;color:var(--pf-text-muted);cursor:pointer;padding:0 2px;font-size:10px;opacity:${idx === 0 ? '0.3' : '1'};">◀</button>
+              <button type="button" onclick="moveMultipagePage(${idx}, 1)" ${idx === selectedMultipagePages.length - 1 ? "disabled" : ""} style="background:none;border:none;color:var(--pf-text-muted);cursor:pointer;padding:0 2px;font-size:10px;opacity:${idx === selectedMultipagePages.length - 1 ? '0.3' : '1'};">▶</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    async function runMultipagePdfGeneration() {
+      if (selectedMultipagePages.length === 0) {
+        alert(currentLang === "en" ? "Please add at least one page!" : "Lütfen en az bir sayfa ekleyin!");
+        return;
+      }
+      const btn = document.getElementById("btnRunMultipage");
+      const pContainer = document.getElementById("multipageProgressContainer");
+      const pBar = document.getElementById("multipageProgressBar");
+      const pPct = document.getElementById("multipageProgressPercent");
+      const pStatus = document.getElementById("multipageProgressStatus");
+      const applyPipeline = document.getElementById("multipageApplyPipeline")?.checked ?? true;
+
+      if (btn) btn.disabled = true;
+      if (pContainer) pContainer.style.display = "flex";
+      if (pBar) pBar.style.width = "30%";
+      if (pPct) pPct.textContent = "30%";
+      if (pStatus) pStatus.textContent = (currentLang === "en") ? "Preparing pages..." : "Sayfalar hazırlanıyor...";
+
+      const formData = new FormData();
+      selectedMultipagePages.forEach((p, idx) => {
+        formData.append("images", p.blob, `page_${idx + 1}.png`);
+      });
+
+      const pipelinePayload = (applyPipeline && activeSteps.length > 0)
+        ? {
+            name: "multipage-run",
+            version: "1.0",
+            steps: activeSteps.map(s => ({ op: s.op, name: s.name, params: s.params }))
+          }
+        : { name: "raw-pdf", version: "1.0", steps: [] };
+
+      formData.append("pipeline", JSON.stringify(pipelinePayload));
+
+      try {
+        if (pBar) pBar.style.width = "65%";
+        if (pPct) pPct.textContent = "65%";
+        if (pStatus) pStatus.textContent = (currentLang === "en") ? "Rendering PDF..." : "PDF oluşturuluyor...";
+
+        const resp = await fetch("/v1/process-multipage", { method: "POST", body: formData });
+        if (!resp.ok) {
+          const err = await resp.json();
+          throw new Error(err.message || "PDF birleştirme başarısız oldu");
+        }
+        if (pBar) pBar.style.width = "100%";
+        if (pPct) pPct.textContent = "100%";
+        if (pStatus) pStatus.textContent = (currentLang === "en") ? "Downloading..." : "İndiriliyor...";
+
+        const pdfBlob = await resp.blob();
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        const a = document.createElement("a");
+        a.href = pdfUrl;
+        a.download = `pixelflow_document_${Date.now()}.pdf`;
+        a.click();
+
+        setTimeout(closeMultipageModal, 500);
+        statusMessage.textContent = (currentLang === "en")
+          ? `✓ Multi-page PDF created (${selectedMultipagePages.length} pages)!`
+          : `✓ Çok sayfalı PDF oluşturuldu (${selectedMultipagePages.length} sayfa)!`;
       } catch (err) {
         alert("Hata: " + err);
       } finally {
