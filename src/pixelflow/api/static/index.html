@@ -582,25 +582,32 @@
 
     .pro-segmented-tabs {
       display: flex;
-      padding: 6px 10px;
+      padding: 6px 8px;
       gap: 4px;
       background: #090c13;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       flex-shrink: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .pro-segmented-tabs::-webkit-scrollbar {
+      display: none;
     }
 
     .seg-tab {
-      flex: 1;
+      flex: 1 0 auto;
       background: transparent;
       border: 1px solid transparent;
       color: #718096;
       font-size: 11px;
       font-weight: 600;
-      padding: 5px 0;
+      padding: 5px 8px;
       border-radius: 6px;
       cursor: pointer;
       text-align: center;
       transition: all 0.14s ease;
+      white-space: nowrap;
     }
 
     .seg-tab:hover {
@@ -1742,6 +1749,13 @@
           </svg>
           <span data-tr="Sinematik" data-en="Presets">Sinematik</span>
         </button>
+        <button type="button" class="seg-tab" id="segTabCrop" onclick="switchLeftTab('crop')">
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
+            <path d="M6 2v14a2 2 0 0 0 2 2h14" />
+            <path d="M18 22V8a2 2 0 0 0-2-2H2" />
+          </svg>
+          <span data-tr="Kırpma" data-en="Crop">Kırpma</span>
+        </button>
         <button type="button" class="seg-tab" id="segTabDocs" onclick="switchLeftTab('docs')">
           <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -1765,14 +1779,21 @@
         </div>
       </div>
 
-      <!-- Tab 2: Belge Şablon Modları -->
+      <!-- Tab 2: En-Boy & Kırpma Oranları -->
+      <div class="tab-content-pro" id="tabContentCrop" style="display:none;">
+        <div class="preset-cards-grid" id="cropRatioGrid">
+          <!-- JS tarafından doldurulur -->
+        </div>
+      </div>
+
+      <!-- Tab 3: Belge Şablon Modları -->
       <div class="tab-content-pro" id="tabContentDocs" style="display:none;">
         <div class="preset-cards-grid" id="docVitrinGrid">
           <!-- JS tarafından doldurulur -->
         </div>
       </div>
 
-      <!-- Tab 3: Geçmiş Snapshots -->
+      <!-- Tab 4: Geçmiş Snapshots -->
       <div class="tab-content-pro" id="tabContentHistory" style="display:none;">
         <div class="history-stack-list" id="historyStackList">
           <!-- JS tarafından doldurulur -->
@@ -3191,6 +3212,7 @@
       });
 
       if (typeof renderPresetVitrin === "function") renderPresetVitrin();
+      if (typeof renderCropRatioVitrin === "function") renderCropRatioVitrin();
       if (typeof renderDocVitrin === "function") renderDocVitrin();
       renderCategoryDrawer();
       renderStepsUI();
@@ -5246,6 +5268,16 @@
       { id: "remove_shadows", name: "Gölge Giderme & Işık Eşitle", nameEn: "Remove Shadows", desc: "Telefon gölgesini ortadan kaldırır", iconSvg: '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor"/></svg>', op: "remove_shadows" }
     ];
 
+    const PRO_CROP_RATIOS = [
+      { id: "1_1", name: "Instagram Kare", nameEn: "Instagram Square", ratioStr: "1:1", w: 1, h: 1, desc: "1080 × 1080 • Kare Gönderi", descEn: "1080 × 1080 • Square Post", boxW: 20, boxH: 20 },
+      { id: "9_16", name: "Story & Reels & TikTok", nameEn: "Story / Reels / TikTok", ratioStr: "9:16", w: 9, h: 16, desc: "1080 × 1920 • Tam Ekran Dikey", descEn: "1080 × 1920 • Fullscreen Vertical", boxW: 14, boxH: 24 },
+      { id: "16_9", name: "YouTube & Sinematik", nameEn: "YouTube / Widescreen", ratioStr: "16:9", w: 16, h: 9, desc: "1920 × 1080 • Yatay Geniş Ekran", descEn: "1920 × 1080 • Landscape Video", boxW: 26, boxH: 15 },
+      { id: "4_5", name: "Instagram Dikey Portre", nameEn: "Instagram Portrait", ratioStr: "4:5", w: 4, h: 5, desc: "1080 × 1350 • Akış Portresi", descEn: "1080 × 1350 • Feed Portrait", boxW: 17, boxH: 22 },
+      { id: "3_2", name: "DSLR / 35mm Fotoğraf", nameEn: "DSLR 35mm Classic", ratioStr: "3:2", w: 3, h: 2, desc: "Klasik Fotoğraf Makinesi", descEn: "Classic 35mm Film Camera", boxW: 24, boxH: 16 },
+      { id: "4_3", name: "Standart Ekran / Tablet", nameEn: "Standard Display 4:3", ratioStr: "4:3", w: 4, h: 3, desc: "Klasik TV & iPad Formatı", descEn: "Standard iPad / TV", boxW: 22, boxH: 17 },
+      { id: "a4_doc", name: "A4 Standart Evrak", nameEn: "A4 ISO Document", ratioStr: "1:1.41", w: 1000, h: 1414, desc: "ISO 216 Resmi Belge Oranı", descEn: "ISO 216 Official Document", boxW: 16, boxH: 23 }
+    ];
+
     function renderPresetVitrin() {
       const grid = document.getElementById("presetVitrinGrid");
       if (!grid) return;
@@ -5262,6 +5294,68 @@
           </div>
         `;
       }).join("");
+    }
+
+    function renderCropRatioVitrin() {
+      const grid = document.getElementById("cropRatioGrid");
+      if (!grid) return;
+      grid.innerHTML = PRO_CROP_RATIOS.map(c => {
+        const title = currentLang === "en" ? c.nameEn : c.name;
+        const sub = currentLang === "en" ? c.descEn : c.desc;
+        return `
+          <div class="preset-vitrin-card" onclick="applyAspectRatioCrop(${c.w}, ${c.h}, '${c.ratioStr}')">
+            <div class="preset-swatch" style="background:#13151c;border:1px solid var(--pf-border);display:flex;align-items:center;justify-content:center;">
+              <div style="width:${c.boxW}px;height:${c.boxH}px;border:1.5px dashed var(--pf-accent);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--pf-accent);">${c.ratioStr}</div>
+            </div>
+            <div>
+              <div class="preset-card-title">${title}</div>
+              <div class="preset-card-sub">${sub}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function applyAspectRatioCrop(ratioW, ratioH, ratioStr) {
+      if (!originalImage || !originalImage.complete || !originalImage.naturalWidth) {
+        statusMessage.textContent = (currentLang === "en") ? "⚠️ Please load an image first" : "⚠️ Lütfen önce bir görsel yükleyin";
+        return;
+      }
+      const W = originalImage.naturalWidth;
+      const H = originalImage.naturalHeight;
+      const targetRatio = ratioW / ratioH;
+      let cropW, cropH;
+      if (W / H > targetRatio) {
+        cropH = H;
+        cropW = Math.round(H * targetRatio);
+      } else {
+        cropW = W;
+        cropH = Math.round(W / targetRatio);
+      }
+      const cropX = Math.max(0, Math.round((W - cropW) / 2));
+      const cropY = Math.max(0, Math.round((H - cropH) / 2));
+
+      let step = activeSteps.find(s => s.op === "crop");
+      if (step) {
+        step.params = { x: cropX, y: cropY, width: cropW, height: cropH };
+        step.name = `katman_${step.id}_crop_${ratioStr.replace(/[:.]/g, '_')}`;
+        selectedStepId = step.id;
+      } else {
+        const id = stepCounter++;
+        activeSteps.push({
+          id,
+          op: "crop",
+          name: `katman_${id}_crop_${ratioStr.replace(/[:.]/g, '_')}`,
+          params: { x: cropX, y: cropY, width: cropW, height: cropH }
+        });
+        selectedStepId = id;
+      }
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+      statusMessage.textContent = (currentLang === "en")
+        ? `✓ Cropped to ${ratioStr} (${cropW}×${cropH}px)`
+        : `✓ ${ratioStr} oranında merkezden kırpıldı (${cropW}×${cropH}px)`;
     }
 
     function renderDocVitrin() {
@@ -5337,13 +5431,14 @@
     }
 
     function switchLeftTab(tabKey) {
-      const tabs = ["presets", "docs", "history"];
+      const tabs = ["presets", "crop", "docs", "history"];
       tabs.forEach(t => {
         const btn = document.getElementById("segTab" + t.charAt(0).toUpperCase() + t.slice(1));
         const content = document.getElementById("tabContent" + t.charAt(0).toUpperCase() + t.slice(1));
         if (btn) btn.classList.toggle("active", t === tabKey);
         if (content) content.style.display = (t === tabKey) ? "block" : "none";
       });
+      if (tabKey === "crop") renderCropRatioVitrin();
       if (tabKey === "history") updateHistoryStackUI();
     }
 
