@@ -1624,8 +1624,9 @@
         <!-- Alt Yüzen Yakınlaştırma ve Sahne Çubuğu -->
         <div class="canvas-zoom-bar">
           <span id="canvasDims"
-            style="font-size:11px;color:var(--pf-text-muted);font-weight:600;margin-right:6px;padding-right:8px;border-right:1px solid var(--pf-border);">—
-            px</span>
+            style="font-size:11px;color:var(--pf-text-muted);font-weight:600;margin-right:6px;padding-right:8px;border-right:1px solid var(--pf-border);">— px</span>
+          <span id="fileSizeBadge"
+            style="font-size:11px;color:var(--pf-text-muted);font-weight:600;margin-right:6px;padding-right:8px;border-right:1px solid var(--pf-border);display:none;align-items:center;gap:4px;"></span>
           <button type="button" class="zoom-btn" onclick="zoomCanvas(-0.15)" title="Uzaklaştır (−)">−</button>
           <span class="zoom-level" id="zoomLevelIndicator" onclick="resetZoom()"
             title="Yakınlaştırmayı sıfırlamak için tıklayın">100%</span>
@@ -2258,6 +2259,8 @@
     let stepCounter = 1;
     let currentBlob = null;
     let currentFileName = "gorsel.png";
+    let originalFileSize = 0;
+    let processedFileSize = 0;
     let renderTimer = null;
     let historyStack = [];
     let historyIndex = -1;
@@ -2270,6 +2273,34 @@
     const timingBadge = document.getElementById("timingBadge") || { textContent: "" };
     const statusMessage = document.getElementById("statusMessage") || { textContent: "" };
     const canvasDims = document.getElementById("canvasDims");
+    const fileSizeBadge = document.getElementById("fileSizeBadge");
+
+    function formatBytes(bytes) {
+      if (!bytes || bytes <= 0) return "0 B";
+      const k = 1024;
+      const sizes = ["B", "KB", "MB", "GB"];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+    }
+
+    function updateImageInfoBadge(inBytes, outBytes) {
+      if (!fileSizeBadge) return;
+      if (!inBytes || inBytes <= 0) {
+        fileSizeBadge.style.display = "none";
+        return;
+      }
+      fileSizeBadge.style.display = "inline-flex";
+      const inStr = formatBytes(inBytes);
+      if (!outBytes || outBytes === inBytes) {
+        fileSizeBadge.innerHTML = `<span title="Orijinal Boyut">${inStr}</span>`;
+        return;
+      }
+      const outStr = formatBytes(outBytes);
+      const diffPct = Math.round(((outBytes - inBytes) / inBytes) * 100);
+      const diffColor = diffPct <= 0 ? "#10b981" : "#f59e0b";
+      const sign = diffPct <= 0 ? "▼" : "▲";
+      fileSizeBadge.innerHTML = `<span title="Orijinal Boyut">${inStr}</span><span style="color:${diffColor};font-weight:700;" title="İşlenmiş Boyut ve Tasarruf">→ ${outStr} (${sign} ${Math.abs(diffPct)}%)</span>`;
+    }
     const stepsList = document.getElementById("stepsList");
     const activeLayersCount = document.getElementById("activeLayersCount");
     const categoryCardsGrid = document.getElementById("categoryCardsGrid");
@@ -2705,6 +2736,7 @@
         imgAfter.style.display = "block";
         timingBadge.textContent = "Orijinal";
         statusMessage.textContent = "Görsel hazır • Düzenlemeye başlayabilirsiniz";
+        updateImageInfoBadge(originalFileSize, originalFileSize);
         if (currentViewMode === "curtain") setTimeout(updateCurtain, 10);
         syncPerspectivePins();
         return;
@@ -2735,6 +2767,8 @@
           return;
         }
         const outBlob = await resp.blob();
+        processedFileSize = outBlob.size;
+        updateImageInfoBadge(originalFileSize, processedFileSize);
         const outUrl = URL.createObjectURL(outBlob);
         lastProcessedUrl = outUrl;
         imgAfter.onload = () => {
@@ -2881,6 +2915,9 @@
     function setSourceImage(blob, filename) {
       currentBlob = blob;
       currentFileName = filename;
+      originalFileSize = blob ? blob.size : 0;
+      processedFileSize = originalFileSize;
+      updateImageInfoBadge(originalFileSize, originalFileSize);
       emptyStateView.style.display = "none";
       activeCanvasContainer.style.display = "flex";
 
