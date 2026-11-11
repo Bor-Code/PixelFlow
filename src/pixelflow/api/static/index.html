@@ -1951,6 +1951,61 @@
     </div>
   </div>
 
+  <!-- Kimlik / Ehliyet Çift Yüz Birleştirici Modalı -->
+  <div class="modal-backdrop" id="idComposerModalBackdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1150;align-items:center;justify-content:center;backdrop-filter:blur(6px);">
+    <div style="background:#0f141d;border:1px solid var(--pf-border);border-radius:var(--radius-sm);width:90%;max-width:560px;padding:22px;box-shadow:0 16px 40px rgba(0,0,0,0.8);display:flex;flex-direction:column;gap:14px;color:var(--pf-text-white);max-height:85vh;overflow-y:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--pf-border);padding-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:16px;">🪪</span>
+          <span style="font-weight:700;font-size:14px;" data-tr="Kimlik / Ehliyet Çift Yüz Birleştirici" data-en="ID Card Front & Back Dual-Side Composer">Kimlik / Ehliyet Çift Yüz Birleştirici</span>
+        </div>
+        <button type="button" onclick="closeIdComposerModal()" style="background:none;border:none;color:var(--pf-text-muted);font-size:18px;cursor:pointer;line-height:1;">×</button>
+      </div>
+
+      <div style="font-size:12px;color:var(--pf-text-muted);line-height:1.5;" data-tr="Kimlik, ehliyet veya pasaportunuzun ön ve arka yüzünü seçin; standart resmi evrak formatında (A4 dikey veya yan yana) tek bir görselde birleştirin." data-en="Select the front and back of your ID card, driver's license, or passport; combine them into a single official-format image.">
+        Kimlik, ehliyet veya pasaportunuzun ön ve arka yüzünü seçin; standart resmi evrak formatında (A4 dikey veya yan yana) tek bir görselde birleştirin.
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <!-- Ön Yüz -->
+        <div style="background:#090d14;border:1px solid var(--pf-border);border-radius:var(--radius-sm);padding:12px;display:flex;flex-direction:column;gap:8px;text-align:center;">
+          <strong style="font-size:12px;color:var(--pf-accent);" data-tr="1. Ön Yüz" data-en="1. Front Side">1. Ön Yüz</strong>
+          <div id="idFrontPreviewBox" style="width:100%;height:100px;background:#05070a;border:1px dashed var(--pf-border);border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;" onclick="document.getElementById('idFrontInput').click()">
+            <span style="font-size:11px;color:var(--pf-text-muted);" id="idFrontPlaceholder">+ Ön Yüz Seç</span>
+            <img id="idFrontImg" style="display:none;max-width:100%;max-height:100%;object-fit:contain;" alt="Front" />
+          </div>
+          <button type="button" class="btn btn-outline" style="font-size:11px;padding:4px;" onclick="useCurrentCanvasForId('front')" data-tr="Kanvastaki Görseli Kullan" data-en="Use Canvas Image">Kanvastaki Görseli Kullan</button>
+          <input type="file" id="idFrontInput" accept="image/*" style="display:none;" onchange="handleIdCardUpload(event, 'front')">
+        </div>
+
+        <!-- Arka Yüz -->
+        <div style="background:#090d14;border:1px solid var(--pf-border);border-radius:var(--radius-sm);padding:12px;display:flex;flex-direction:column;gap:8px;text-align:center;">
+          <strong style="font-size:12px;color:var(--pf-accent);" data-tr="2. Arka Yüz" data-en="2. Back Side">2. Arka Yüz</strong>
+          <div id="idBackPreviewBox" style="width:100%;height:100px;background:#05070a;border:1px dashed var(--pf-border);border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;" onclick="document.getElementById('idBackInput').click()">
+            <span style="font-size:11px;color:var(--pf-text-muted);" id="idBackPlaceholder">+ Arka Yüz Seç</span>
+            <img id="idBackImg" style="display:none;max-width:100%;max-height:100%;object-fit:contain;" alt="Back" />
+          </div>
+          <button type="button" class="btn btn-outline" style="font-size:11px;padding:4px;" onclick="useCurrentCanvasForId('back')" data-tr="Kanvastaki Görseli Kullan" data-en="Use Canvas Image">Kanvastaki Görseli Kullan</button>
+          <input type="file" id="idBackInput" accept="image/*" style="display:none;" onchange="handleIdCardUpload(event, 'back')">
+        </div>
+      </div>
+
+      <!-- Düzen Seçimi -->
+      <div style="display:flex;justify-content:space-between;align-items:center;background:#141923;padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--pf-border);font-size:12px;">
+        <span data-tr="Sayfa Düzeni:" data-en="Page Layout:">Sayfa Düzeni:</span>
+        <select id="idLayoutSelect" class="select-format" style="font-size:11.5px;padding:3px 8px;">
+          <option value="vertical">Dikey (Alt Alta - A4 Formatı)</option>
+          <option value="horizontal">Yatay (Yan Yana)</option>
+        </select>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
+        <button type="button" onclick="closeIdComposerModal()" class="action-btn" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);" data-tr="Vazgeç" data-en="Cancel">Vazgeç</button>
+        <button type="button" id="btnRunIdCompose" onclick="runIdCompose()" class="action-btn" style="background:var(--pf-accent);color:#081b2a;font-weight:700;" data-tr="Birleştir ve Kanvasa Yükle" data-en="Merge & Load to Canvas">Birleştir ve Kanvasa Yükle</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Dijital İmza Çizim Modalı -->
   <div id="signatureModal" class="pf-modal">
     <div class="pf-modal-box">
@@ -2534,6 +2589,7 @@
         title: { tr: "Belge & Evrak Araçları", en: "Document & Paper Tools" },
         sub: { tr: "Gölge giderme, eğrilik düzeltme ve kişisel veri maskeleme", en: "Shadow removal, deskewing, and PII masking" },
         cards: [
+          { op: "id_card", name: { tr: "Kimlik Çift Yüz", en: "ID Dual-Side" }, tag: { tr: "Kimlik", en: "ID Card" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><line x1="15" y1="8" x2="17" y2="8"/><line x1="15" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>', action: "openIdComposer" },
           { op: "multipage_pdf", name: { tr: "Çok Sayfalı PDF", en: "Multi-Page PDF" }, tag: { tr: "PDF", en: "PDF" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>', action: "multipagePdf" },
           { op: "magic_color", name: { tr: "Sihirli Renk", en: "Magic Color" }, tag: { tr: "CamScan", en: "CamScan" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>' },
           { op: "shadow_removal", name: { tr: "Gölge Temizle", en: "Remove Document Shadows" }, tag: { tr: "Aydınlat", en: "Clean" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/></svg>' },
@@ -2738,6 +2794,8 @@
         div.onclick = () => {
           if (c.action === "openSigModal") {
             openSignatureModal();
+          } else if (c.action === "openIdComposer") {
+            openIdComposerModal();
           } else if (c.action === "multipagePdf") {
             openMultipageModal();
           } else if (c.action === "autoPii") {
@@ -4325,6 +4383,94 @@
         statusMessage.textContent = (currentLang === "en")
           ? `✓ Multi-page PDF created (${selectedMultipagePages.length} pages)!`
           : `✓ Çok sayfalı PDF oluşturuldu (${selectedMultipagePages.length} sayfa)!`;
+      } catch (err) {
+        alert("Hata: " + err);
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    // Kimlik & Ehliyet Çift Yüz Birleştirici
+    let idFrontBlob = null;
+    let idBackBlob = null;
+
+    function openIdComposerModal() {
+      const modal = document.getElementById("idComposerModalBackdrop");
+      if (modal) modal.style.display = "flex";
+      if (!idFrontBlob && currentBlob) {
+        useCurrentCanvasForId("front");
+      }
+    }
+
+    function closeIdComposerModal() {
+      const modal = document.getElementById("idComposerModalBackdrop");
+      if (modal) modal.style.display = "none";
+    }
+
+    function handleIdCardUpload(e, side) {
+      if (!e.target.files || e.target.files.length === 0) return;
+      const file = e.target.files[0];
+      const url = URL.createObjectURL(file);
+      if (side === "front") {
+        idFrontBlob = file;
+        const img = document.getElementById("idFrontImg");
+        const placeholder = document.getElementById("idFrontPlaceholder");
+        if (img) { img.src = url; img.style.display = "block"; }
+        if (placeholder) placeholder.style.display = "none";
+      } else {
+        idBackBlob = file;
+        const img = document.getElementById("idBackImg");
+        const placeholder = document.getElementById("idBackPlaceholder");
+        if (img) { img.src = url; img.style.display = "block"; }
+        if (placeholder) placeholder.style.display = "none";
+      }
+      e.target.value = "";
+    }
+
+    function useCurrentCanvasForId(side) {
+      if (!currentBlob) return;
+      const url = lastProcessedUrl || URL.createObjectURL(currentBlob);
+      if (side === "front") {
+        idFrontBlob = currentBlob;
+        const img = document.getElementById("idFrontImg");
+        const placeholder = document.getElementById("idFrontPlaceholder");
+        if (img) { img.src = url; img.style.display = "block"; }
+        if (placeholder) placeholder.style.display = "none";
+      } else {
+        idBackBlob = currentBlob;
+        const img = document.getElementById("idBackImg");
+        const placeholder = document.getElementById("idBackPlaceholder");
+        if (img) { img.src = url; img.style.display = "block"; }
+        if (placeholder) placeholder.style.display = "none";
+      }
+    }
+
+    async function runIdCompose() {
+      if (!idFrontBlob || !idBackBlob) {
+        alert(currentLang === "en" ? "Please select both front and back images!" : "Lütfen hem ön hem de arka yüz görselini seçin!");
+        return;
+      }
+      const btn = document.getElementById("btnRunIdCompose");
+      const layout = document.getElementById("idLayoutSelect")?.value || "vertical";
+      if (btn) btn.disabled = true;
+
+      try {
+        const formData = new FormData();
+        formData.append("front", idFrontBlob, "front.png");
+        formData.append("back", idBackBlob, "back.png");
+        formData.append("layout", layout);
+
+        const resp = await fetch("/v1/compose-id-card", { method: "POST", body: formData });
+        if (!resp.ok) {
+          const err = await resp.json();
+          throw new Error(err.message || "Kimlik birleştirme başarısız oldu");
+        }
+        const composedBlob = await resp.blob();
+        loadImageBlob(composedBlob, "kimlik_birlestirilmis.png");
+        closeIdComposerModal();
+        statusMessage.textContent = (currentLang === "en")
+          ? "✓ Front and back sides merged on canvas!"
+          : "✓ Kimlik ön ve arka yüzü kanvasta birleştirildi!";
       } catch (err) {
         alert("Hata: " + err);
       } finally {
