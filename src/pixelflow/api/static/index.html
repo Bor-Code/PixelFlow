@@ -312,513 +312,356 @@
       margin: 4px 0;
     }
 
-    /* Photoshop Tarzı Üst Menü Çubuğu (PS Menubar) */
-    .ps-menubar {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      margin-left: 6px;
-    }
-
-    .ps-menu-item {
-      position: relative;
-      padding: 5px 9px;
-      font-size: 11.5px;
-      font-weight: 500;
-      color: #c5d1de;
+    /* Pro Topbar Ek Stilleri */
+    .pro-badge {
+      font-size: 9.5px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      color: #06111f;
+      padding: 1px 5px;
       border-radius: 4px;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.12s ease, color 0.12s ease;
+      margin-left: 6px;
+      letter-spacing: 0.5px;
     }
 
-    .ps-menu-item:hover,
-    .ps-menu-item.open {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ffffff;
-    }
-
-    .ps-dropdown {
-      display: none;
-      position: absolute;
-      top: calc(100% + 4px);
-      left: 0;
-      min-width: 220px;
-      background: #181d24;
-      border: 1px solid #2e3846;
-      border-radius: 6px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
-      padding: 5px 0;
-      z-index: 1000;
-    }
-
-    .ps-dropdown.show {
-      display: block;
-    }
-
-    .ps-menu-action {
-      padding: 6px 14px;
+    .btn-top-action {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--pf-accent);
+      padding: 5px 12px;
+      border-radius: 16px;
       font-size: 11.5px;
-      color: #d1d9e2;
-      display: flex;
+      font-weight: 600;
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 6px;
       cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.12s;
+      transition: all 0.15s ease;
     }
 
-    .ps-menu-action:hover {
-      background: #0084ff;
-      color: #ffffff;
+    .btn-top-action:hover {
+      background: var(--pf-accent);
+      color: #061826;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
     }
 
-    .ps-menu-action .ps-shortcut {
-      font-size: 10px;
-      color: #798b9e;
-      margin-left: 18px;
+    .btn-top-capsule {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      color: #cbd5e1;
+      padding: 4px 11px;
+      border-radius: 16px;
+      font-size: 11.5px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
 
-    .ps-menu-action:hover .ps-shortcut {
-      color: rgba(255, 255, 255, 0.85);
+    .btn-top-capsule:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
     }
 
-    .ps-menu-divider {
-      height: 1px;
-      background: rgba(255, 255, 255, 0.07);
-      margin: 4px 0;
-    }
-
-    /* Ana Alan */
-    .app-main {
+    /* LIGHTROOM & DAVINCI RESOLVE PRO 3-PANEL LAYOUT */
+    .app-main.lightroom-layout {
       flex: 1;
       display: flex;
       position: relative;
       overflow: hidden;
+      background: #07090e;
     }
 
-    /* 1. RESİMDEKİ KAYARAK AÇILAN SOL MENÜ (Slide-Out Expandable Left Sidebar) */
-    .sidebar-dock {
-      width: 56px;
-      background: var(--pf-bg-sidebar);
-      border-right: 1px solid var(--pf-border);
+    /* 1. SOL PANEL: PRESET VİTRİNİ & GEÇMİŞ */
+    .pro-left-panel {
+      width: 280px;
+      background: #0a0d14;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       flex-direction: column;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 120;
+      flex-shrink: 0;
+      z-index: 40;
+      transition: width 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
       overflow: hidden;
-      box-shadow: 3px 0 16px rgba(0, 0, 0, 0.4);
-      transition: width 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.24s ease;
     }
 
-    .sidebar-dock:hover,
-    .sidebar-dock.pinned {
-      width: 195px;
-      box-shadow: 8px 0 28px rgba(0, 0, 0, 0.65);
+    .pro-left-panel.collapsed {
+      width: 0 !important;
+      border-right: none;
     }
 
-    .sidebar-header-toggle {
+    .panel-header-pro {
       height: 42px;
-      padding: 0 16px;
+      padding: 0 14px;
       display: flex;
       align-items: center;
-      gap: 11px;
-      color: var(--pf-text-white);
-      font-weight: 700;
-      font-size: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .sidebar-header-toggle svg {
-      width: 18px;
-      height: 18px;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      background: #0d111a;
       flex-shrink: 0;
     }
 
-    .sidebar-header-toggle span {
-      opacity: 0;
-      transform: translateX(-8px);
-      transition: opacity 0.2s ease 0.04s, transform 0.2s ease 0.04s;
-    }
-
-    .sidebar-dock:hover .sidebar-header-toggle span,
-    .sidebar-dock.pinned .sidebar-header-toggle span {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .sidebar-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      padding: 8px 6px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      height: 38px;
-      padding: 0 13px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      color: var(--pf-text-muted);
-      transition: background 0.15s ease, color 0.15s ease;
-      white-space: nowrap;
-      position: relative;
-      gap: 12px;
-    }
-
-    .nav-item:hover {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--pf-text-white);
-    }
-
-    .nav-item.active {
-      background: var(--pf-accent-soft);
-      color: var(--pf-accent);
-      font-weight: 600;
-    }
-
-    .nav-item.active::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 8px;
-      bottom: 8px;
-      width: 3px;
-      background: var(--pf-accent);
-      border-radius: 0 3px 3px 0;
-    }
-
-    .nav-item svg {
-      width: 17px;
-      height: 17px;
-      flex-shrink: 0;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 2;
-    }
-
-    .nav-item span.label {
+    .pro-panel-title {
       font-size: 11.5px;
-      font-weight: 500;
-      color: var(--pf-text);
-      opacity: 0;
-      transform: translateX(-8px);
-      transition: opacity 0.2s ease 0.04s, transform 0.2s ease 0.04s;
-      pointer-events: none;
-    }
-
-    .sidebar-dock:hover .nav-item span.label,
-    .sidebar-dock.pinned .nav-item span.label {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .nav-badge-ai {
-      background: linear-gradient(135deg, #0084ff, #8b5cf6);
-      color: #fff;
-      font-size: 8.5px;
-      font-weight: 800;
-      padding: 1.5px 5px;
-      border-radius: 6px;
-      margin-left: auto;
-      opacity: 0;
-      transition: opacity 0.2s ease 0.04s;
-    }
-
-    .sidebar-dock:hover .nav-badge-ai,
-    .sidebar-dock.pinned .nav-badge-ai {
-      opacity: 1;
-    }
-
-    /* 2. RESİMDEKİ İKİNCİL ÇEKMECE PANELİ (Fotor Style Category Drawer) */
-    .drawer-panel {
-      width: 285px;
-      margin-left: 56px;
-      background: var(--pf-bg-drawer);
-      border-right: 1px solid var(--pf-border);
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      flex-shrink: 0;
-      z-index: 60;
-    }
-
-    .drawer-header {
-      padding: 12px 14px 10px;
-      border-bottom: 1px solid var(--pf-border);
-    }
-
-    .drawer-title {
-      font-size: 13.5px;
       font-weight: 700;
-      color: var(--pf-text-white);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .drawer-sub {
-      font-size: 11px;
-      color: var(--pf-text-muted);
-      margin-top: 2px;
-    }
-
-    /* Fotor Tarzı Önerilen Araç Kartları Izgarası */
-    .cards-section {
-      padding: 12px 14px;
-    }
-
-    .section-headline {
-      font-size: 10.5px;
-      font-weight: 700;
+      color: #f1f5f9;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--pf-text-muted);
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      letter-spacing: 0.5px;
     }
 
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 7px;
-      margin-bottom: 12px;
-    }
-
-    .tool-card {
-      background: var(--pf-bg-card);
-      border: 1px solid var(--pf-border);
-      border-radius: var(--radius-sm);
-      padding: 8px 6px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 5px;
+    .btn-icon-tiny {
+      background: transparent;
+      border: none;
+      color: #64748b;
       cursor: pointer;
-      position: relative;
-      transition: all 0.16s ease;
+      font-size: 13px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      transition: all 0.14s ease;
     }
 
-    .tool-card:hover {
-      background: var(--pf-bg-card-hover);
-      border-color: var(--pf-accent);
-      transform: translateY(-1px);
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
-    }
-
-    .tool-card.active {
-      border-color: var(--pf-accent);
-      background: var(--pf-accent-soft);
-    }
-
-    .tool-card-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, 0.06);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--pf-text-white);
-    }
-
-    .tool-card-icon svg {
-      width: 15px;
-      height: 15px;
-    }
-
-    .tool-card:hover .tool-card-icon {
-      background: var(--pf-accent);
-      color: #0c1b0e;
-    }
-
-    .tool-card-name {
-      font-size: 10.5px;
-      font-weight: 600;
-      color: var(--pf-text);
-      line-height: 1.25;
-    }
-
-    .card-tag {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      font-size: 8px;
-      font-weight: 800;
-      padding: 1.5px 4px;
-      border-radius: 3px;
-      background: #0084ff;
+    .btn-icon-tiny:hover {
       color: #fff;
+      background: rgba(255, 255, 255, 0.08);
     }
 
-    /* 1-Tık Canlı Filtre/Preset Galerisi */
-    .preset-preview-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-bottom: 8px;
+    .pro-segmented-tabs {
+      display: flex;
+      padding: 6px 10px;
+      gap: 4px;
+      background: #090c13;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      flex-shrink: 0;
     }
 
-    .preset-card-item {
+    .seg-tab {
+      flex: 1;
+      background: transparent;
+      border: 1px solid transparent;
+      color: #718096;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.14s ease;
+    }
+
+    .seg-tab:hover {
+      color: #cbd5e1;
+    }
+
+    .seg-tab.active {
+      background: #161c28;
+      border-color: rgba(56, 189, 248, 0.35);
+      color: var(--pf-accent);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    .tab-content-pro {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 10px;
+    }
+
+    .tab-content-pro::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .tab-content-pro::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+    }
+
+    .preset-cards-grid {
       display: flex;
       flex-direction: column;
+      gap: 6px;
+    }
+
+    .preset-vitrin-card {
+      display: flex;
       align-items: center;
-      gap: 4px;
-      background: #0c0e12;
-      border: 1px solid var(--pf-border);
-      border-radius: 6px;
-      padding: 5px 3px;
+      gap: 10px;
+      padding: 8px 10px;
+      background: #10141d;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.15s ease;
-      text-align: center;
     }
 
-    .preset-card-item:hover {
+    .preset-vitrin-card:hover {
+      background: #171d2b;
       border-color: var(--pf-accent);
-      transform: translateY(-1px);
-    }
-
-    .preset-card-item.active {
-      border-color: var(--pf-accent);
-      background: rgba(56, 189, 248, 0.14);
-      box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+      transform: translateX(2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
     }
 
     .preset-swatch {
-      width: 100%;
-      height: 28px;
-      border-radius: 4px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
-    }
-
-    .preset-label {
-      font-size: 9.5px;
-      font-weight: 600;
-      color: var(--pf-text-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
-    }
-
-    .preset-card-item.active .preset-label {
-      color: var(--pf-accent);
-      font-weight: 700;
-    }
-
-    .card-tag.new {
-      background: #ec4899;
-    }
-
-    .card-tag.ai {
-      background: #38bdf8;
-      color: #061826;
-    }
-
-    /* Ayar Sürgüleri & Katman Kartları */
-    .controls-section {
-      padding: 0 14px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .active-step-card {
-      background: var(--pf-bg-card);
-      border: 1px solid var(--pf-border);
-      border-radius: var(--radius-sm);
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-    }
-
-    .step-header {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      padding-bottom: 6px;
-    }
-
-    .step-title {
-      font-weight: 700;
-      font-size: 11.5px;
-      color: var(--pf-text-white);
-    }
-
-    .step-remove {
-      background: transparent;
-      border: none;
-      color: var(--pf-text-muted);
-      cursor: pointer;
+      justify-content: center;
       font-size: 14px;
-      line-height: 1;
-      padding: 1px 5px;
-      border-radius: 3px;
     }
 
-    .step-remove:hover {
-      background: rgba(239, 68, 68, 0.15);
-      color: var(--pf-danger);
-    }
-
-    .tool-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 9px;
-      font-size: 11px;
+    .preset-card-title {
+      font-size: 11.5px;
       font-weight: 600;
-      border-radius: 12px;
-      background: var(--pf-bg-card);
-      border: 1px solid var(--pf-border);
-      color: var(--pf-text-muted);
-      cursor: pointer;
-      transition: all 0.15s ease;
+      color: #f1f5f9;
     }
 
-    .tool-pill:hover {
-      border-color: var(--pf-accent);
-      color: var(--pf-text-white);
+    .preset-card-sub {
+      font-size: 10px;
+      color: #64748b;
+      margin-top: 1px;
     }
 
-    .tool-pill.active {
-      background: rgba(56, 189, 248, 0.14);
-      border-color: var(--pf-accent);
-      color: var(--pf-accent);
-      box-shadow: 0 0 6px rgba(56, 189, 248, 0.2);
-    }
-
-    .tool-pill .pill-close {
-      cursor: pointer;
-      font-size: 13px;
-      line-height: 1;
-      opacity: 0.6;
-      transition: opacity 0.15s ease, color 0.15s ease;
-    }
-
-    .tool-pill .pill-close:hover {
-      opacity: 1;
-      color: var(--pf-danger);
-    }
-
-    .slider-row {
+    .history-stack-list {
       display: flex;
       flex-direction: column;
       gap: 4px;
+    }
+
+    .history-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      background: #10141e;
+      border-radius: 6px;
+      font-size: 11px;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .history-item-row:hover,
+    .history-item-row.active {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--pf-accent);
+    }
+
+    /* 3. SAĞ PANEL: LIGHTROOM PRO DEVELOP & ADJUSTMENTS INSPECTOR */
+    .pro-right-panel {
+      width: 340px;
+      background: #0c1018;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      z-index: 40;
+      overflow-y: auto;
+    }
+
+    .pro-right-panel::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .pro-right-panel::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 3px;
+    }
+
+    .pro-accordion-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pro-accordion {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .acc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 14px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.015);
+      user-select: none;
+      transition: background 0.15s ease;
+    }
+
+    .acc-header:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .acc-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .acc-chevron {
+      font-size: 10px;
+      color: #64748b;
+      transition: transform 0.2s ease;
+    }
+
+    .pro-accordion.closed .acc-chevron {
+      transform: rotate(-90deg);
+    }
+
+    .pro-accordion.closed .acc-body {
+      display: none;
+    }
+
+    .acc-body {
+      padding: 12px 14px;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .pro-quick-btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .pro-tool-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: #131823;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 7px;
+      padding: 7px 9px;
+      color: #cbd5e1;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+
+    .pro-tool-btn:hover {
+      background: #1a2232;
+      border-color: var(--pf-accent);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+    }
+
+    .pro-tool-btn .btn-icon-wrap {
+      font-size: 13px;
+    }
+
+    .pro-slider-row {
+      margin-bottom: 11px;
+    }
+
+    .pro-slider-row:last-child {
+      margin-bottom: 0;
     }
 
     .slider-meta {
@@ -827,30 +670,93 @@
       font-size: 11px;
       color: var(--pf-text-muted);
       font-weight: 500;
+      margin-bottom: 4px;
     }
 
     .slider-meta span.val {
-      color: var(--pf-text-white);
+      color: var(--pf-accent);
       font-weight: 700;
+      font-family: monospace;
+    }
+
+    .tool-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+
+    .tool-pill {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 3px 8px;
+      font-size: 10.5px;
+      color: #cbd5e1;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+
+    .tool-pill.active {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: var(--pf-accent);
+      color: var(--pf-accent);
+    }
+
+    .tool-pill .pill-close {
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+      opacity: 0.6;
+    }
+
+    .tool-pill .pill-close:hover {
+      opacity: 1;
+      color: var(--pf-danger);
+    }
+
+    .active-step-card {
+      background: #111622;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .step-title {
+      font-weight: 700;
+      color: #fff;
+      font-size: 12px;
     }
 
     input[type="range"] {
       -webkit-appearance: none;
       width: 100%;
-      height: 5px;
-      border-radius: 3px;
-      background: #2b3242;
+      height: 4px;
+      border-radius: 2px;
+      background: #232a39;
       outline: none;
     }
 
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
       background: var(--pf-accent);
       cursor: pointer;
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
       transition: transform 0.1s;
     }
 
@@ -1429,197 +1335,17 @@
 </head>
 
 <body>
-  <!-- Üst Gezinme Çubuğu (Photoshop Stili Menü Barı) -->
+  <!-- PRO TOPBAR (Adobe Lightroom / DaVinci Resolve Pro Stüdyo Çubuğu) -->
   <header class="topbar">
     <div class="topbar-left">
-      <div class="brand-logo" onclick="location.reload()" title="PixelFlow Studio" id="brandLogoContainer">
+      <div class="brand-logo" onclick="location.reload()" title="PixelFlow Pro Studio" id="brandLogoContainer">
         <img class="brand-logo-img" id="brandLogoImg" src="/pictures/logo.png" onerror="this.src='/static/logo.png'" alt="PixelFlow" />
+        <span class="pro-badge">PRO</span>
       </div>
-
-      <nav class="ps-menubar" id="psMenuBar">
-        <!-- Dosya -->
-        <div class="ps-menu-item" onclick="togglePsMenu(event, 'menuFile')">
-          <span class="ps-menu-label" data-tr="Dosya" data-en="File">Dosya</span>
-          <div class="ps-dropdown" id="menuFile">
-            <div class="ps-menu-action" onclick="document.getElementById('filePicker').click()">
-              <span data-tr="Görsel Yükle..." data-en="Open Image...">Görsel Yükle...</span>
-              <span class="ps-shortcut">Ctrl+O</span>
-            </div>
-            <div class="ps-menu-divider"></div>
-            <div class="ps-menu-action" onclick="downloadCurrentFormat('PNG')">
-              <span data-tr="PNG Olarak Kaydet" data-en="Save as PNG">PNG Olarak Kaydet</span>
-              <span class="ps-shortcut">PNG</span>
-            </div>
-            <div class="ps-menu-action" onclick="downloadCurrentFormat('JPEG')">
-              <span data-tr="JPEG Olarak Kaydet" data-en="Save as JPEG">JPEG Olarak Kaydet</span>
-              <span class="ps-shortcut">JPEG</span>
-            </div>
-            <div class="ps-menu-action" onclick="downloadCurrentFormat('PDF')">
-              <span data-tr="PDF Olarak Dışa Aktar" data-en="Export as PDF">PDF Olarak Dışa Aktar</span>
-              <span class="ps-shortcut">PDF</span>
-            </div>
-            <div class="ps-menu-divider"></div>
-            <div class="ps-menu-action" onclick="openBatchModal()">
-              <span data-tr="Toplu İşlem & ZIP..." data-en="Batch Process & ZIP...">Toplu İşlem & ZIP...</span>
-              <span class="ps-shortcut">Ctrl+B</span>
-            </div>
-            <div class="ps-menu-action" onclick="openMultipageModal()">
-              <span data-tr="Çok Sayfalı PDF..." data-en="Multi-Page PDF...">Çok Sayfalı PDF...</span>
-              <span class="ps-shortcut">Ctrl+M</span>
-            </div>
-            <div class="ps-menu-divider"></div>
-            <div class="ps-menu-action" onclick="resetToOriginal()">
-              <span data-tr="Orijinal Görsele Dön" data-en="Revert to Original">Orijinal Görsele Dön</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Düzen -->
-        <div class="ps-menu-item" onclick="togglePsMenu(event, 'menuEdit')">
-          <span class="ps-menu-label" data-tr="Düzen" data-en="Edit">Düzen</span>
-          <div class="ps-dropdown" id="menuEdit">
-            <div class="ps-menu-action" onclick="undo()">
-              <span data-tr="Geri Al" data-en="Undo">Geri Al</span>
-              <span class="ps-shortcut">Ctrl+Z</span>
-            </div>
-            <div class="ps-menu-action" onclick="redo()">
-              <span data-tr="Yinele" data-en="Redo">Yinele</span>
-              <span class="ps-shortcut">Ctrl+Y</span>
-            </div>
-            <div class="ps-menu-divider"></div>
-            <div class="ps-menu-action" onclick="resetAllSteps()">
-              <span data-tr="Tüm Efektleri Sıfırla" data-en="Reset All Effects">Tüm Efektleri Sıfırla</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Görüntü -->
-        <div class="ps-menu-item" onclick="togglePsMenu(event, 'menuImage')">
-          <span class="ps-menu-label" data-tr="Görüntü" data-en="Image">Görüntü</span>
-          <div class="ps-dropdown" id="menuImage">
-            <div class="ps-menu-action" onclick="quickAdd('auto_enhance')">
-              <span data-tr="Otomatik Renk & Kontrast" data-en="Auto Tone & Contrast">Otomatik Renk & Kontrast</span>
-              <span class="ps-shortcut">Auto</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('grayscale')">
-              <span data-tr="Siyah & Beyaz (Grayscale)" data-en="Black & White (Grayscale)">Siyah & Beyaz
-                (Grayscale)</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('brightness_contrast')">
-              <span data-tr="Parlaklık / Kontrast" data-en="Brightness / Contrast">Parlaklık / Kontrast</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('curves')">
-              <span data-tr="Renk Eğrileri (Curves)" data-en="Curves">Renk Eğrileri (Curves)</span>
-            </div>
-            <div class="ps-menu-divider"></div>
-            <div class="ps-menu-action" onclick="rotateCanvas()">
-              <span data-tr="90° Saat Yönünde Döndür" data-en="Rotate 90° Clockwise">90° Saat Yönünde Döndür</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('flip')">
-              <span data-tr="Yatay Aynala (Flip Horizontal)" data-en="Flip Horizontal">Yatay Aynala</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('resize')">
-              <span data-tr="Boyutlandır..." data-en="Resize...">Boyutlandır...</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Filtre -->
-        <div class="ps-menu-item" onclick="togglePsMenu(event, 'menuFilter')">
-          <span class="ps-menu-label" data-tr="Filtre" data-en="Filter">Filtre</span>
-          <div class="ps-dropdown" id="menuFilter">
-            <div class="ps-menu-action" onclick="quickAdd('preset')">
-              <span data-tr="Sinematik LUT Presetleri..." data-en="Cinematic LUT Presets...">Sinematik LUT
-                Presetleri...</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('duotone')">
-              <span data-tr="Duotone Gradyan Eşleme" data-en="Duotone Gradient Map">Duotone Gradyan Eşleme</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('color_splash')">
-              <span data-tr="Color Splash (Seçici Renk)" data-en="Color Splash">Color Splash (Seçici Renk)</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('vignette')">
-              <span data-tr="Vinyet (Odak Çerçevesi)" data-en="Vignette">Vinyet (Odak Çerçevesi)</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('glitch')">
-              <span data-tr="Glitch & RGB Split" data-en="Glitch & RGB Split">Glitch & RGB Split</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('film_grain')">
-              <span data-tr="Analog Film Greni" data-en="Film Grain">Analog Film Greni</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('tilt_shift')">
-              <span data-tr="Tilt-Shift Minyatür" data-en="Tilt-Shift Miniature">Tilt-Shift Minyatür</span>
-            </div>
-            <div class="ps-menu-divider"></div>
-            <div class="ps-menu-action" onclick="quickAdd('denoise')">
-              <span data-tr="Gece Parazit Giderme (Denoise)" data-en="Denoise">Gece Parazit Giderme</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('sharpen')">
-              <span data-tr="Keskinleştir (Unsharp)" data-en="Sharpen">Keskinleştir (Unsharp)</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('gaussian_blur')">
-              <span data-tr="Gauss Bulanıklığı" data-en="Gaussian Blur">Gauss Bulanıklığı</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Görünüm -->
-        <div class="ps-menu-item" onclick="togglePsMenu(event, 'menuView')">
-          <span class="ps-menu-label" data-tr="Görünüm" data-en="View">Görünüm</span>
-          <div class="ps-dropdown" id="menuView">
-            <div class="ps-menu-action" onclick="fitCanvas()">
-              <span data-tr="Ekrana Sığdır" data-en="Fit on Screen">Ekrana Sığdır</span>
-              <span class="ps-shortcut">Ctrl+0</span>
-            </div>
-            <div class="ps-menu-action" onclick="resetZoom()">
-              <span data-tr="%100 Gerçek Boyut" data-en="100% Actual Size">%100 Gerçek Boyut</span>
-              <span class="ps-shortcut">100%</span>
-            </div>
-            <div class="ps-menu-action" onclick="zoomCanvas(0.2)">
-              <span data-tr="Yakınlaştır (+)" data-en="Zoom In (+)">Yakınlaştır (+)</span>
-            </div>
-            <div class="ps-menu-action" onclick="zoomCanvas(-0.2)">
-              <span data-tr="Uzaklaştır (−)" data-en="Zoom Out (−)">Uzaklaştır (−)</span>
-            </div>
-            <div class="ps-menu-divider"></div>
-            <div class="ps-menu-action" onclick="setComparisonMode('split')">
-              <span data-tr="Perde Karşılaştırma (Split)" data-en="Curtain Split View">Perde Karşılaştırma
-                (Split)</span>
-            </div>
-            <div class="ps-menu-action" onclick="setComparisonMode('after')">
-              <span data-tr="Sadece Düzenlenen (After)" data-en="Processed Only (After)">Sadece Düzenlenen</span>
-            </div>
-            <div class="ps-menu-action" onclick="setComparisonMode('before')">
-              <span data-tr="Sadece Orijinal (Before)" data-en="Original Only (Before)">Sadece Orijinal</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Araçlar -->
-        <div class="ps-menu-item" onclick="togglePsMenu(event, 'menuTools')">
-          <span class="ps-menu-label" data-tr="Araçlar" data-en="Tools">Araçlar</span>
-          <div class="ps-dropdown" id="menuTools">
-            <div class="ps-menu-action" onclick="quickAdd('inpaint')">
-              <span data-tr="Sihirli Silgi (Magic Eraser)" data-en="Magic Eraser (Inpaint)">Sihirli Silgi</span>
-            </div>
-            <div class="ps-menu-action" onclick="quickAdd('qr_overlay')">
-              <span data-tr="QR Kod Filigranı" data-en="QR Code Watermark">QR Kod Filigranı</span>
-            </div>
-            <div class="ps-menu-action" onclick="openSignatureModal()">
-              <span data-tr="Dijital İmza Çiz..." data-en="Draw Digital Signature...">Dijital İmza Çiz...</span>
-            </div>
-            <div class="ps-menu-action" onclick="runAutoPiiRedaction()">
-              <span data-tr="TC / IBAN Otomatik Maskele" data-en="Auto Mask PII (ID/IBAN)">TC / IBAN Otomatik
-                Maskele</span>
-            </div>
-          </div>
-        </div>
-      </nav>
 
       <input type="file" id="filePicker" accept="image/*,.pdf,application/pdf" style="display:none" />
 
-      <button type="button" class="btn-upload-pill" id="btnTopUpload" title="Yeni Görsel veya Belge Yükle"
-        style="margin-left:8px;">
+      <button type="button" class="btn-top-action" id="btnTopUpload" onclick="document.getElementById('filePicker').click()" title="Yeni Görsel veya PDF Yükle (Ctrl+O)">
         <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
           <polyline points="17 8 12 3 7 8" />
@@ -1628,7 +1354,40 @@
         <span data-tr="Görsel Aç" data-en="Open Image">Görsel Aç</span>
       </button>
 
-      <div style="display:flex;gap:3px;margin-left:4px;">
+      <button type="button" class="btn-top-capsule" onclick="openMultipageModal()" title="Çok Sayfalı PDF Birleştirici (Ctrl+M)">
+        <span>📑</span>
+        <span data-tr="Çok Sayfalı PDF" data-en="Multi-Page PDF">Çok Sayfalı PDF</span>
+      </button>
+
+      <button type="button" class="btn-top-capsule" onclick="openBatchModal()" title="Toplu İşlem &amp; ZIP (Ctrl+B)">
+        <span>📦</span>
+        <span data-tr="Toplu İşlem (ZIP)" data-en="Batch (ZIP)">Toplu İşlem (ZIP)</span>
+      </button>
+    </div>
+
+    <!-- Merkez Hızlı Komut Paleti & PDF Sayfa Sayacı -->
+    <div class="topbar-center" id="topbarCenterHub">
+      <button type="button" class="command-search-capsule" onclick="openCommandPalette()" title="Komut Arama (Ctrl+K)">
+        <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span data-tr="Hızlı komut veya filtre ara..." data-en="Search commands or filters...">Hızlı komut veya filtre ara...</span>
+        <kbd>Ctrl+K</kbd>
+      </button>
+
+      <!-- Çok Sayfalı PDF Çubuğu -->
+      <div id="pdfPaginationBar" style="display:none;align-items:center;gap:4px;">
+        <button type="button" class="btn-icon" id="btnPrevPage" title="Önceki Sayfa">‹</button>
+        <span id="pdfPageIndicator" style="font-size:12px;font-weight:600;">Sayfa 1 / 1</span>
+        <button type="button" class="btn-icon" id="btnNextPage" title="Sonraki Sayfa">›</button>
+        <button type="button" class="btn-upload-pill" id="btnBatchPdfAll" style="padding:4px 10px;font-size:11px;"
+          data-tr="Tüm Sayfaları İşle" data-en="Process All Pages">Tüm Sayfaları İşle</button>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <div style="display:flex;gap:3px;">
         <button type="button" class="btn-icon" id="btnUndo" title="Geri Al (Ctrl+Z)" onclick="undo()" disabled>
           <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24">
             <polyline points="1 4 1 10 7 10" />
@@ -1642,44 +1401,8 @@
           </svg>
         </button>
       </div>
-    </div>
 
-    <!-- Merkez Kontrol Alanı (Mode Switcher + Command Search + PDF Bar) -->
-    <div class="topbar-center" id="topbarCenterHub" style="display:flex;align-items:center;gap:12px;">
-      <!-- Çalışma Alanı Modu: Fotoğraf vs Belge & Evrak -->
-      <div class="workspace-mode-switcher" id="workspaceModeSwitcher">
-        <button type="button" class="mode-tab active" id="modeTabPhoto" onclick="switchWorkspaceMode('photo')">
-          <span>🎨</span>
-          <span data-tr="Fotoğraf Stüdyosu" data-en="Photo Studio">Fotoğraf Stüdyosu</span>
-        </button>
-        <button type="button" class="mode-tab" id="modeTabDoc" onclick="switchWorkspaceMode('doc')">
-          <span>📄</span>
-          <span data-tr="Belge & Evrak" data-en="Docs & Office">Belge & Evrak</span>
-        </button>
-      </div>
-
-      <!-- Hızlı Komut Paleti Tetikleyici Kapsül -->
-      <button type="button" class="command-search-capsule" onclick="openCommandPalette()" title="Komut Arama (Ctrl+K)">
-        <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        <span data-tr="Hızlı komut ara..." data-en="Search commands...">Hızlı komut ara...</span>
-        <kbd>Ctrl+K</kbd>
-      </button>
-
-      <!-- Çok Sayfalı PDF Çubuğu -->
-      <div id="pdfPaginationBar" style="display:none;align-items:center;gap:4px;">
-        <button type="button" class="btn-icon" id="btnPrevPage" title="Önceki Sayfa">‹</button>
-        <span id="pdfPageIndicator" style="font-size:12.5px;font-weight:600;">Sayfa 1 / 1</span>
-        <button type="button" class="btn-icon" id="btnNextPage" title="Sonraki Sayfa">›</button>
-        <button type="button" class="btn-upload-pill" id="btnBatchPdfAll" style="padding:4px 10px;font-size:11.5px;"
-          data-tr="Tüm Sayfaları İşle" data-en="Process All Pages">Tüm Sayfaları İşle</button>
-      </div>
-    </div>
-
-    <div class="topbar-right">
-      <!-- Dil Seçeneği (TR / US Bayraklı Dil Seçici) -->
+      <!-- Dil Seçeneği -->
       <div class="lang-switcher-pill" id="langSwitcher" role="group" aria-label="Language Selector">
         <button type="button" class="lang-btn active" id="langBtnTr" onclick="setLanguage('tr')" title="Türkçe">
           <svg class="flag-icon" viewBox="0 0 1200 800" width="19" height="13"
@@ -1699,39 +1422,10 @@
               stroke-width="7.69" />
             <rect width="76" height="53.85" fill="#3C3B6E" />
             <g fill="#ffffff" transform="scale(1.15) translate(2, 2)">
-              <circle cx="5" cy="5" r="1.8" />
-              <circle cx="15" cy="5" r="1.8" />
-              <circle cx="25" cy="5" r="1.8" />
-              <circle cx="35" cy="5" r="1.8" />
-              <circle cx="45" cy="5" r="1.8" />
-              <circle cx="55" cy="5" r="1.8" />
-              <circle cx="10" cy="11" r="1.8" />
-              <circle cx="20" cy="11" r="1.8" />
-              <circle cx="30" cy="11" r="1.8" />
-              <circle cx="40" cy="11" r="1.8" />
-              <circle cx="50" cy="11" r="1.8" />
-              <circle cx="5" cy="17" r="1.8" />
-              <circle cx="15" cy="17" r="1.8" />
-              <circle cx="25" cy="17" r="1.8" />
-              <circle cx="35" cy="17" r="1.8" />
-              <circle cx="45" cy="17" r="1.8" />
-              <circle cx="55" cy="17" r="1.8" />
-              <circle cx="10" cy="23" r="1.8" />
-              <circle cx="20" cy="23" r="1.8" />
-              <circle cx="30" cy="23" r="1.8" />
-              <circle cx="40" cy="23" r="1.8" />
-              <circle cx="50" cy="23" r="1.8" />
-              <circle cx="5" cy="29" r="1.8" />
-              <circle cx="15" cy="29" r="1.8" />
-              <circle cx="25" cy="29" r="1.8" />
-              <circle cx="35" cy="29" r="1.8" />
-              <circle cx="45" cy="29" r="1.8" />
-              <circle cx="55" cy="29" r="1.8" />
-              <circle cx="10" cy="35" r="1.8" />
-              <circle cx="20" cy="35" r="1.8" />
-              <circle cx="30" cy="35" r="1.8" />
-              <circle cx="40" cy="35" r="1.8" />
-              <circle cx="50" cy="35" r="1.8" />
+              <circle cx="5" cy="5" r="1.8" /><circle cx="15" cy="5" r="1.8" /><circle cx="25" cy="5" r="1.8" />
+              <circle cx="35" cy="5" r="1.8" /><circle cx="45" cy="5" r="1.8" /><circle cx="55" cy="5" r="1.8" />
+              <circle cx="10" cy="11" r="1.8" /><circle cx="20" cy="11" r="1.8" /><circle cx="30" cy="11" r="1.8" />
+              <circle cx="40" cy="11" r="1.8" /><circle cx="50" cy="11" r="1.8" />
             </g>
           </svg>
           <span class="lang-code">EN</span>
@@ -1744,145 +1438,65 @@
         <option value="PDF">PDF</option>
       </select>
       <button type="button" class="btn-download-main" id="btnDownload">
-        <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4" viewBox="0 0 24 24">
+        <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.4" viewBox="0 0 24 24">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
           <polyline points="7 10 12 15 17 10" />
           <line x1="12" y1="15" x2="12" y2="3" />
         </svg>
-        <span data-tr="İndir" data-en="Export">İndir</span>
+        <span data-tr="Dışa Aktar" data-en="Export">Dışa Aktar</span>
       </button>
     </div>
   </header>
 
-  <!-- Ana Çalışma Masası -->
-  <main class="app-main">
-    <!-- 1. RESİMDEKİ KAYARAK AÇILAN SOL MENÜ (Slide-Out Expandable Left Sidebar) -->
-    <aside class="sidebar-dock" id="mainSidebar">
-      <div class="sidebar-header-toggle" onclick="toggleSidebarPin()" title="Menüyü Sabitle / Kapat">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
-        <span data-tr="Fotoğraf Stüdyosu" data-en="Photo Studio">Fotoğraf Stüdyosu</span>
+  <!-- LIGHTROOM & DAVINCI RESOLVE PRO 3-SÜTUNLU ÇALIŞMA ALANI -->
+  <main class="app-main lightroom-layout">
+    <!-- 1. SOL PANEL: PRESET VİTRİNİ & GEÇMİŞ (Lightroom Preset Browser) -->
+    <aside class="pro-left-panel" id="proLeftPanel">
+      <div class="panel-header-pro">
+        <div class="pro-panel-title">
+          <span data-tr="Preset Vitrini &amp; Şablonlar" data-en="Presets &amp; Templates">Preset Vitrini &amp; Şablonlar</span>
+        </div>
+        <button type="button" class="btn-icon-tiny" onclick="toggleLeftPanel()" title="Paneli Gizle / Göster">◨</button>
       </div>
 
-      <div class="sidebar-nav">
-        <div class="nav-item active" data-category="ai" onclick="switchCategory('ai')">
-          <svg viewBox="0 0 24 24">
-            <polygon
-              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
-          <span class="label" data-tr="Akıllı Araçlar" data-en="Smart AI">Akıllı Araçlar</span>
-          <span class="nav-badge-ai">AI</span>
-        </div>
+      <!-- Segmented Tabs for Left Panel -->
+      <div class="pro-segmented-tabs">
+        <button type="button" class="seg-tab active" id="segTabPresets" onclick="switchLeftTab('presets')">
+          <span data-tr="🎨 Sinematik" data-en="🎨 Presets">🎨 Sinematik</span>
+        </button>
+        <button type="button" class="seg-tab" id="segTabDocs" onclick="switchLeftTab('docs')">
+          <span data-tr="📄 Belge Modu" data-en="📄 Doc Modes">📄 Belge Modu</span>
+        </button>
+        <button type="button" class="seg-tab" id="segTabHistory" onclick="switchLeftTab('history')">
+          <span data-tr="🕒 Geçmiş" data-en="🕒 History">🕒 Geçmiş</span>
+        </button>
+      </div>
 
-        <div class="nav-item" data-category="adjust" onclick="switchCategory('adjust')">
-          <svg viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="5" />
-            <line x1="12" y1="1" x2="12" y2="3" />
-            <line x1="12" y1="21" x2="12" y2="23" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="1" y1="12" x2="3" y2="12" />
-            <line x1="21" y1="12" x2="23" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-          </svg>
-          <span class="label" data-tr="Ayar &amp; Renk" data-en="Adjust &amp; Tone">Ayar &amp; Renk</span>
+      <!-- Tab 1: Sinematik LUT Presetleri -->
+      <div class="tab-content-pro" id="tabContentPresets">
+        <div class="preset-cards-grid" id="presetVitrinGrid">
+          <!-- JS tarafından doldurulur -->
         </div>
+      </div>
 
-        <div class="nav-item" data-category="effects" onclick="switchCategory('effects')">
-          <svg viewBox="0 0 24 24">
-            <polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2" />
-          </svg>
-          <span class="label" data-tr="Filtre &amp; Efekt" data-en="Filter &amp; Effects">Filtre &amp; Efekt</span>
+      <!-- Tab 2: Belge Şablon Modları -->
+      <div class="tab-content-pro" id="tabContentDocs" style="display:none;">
+        <div class="preset-cards-grid" id="docVitrinGrid">
+          <!-- JS tarafından doldurulur -->
         </div>
+      </div>
 
-        <div class="nav-item" data-category="retouch" onclick="switchCategory('retouch')">
-          <svg viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-            <line x1="9" y1="9" x2="9.01" y2="9" />
-            <line x1="15" y1="9" x2="15.01" y2="9" />
-          </svg>
-          <span class="label" data-tr="Portre &amp; Rötuş" data-en="Portrait &amp; Retouch">Portre &amp; Rötuş</span>
-        </div>
-
-        <div class="nav-item" data-category="geometry" onclick="switchCategory('geometry')">
-          <svg viewBox="0 0 24 24">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-            <line x1="9" y1="3" x2="9" y2="21" />
-            <line x1="15" y1="3" x2="15" y2="21" />
-            <line x1="3" y1="9" x2="21" y2="9" />
-            <line x1="3" y1="15" x2="21" y2="15" />
-          </svg>
-          <span class="label" data-tr="Kırp &amp; Geometri" data-en="Crop &amp; Geometry">Kırp &amp; Geometri</span>
-        </div>
-
-        <div class="nav-item" data-category="text" onclick="switchCategory('text')">
-          <svg viewBox="0 0 24 24">
-            <polyline points="4 7 4 4 20 4 20 7" />
-            <line x1="9" y1="20" x2="15" y2="20" />
-            <line x1="12" y1="4" x2="12" y2="20" />
-          </svg>
-          <span class="label" data-tr="Yazı &amp; İmza" data-en="Text &amp; Sign">Yazı &amp; İmza</span>
-        </div>
-
-        <div class="nav-item" data-category="docs" onclick="switchCategory('docs')">
-          <svg viewBox="0 0 24 24">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-          </svg>
-          <span class="label" data-tr="Belge Araçları" data-en="Doc Tools">Belge Araçları</span>
+      <!-- Tab 3: Geçmiş Snapshots -->
+      <div class="tab-content-pro" id="tabContentHistory" style="display:none;">
+        <div class="history-stack-list" id="historyStackList">
+          <!-- JS tarafından doldurulur -->
         </div>
       </div>
     </aside>
 
-    <!-- 2. RESİMDEKİ İKİNCİL ÇEKMECE PANELİ (Fotor Style Category Drawer) -->
-    <aside class="drawer-panel" id="drawerPanel">
-      <div class="drawer-header">
-        <div class="drawer-title">
-          <span id="drawerTitleText">Akıllı Araçlar</span>
-          <button type="button" class="btn-icon" title="Tüm Katmanları Sıfırla" onclick="resetAllSteps()">
-            <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-              <polyline points="3 3 3 8 8 8" />
-            </svg>
-          </button>
-        </div>
-        <div class="drawer-sub" id="drawerSubText">Yapay zeka destekli tek tıkla fotoğraf iyileştirme ve kesim</div>
-      </div>
-
-      <!-- Fotor Tarzı Önerilen Araç Kartları -->
-      <div class="cards-section">
-        <div class="section-headline">
-          <span data-tr="Önerilen Araçlar" data-en="Recommended Tools">Önerilen Araçlar</span>
-          <span style="font-size:10.5px;color:var(--pf-accent)" data-tr="Seç &amp; Uygula"
-            data-en="Select &amp; Apply">Seç &amp; Uygula</span>
-        </div>
-        <div class="cards-grid" id="categoryCardsGrid">
-          <!-- Kategoriye göre dinamik dolar -->
-        </div>
-      </div>
-
-      <!-- Aktif İşlem Sürgüleri & Ayar Paneli -->
-      <div class="controls-section">
-        <div class="section-headline">
-          <span data-tr="Ayar Paneli" data-en="Adjustment Panel">Ayar Paneli</span>
-          <span id="activeLayersCount" style="color:var(--pf-accent);font-size:11px;font-weight:600;"></span>
-        </div>
-        <div id="stepsList" style="display:flex;flex-direction:column;gap:10px;">
-          <!-- Dinamik Araç Ayarları -->
-        </div>
-      </div>
-    </aside>
-
-    <!-- ORTA KANVAS ÇALIŞMA ALANI -->
+    <!-- 2. ORTA KANVAS ÇALIŞMA ALANI (SİNEMATİK STÜDYO) -->
     <section class="canvas-workspace" id="canvasWorkspace">
-      <!-- 2. Resimdeki Fotor Tarzı Boş Durum (Empty State Dropzone) -->
+      <!-- Fotor / Lightroom Boş Durum (Empty State Dropzone) -->
       <div class="empty-state-view" id="emptyStateView">
         <div class="empty-drop-card">
           <div class="empty-icon-circle">
@@ -1910,19 +1524,16 @@
           <div style="font-size:12px;color:var(--pf-text-muted);margin-top:24px;"
             data-tr="veya hazır örneklerden birini deneyin:" data-en="or try one of the ready samples:">veya hazır
             örneklerden birini deneyin:</div>
-          <div class="sample-photos-row">
-            <div class="sample-photo-chip" id="btnSamplePhoto">
-              <svg style="width:15px;height:15px;color:#38bdf8" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
+          <div class="sample-photos-row" style="display:flex;gap:8px;margin-top:10px;">
+            <div class="sample-photo-chip" id="btnSamplePhoto" style="padding:6px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:18px;cursor:pointer;display:flex;align-items:center;gap:6px;">
+              <svg style="width:15px;height:15px;color:#38bdf8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="5" />
-                <path
-                  d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
               </svg>
               <span data-tr="Canlı Manzara" data-en="Vivid Landscape">Canlı Manzara</span>
             </div>
-            <div class="sample-photo-chip" id="btnSampleDoc">
-              <svg style="width:15px;height:15px;color:#f59e0b" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
+            <div class="sample-photo-chip" id="btnSampleDoc" style="padding:6px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:18px;cursor:pointer;display:flex;align-items:center;gap:6px;">
+              <svg style="width:15px;height:15px;color:#f59e0b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
               </svg>
@@ -2048,6 +1659,178 @@
         </div>
       </div>
     </section>
+
+    <!-- 3. SAĞ PANEL: LIGHTROOM PRO DEVELOP & ADJUSTMENTS INSPECTOR -->
+    <aside class="pro-right-panel" id="proRightPanel">
+      <div class="panel-header-pro">
+        <div class="pro-panel-title">
+          <span data-tr="Geliştirme &amp; Ayarlar" data-en="Develop &amp; Adjust">Geliştirme &amp; Ayarlar</span>
+        </div>
+        <button type="button" class="btn-icon-tiny" onclick="resetAllSteps()" title="Tüm Efektleri Sıfırla">🔄</button>
+      </div>
+
+      <div class="pro-accordion-list" id="proAccordionList">
+        <!-- 1. Yapay Zeka & Akıllı Araçlar -->
+        <div class="pro-accordion" id="accAi">
+          <div class="acc-header" onclick="toggleAccordion('accAi')">
+            <span class="acc-title">🪄 <span data-tr="Yapay Zeka &amp; Akıllı Rötuş" data-en="AI &amp; Smart Retouch">Yapay Zeka &amp; Akıllı Rötuş</span></span>
+            <span class="acc-chevron">▾</span>
+          </div>
+          <div class="acc-body">
+            <div class="pro-quick-btn-grid">
+              <button type="button" class="pro-tool-btn" onclick="quickAdd('auto_enhance')">
+                <span class="btn-icon-wrap">⚡</span>
+                <span data-tr="Auto-Enhance" data-en="Auto-Enhance">Auto-Enhance</span>
+              </button>
+              <button type="button" class="pro-tool-btn" onclick="quickAdd('background_removal')">
+                <span class="btn-icon-wrap">✂️</span>
+                <span data-tr="Arka Plan Sil" data-en="Cutout AI">Arka Plan Sil</span>
+              </button>
+              <button type="button" class="pro-tool-btn" onclick="quickAdd('inpaint')">
+                <span class="btn-icon-wrap">🧹</span>
+                <span data-tr="Sihirli Silgi" data-en="Magic Eraser">Sihirli Silgi</span>
+              </button>
+              <button type="button" class="pro-tool-btn" onclick="quickAdd('face_blur')">
+                <span class="btn-icon-wrap">👤</span>
+                <span data-tr="Yüz Sansürü" data-en="Face Blur">Yüz Sansürü</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Temel Işık & Ton (Lightroom Sliders) -->
+        <div class="pro-accordion" id="accTone">
+          <div class="acc-header" onclick="toggleAccordion('accTone')">
+            <span class="acc-title">☀️ <span data-tr="Temel Işık &amp; Ton (Lightroom)" data-en="Basic Tone &amp; Exposure">Temel Işık &amp; Ton</span></span>
+            <span class="acc-chevron">▾</span>
+          </div>
+          <div class="acc-body">
+            <div class="pro-slider-row">
+              <div class="slider-meta">
+                <span data-tr="Parlaklık (Exposure)" data-en="Brightness">Parlaklık (Exposure)</span>
+                <span class="val" id="valToneBrightness">0.00</span>
+              </div>
+              <input type="range" id="sliderToneBrightness" min="-0.8" max="0.8" step="0.05" value="0" oninput="handleDirectSlider('brightness_contrast', 'brightness', this.value, 'valToneBrightness')" />
+            </div>
+            <div class="pro-slider-row">
+              <div class="slider-meta">
+                <span data-tr="Kontrast" data-en="Contrast">Kontrast</span>
+                <span class="val" id="valToneContrast">1.00</span>
+              </div>
+              <input type="range" id="sliderToneContrast" min="0.4" max="2.5" step="0.05" value="1.0" oninput="handleDirectSlider('brightness_contrast', 'contrast', this.value, 'valToneContrast')" />
+            </div>
+            <div class="pro-slider-row">
+              <div class="slider-meta">
+                <span data-tr="Canlılık (Vibrance)" data-en="Vibrance">Canlılık (Vibrance)</span>
+                <span class="val" id="valToneVibrance">0.00</span>
+              </div>
+              <input type="range" id="sliderToneVibrance" min="-1.0" max="1.0" step="0.05" value="0" oninput="handleDirectSlider('vibrance', 'vibrance', this.value, 'valToneVibrance')" />
+            </div>
+            <div class="pro-slider-row">
+              <div class="slider-meta">
+                <span data-tr="Doygunluk (Saturation)" data-en="Saturation">Doygunluk (Saturation)</span>
+                <span class="val" id="valToneSaturation">0.00</span>
+              </div>
+              <input type="range" id="sliderToneSaturation" min="-1.0" max="1.0" step="0.05" value="0" oninput="handleDirectSlider('vibrance', 'saturation', this.value, 'valToneSaturation')" />
+            </div>
+            <div class="pro-slider-row">
+              <div class="slider-meta">
+                <span data-tr="HDR CLAHE Gücü" data-en="HDR CLAHE Boost">HDR CLAHE Gücü</span>
+                <span class="val" id="valToneHdr">1.0</span>
+              </div>
+              <input type="range" id="sliderToneHdr" min="1.0" max="5.0" step="0.2" value="1.0" oninput="handleDirectSlider('histogram_equalization', 'clip_limit', this.value, 'valToneHdr')" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Belge & CamScanner Stüdyosu -->
+        <div class="pro-accordion" id="accDoc">
+          <div class="acc-header" onclick="toggleAccordion('accDoc')">
+            <span class="acc-title">📄 <span data-tr="Belge &amp; CamScanner Evrak" data-en="Document &amp; Office Tools">Belge &amp; CamScanner Evrak</span></span>
+            <span class="acc-chevron">▾</span>
+          </div>
+          <div class="acc-body">
+            <div class="pro-quick-btn-grid">
+              <button type="button" class="pro-tool-btn" onclick="quickAdd('magic_color')">
+                <span class="btn-icon-wrap">✨</span>
+                <span data-tr="Sihirli Renk" data-en="Magic Color">Sihirli Renk</span>
+              </button>
+              <button type="button" class="pro-tool-btn" onclick="quickAdd('perspective_warp')">
+                <span class="btn-icon-wrap">📐</span>
+                <span data-tr="Köşe Düzelt" data-en="Deskew">Köşe Düzelt</span>
+              </button>
+              <button type="button" class="pro-tool-btn" onclick="openSignatureModal()">
+                <span class="btn-icon-wrap">✍️</span>
+                <span data-tr="İmza Pad" data-en="Draw Sign">İmza Pad</span>
+              </button>
+              <button type="button" class="pro-tool-btn" onclick="quickAdd('official_stamp')">
+                <span class="btn-icon-wrap">🔴</span>
+                <span data-tr="Evrak Kaşesi" data-en="Official Seal">Evrak Kaşesi</span>
+              </button>
+              <button type="button" class="pro-tool-btn" onclick="openOcrModal()">
+                <span class="btn-icon-wrap">🔍</span>
+                <span data-tr="OCR Metin" data-en="OCR Text">OCR Metin</span>
+              </button>
+              <button type="button" class="pro-tool-btn" onclick="runAutoPiiRedaction()">
+                <span class="btn-icon-wrap">🛡️</span>
+                <span data-tr="TC / IBAN Gizle" data-en="Mask PII">TC / IBAN Gizle</span>
+              </button>
+              <button type="button" class="pro-tool-btn" onclick="openIdComposerModal()">
+                <span class="btn-icon-wrap">🪪</span>
+                <span data-tr="Kimlik Birleştir" data-en="ID Combine">Kimlik Birleştir</span>
+              </button>
+              <button type="button" class="pro-tool-btn" onclick="quickAdd('document_clean')">
+                <span class="btn-icon-wrap">📄</span>
+                <span data-tr="Fon Beyazlat" data-en="Clean Whiten">Fon Beyazlat</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Detay & Optik (Detail & Lens) -->
+        <div class="pro-accordion closed" id="accDetail">
+          <div class="acc-header" onclick="toggleAccordion('accDetail')">
+            <span class="acc-title">🔍 <span data-tr="Detay, Netlik &amp; Gren" data-en="Detail, Sharpness &amp; Grain">Detay, Netlik &amp; Gren</span></span>
+            <span class="acc-chevron">▾</span>
+          </div>
+          <div class="acc-body">
+            <div class="pro-slider-row">
+              <div class="slider-meta">
+                <span data-tr="Keskinleştirme (Unsharp)" data-en="Sharpen">Keskinleştirme (Unsharp)</span>
+                <span class="val" id="valDetailSharpen">0.0</span>
+              </div>
+              <input type="range" id="sliderDetailSharpen" min="0" max="2.5" step="0.1" value="0" oninput="handleDirectSlider('sharpen', 'amount', this.value, 'valDetailSharpen')" />
+            </div>
+            <div class="pro-slider-row">
+              <div class="slider-meta">
+                <span data-tr="Vinyet Karartma (Vignette)" data-en="Vignette">Vinyet Karartma</span>
+                <span class="val" id="valDetailVignette">0.0</span>
+              </div>
+              <input type="range" id="sliderDetailVignette" min="0" max="1.5" step="0.1" value="0" oninput="handleDirectSlider('vignette', 'intensity', this.value, 'valDetailVignette')" />
+            </div>
+            <div class="pro-slider-row">
+              <div class="slider-meta">
+                <span data-tr="Analog Film Greni" data-en="Film Grain">Analog Film Greni</span>
+                <span class="val" id="valDetailGrain">0.0</span>
+              </div>
+              <input type="range" id="sliderDetailGrain" min="0" max="1.0" step="0.05" value="0" oninput="handleDirectSlider('film_grain', 'intensity', this.value, 'valDetailGrain')" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Aktif Araç Parametreleri & Katmanlar -->
+        <div class="pro-accordion" id="accActiveStep">
+          <div class="acc-header" onclick="toggleAccordion('accActiveStep')">
+            <span class="acc-title">📋 <span data-tr="Seçili Araç Parametreleri" data-en="Selected Tool Parameters">Seçili Araç Parametreleri</span></span>
+            <span id="activeLayersCount" style="font-size:10.5px;color:var(--pf-accent);font-weight:600;"></span>
+            <span class="acc-chevron">▾</span>
+          </div>
+          <div class="acc-body" id="stepsList">
+            <!-- Dinamik Araç Ayarları -->
+          </div>
+        </div>
+      </div>
+    </aside>
   </main>
 
   <!-- Kanvas Sağ Tık Bağlam Menüsü -->
@@ -3039,6 +2822,8 @@
         }
       });
 
+      if (typeof renderPresetVitrin === "function") renderPresetVitrin();
+      if (typeof renderDocVitrin === "function") renderDocVitrin();
       renderCategoryDrawer();
       renderStepsUI();
     }
@@ -3237,6 +3022,8 @@
     function renderStepsUI() {
       if (!stepsList || !activeLayersCount) return;
       stepsList.innerHTML = "";
+      if (typeof syncProSliders === "function") syncProSliders();
+      if (typeof updateHistoryStackUI === "function") updateHistoryStackUI();
 
       if (activeSteps.length === 0) {
         activeLayersCount.textContent = (currentLang === "en") ? "No Active Tool" : "Aktif Araç Yok";
@@ -5026,6 +4813,213 @@
       closeCommandPalette();
       if (cmd && typeof cmd.action === "function") {
         cmd.action();
+      }
+    }
+
+    // Lightroom & DaVinci Resolve Pro Kontrolleri
+    const PRO_PRESETS = [
+      { id: "teal_orange", name: "Teal & Orange", nameEn: "Teal & Orange", desc: "Hollywood Sinematik Gişe", descEn: "Hollywood Blockbuster", grad: "linear-gradient(135deg, #0284c7, #f97316)", preset: "teal_orange" },
+      { id: "vintage", name: "Vintage 1975", nameEn: "Vintage 1975", desc: "Sıcak Analog Kodachrome", descEn: "Warm Analog Kodachrome", grad: "linear-gradient(135deg, #d97706, #78350f)", preset: "vintage" },
+      { id: "cyberpunk", name: "Cyberpunk", nameEn: "Cyberpunk Neon", desc: "Neon Mor & Camgöbeği", descEn: "Neon Purple & Blue", grad: "linear-gradient(135deg, #a855f7, #06b6d4)", preset: "cyberpunk" },
+      { id: "bw_dramatic", name: "Dramatic Noir B&W", nameEn: "Dramatic Noir B&W", desc: "Yüksek Kontrast Siyah-Beyaz", descEn: "High-Contrast Noir", grad: "linear-gradient(135deg, #09090b, #94a3b8)", preset: "bw_contrast" },
+      { id: "warm_sunset", name: "Golden Sunset", nameEn: "Golden Sunset", desc: "Sıcak Altın Saat Işığı", descEn: "Warm Golden Hour Glow", grad: "linear-gradient(135deg, #f59e0b, #ef4444)", preset: "warm" },
+      { id: "cold_moody", name: "Nordic Cold", nameEn: "Nordic Cold", desc: "Soğuk İskandinav Tonu", descEn: "Cold Nordic Tone", grad: "linear-gradient(135deg, #38bdf8, #1e293b)", preset: "cold" },
+      { id: "cinematic", name: "Cinematic Modern", nameEn: "Cinematic Modern", desc: "Geniş Dinamik Aralık", descEn: "Wide Dynamic Range", grad: "linear-gradient(135deg, #6366f1, #14b8a6)", preset: "cinematic" }
+    ];
+
+    const PRO_DOC_MODES = [
+      { id: "magic_color", name: "CamScanner Sihirli Renk", nameEn: "CamScanner Magic Color", desc: "Beyaz zemin, net canlı yazılar", icon: "✨", op: "magic_color" },
+      { id: "doc_clean", name: "Döküman Arka Plan Temizle", nameEn: "Clean Background", desc: "Kağıt lekelerini & sararmayı siler", icon: "📄", op: "document_clean" },
+      { id: "binarize", name: "Yüksek Kontrast Fotokopi", nameEn: "Sharp Binarize", desc: "Taranmış siyah-beyaz net eşikleme", icon: "🔲", op: "binarize" },
+      { id: "deskew", name: "4-Köşe Perspektif Düzelt", nameEn: "Perspective Deskew", desc: "Eğik çekilmiş evrakı hizalar", icon: "📐", op: "perspective_warp" },
+      { id: "remove_shadows", name: "Gölge Giderme & Işık Eşitle", nameEn: "Remove Shadows", desc: "Telefon gölgesini ortadan kaldırır", icon: "🌓", op: "remove_shadows" }
+    ];
+
+    function renderPresetVitrin() {
+      const grid = document.getElementById("presetVitrinGrid");
+      if (!grid) return;
+      grid.innerHTML = PRO_PRESETS.map(p => {
+        const title = currentLang === "en" ? p.nameEn : p.name;
+        const sub = currentLang === "en" ? p.descEn : p.desc;
+        return `
+          <div class="preset-vitrin-card" onclick="applyPresetDirect('${p.preset}')">
+            <div class="preset-swatch" style="background:${p.grad};"></div>
+            <div>
+              <div class="preset-card-title">${title}</div>
+              <div class="preset-card-sub">${sub}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderDocVitrin() {
+      const grid = document.getElementById("docVitrinGrid");
+      if (!grid) return;
+      grid.innerHTML = PRO_DOC_MODES.map(d => {
+        const title = currentLang === "en" ? d.nameEn : d.name;
+        const sub = currentLang === "en" ? d.descEn : d.desc;
+        return `
+          <div class="preset-vitrin-card" onclick="quickAdd('${d.op}')">
+            <div class="preset-swatch" style="background:#1e293b;color:var(--pf-accent);">${d.icon}</div>
+            <div>
+              <div class="preset-card-title">${title}</div>
+              <div class="preset-card-sub">${sub}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function applyPresetDirect(presetKey) {
+      let step = activeSteps.find(s => s.op === "preset");
+      if (step) {
+        step.params.preset = presetKey;
+        selectedStepId = step.id;
+      } else {
+        const id = stepCounter++;
+        activeSteps.push({
+          id,
+          op: "preset",
+          name: `katman_${id}_preset`,
+          params: { preset: presetKey, intensity: 1.0 }
+        });
+        selectedStepId = id;
+      }
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+      statusMessage.textContent = (currentLang === "en") ? `✓ Preset applied: ${presetKey}` : `✓ Filtre uygulandı: ${presetKey}`;
+    }
+
+    function switchLeftTab(tabKey) {
+      const tabs = ["presets", "docs", "history"];
+      tabs.forEach(t => {
+        const btn = document.getElementById("segTab" + t.charAt(0).toUpperCase() + t.slice(1));
+        const content = document.getElementById("tabContent" + t.charAt(0).toUpperCase() + t.slice(1));
+        if (btn) btn.classList.toggle("active", t === tabKey);
+        if (content) content.style.display = (t === tabKey) ? "block" : "none";
+      });
+      if (tabKey === "history") updateHistoryStackUI();
+    }
+
+    function toggleAccordion(accId) {
+      const acc = document.getElementById(accId);
+      if (acc) acc.classList.toggle("closed");
+    }
+
+    function toggleLeftPanel() {
+      const p = document.getElementById("proLeftPanel");
+      if (p) p.classList.toggle("collapsed");
+    }
+
+    function updateHistoryStackUI() {
+      const list = document.getElementById("historyStackList");
+      if (!list) return;
+      if (historyStack.length === 0) {
+        list.innerHTML = `<div style="padding:14px;color:#64748b;font-size:11px;text-align:center;">${currentLang === "en" ? "No history yet" : "Henüz işlem geçmişi yok"}</div>`;
+        return;
+      }
+      list.innerHTML = historyStack.map((h, i) => {
+        let steps = [];
+        try { steps = JSON.parse(h); } catch(e) {}
+        const isCurrent = (i === historyIndex);
+        const label = i === 0
+          ? (currentLang === "en" ? "Original Image" : "Orijinal Görsel")
+          : `${i}. ${steps.length > 0 ? (EFFECT_DEFS[steps[steps.length - 1].op]?.title || steps[steps.length - 1].op) : "Temiz Durum"}`;
+        return `
+          <div class="history-item-row ${isCurrent ? "active" : ""}" onclick="jumpToHistoryIndex(${i})">
+            <span>${label}</span>
+            <span style="font-size:9.5px;opacity:0.7;">${isCurrent ? "●" : "○"}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function jumpToHistoryIndex(idx) {
+      if (idx >= 0 && idx < historyStack.length) {
+        historyIndex = idx;
+        activeSteps = JSON.parse(historyStack[historyIndex]);
+        selectedStepId = activeSteps.length > 0 ? activeSteps[activeSteps.length - 1].id : null;
+        renderStepsUI();
+        scheduleRender();
+        updateUndoRedoButtons();
+        updateHistoryStackUI();
+      }
+    }
+
+    function handleDirectSlider(opKey, paramKey, val, badgeId) {
+      const numVal = parseFloat(val);
+      const badge = document.getElementById(badgeId);
+      if (badge) badge.textContent = numVal.toFixed(2);
+
+      let step = activeSteps.find(s => s.op === opKey);
+      if (!step) {
+        const id = stepCounter++;
+        const def = EFFECT_DEFS[opKey] || {};
+        const params = JSON.parse(JSON.stringify(def.defaults || {}));
+        params[paramKey] = numVal;
+        step = { id, op: opKey, name: `katman_${id}_${opKey}`, params };
+        activeSteps.push(step);
+        selectedStepId = id;
+      } else {
+        step.params[paramKey] = numVal;
+        selectedStepId = step.id;
+      }
+
+      scheduleRender();
+      if (!handleDirectSlider._timer) {
+        handleDirectSlider._timer = setTimeout(() => {
+          pushHistory();
+          renderStepsUI();
+          handleDirectSlider._timer = null;
+        }, 300);
+      }
+    }
+
+    function syncProSliders() {
+      // Brightness / Contrast
+      const stepBC = activeSteps.find(s => s.op === "brightness_contrast");
+      const sB = document.getElementById("sliderToneBrightness");
+      const vB = document.getElementById("valToneBrightness");
+      const sC = document.getElementById("sliderToneContrast");
+      const vC = document.getElementById("valToneContrast");
+      if (stepBC) {
+        if (sB && stepBC.params.brightness !== undefined) {
+          sB.value = stepBC.params.brightness;
+          if (vB) vB.textContent = parseFloat(stepBC.params.brightness).toFixed(2);
+        }
+        if (sC && stepBC.params.contrast !== undefined) {
+          sC.value = stepBC.params.contrast;
+          if (vC) vC.textContent = parseFloat(stepBC.params.contrast).toFixed(2);
+        }
+      } else {
+        if (sB) sB.value = 0;
+        if (vB) vB.textContent = "0.00";
+        if (sC) sC.value = 1.0;
+        if (vC) vC.textContent = "1.00";
+      }
+
+      // Vibrance / Saturation
+      const stepV = activeSteps.find(s => s.op === "vibrance");
+      const sV = document.getElementById("sliderToneVibrance");
+      const vV = document.getElementById("valToneVibrance");
+      const sS = document.getElementById("sliderToneSaturation");
+      const vS = document.getElementById("valToneSaturation");
+      if (stepV) {
+        if (sV && stepV.params.vibrance !== undefined) {
+          sV.value = stepV.params.vibrance;
+          if (vV) vV.textContent = parseFloat(stepV.params.vibrance).toFixed(2);
+        }
+        if (sS && stepV.params.saturation !== undefined) {
+          sS.value = stepV.params.saturation;
+          if (vS) vS.textContent = parseFloat(stepV.params.saturation).toFixed(2);
+        }
+      } else {
+        if (sV) sV.value = 0;
+        if (vV) vV.textContent = "0.00";
+        if (sS) sS.value = 0;
+        if (vS) vS.textContent = "0.00";
       }
     }
 
