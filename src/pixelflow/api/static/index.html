@@ -2443,13 +2443,14 @@
       stamp: {
         title: "Resmi Kaşe / Damga",
         tag: "Onay",
-        defaults: { text: "ASLI GİBİDİR", x: 40, y: 160, scale: 0.9, angle: -12.0, opacity: 0.9, box_border: true },
+        defaults: { text: "ASLI GİBİDİR", x: 40, y: 160, scale: 0.9, angle: -12.0, opacity: 0.9, color: [220, 38, 38], box_border: true },
         textFields: [{ key: "text", label: "Kaşe Metni" }],
         fields: [
-          { key: "x", label: "Konum X", min: 0, max: 1000, step: 5 },
-          { key: "y", label: "Konum Y", min: 0, max: 1000, step: 5 },
-          { key: "scale", label: "Boyut", min: 0.4, max: 2.0, step: 0.1 },
-          { key: "opacity", label: "Opaklık", min: 0.2, max: 1.0, step: 0.05 }
+          { key: "scale", label: "Boyut", min: 0.4, max: 2.5, step: 0.1 },
+          { key: "angle", label: "Kaşe Açısı (°)", min: -45, max: 45, step: 1 },
+          { key: "opacity", label: "Opaklık", min: 0.2, max: 1.0, step: 0.05 },
+          { key: "x", label: "Konum X", min: 0, max: 1200, step: 5 },
+          { key: "y", label: "Konum Y", min: 0, max: 1200, step: 5 }
         ]
       },
       signature_extract: {
@@ -2591,6 +2592,8 @@
         cards: [
           { op: "id_card", name: { tr: "Kimlik Çift Yüz", en: "ID Dual-Side" }, tag: { tr: "Kimlik", en: "ID Card" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><line x1="15" y1="8" x2="17" y2="8"/><line x1="15" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>', action: "openIdComposer" },
           { op: "multipage_pdf", name: { tr: "Çok Sayfalı PDF", en: "Multi-Page PDF" }, tag: { tr: "PDF", en: "PDF" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>', action: "multipagePdf" },
+          { op: "stamp", name: { tr: "Resmi Kaşe / Mühür", en: "Official Stamp" }, tag: { tr: "Mühür", en: "Seal" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>' },
+          { op: "qr_overlay", name: { tr: "Doğrulama QR Damgası", en: "Verification QR Seal" }, tag: { tr: "QR", en: "QR" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>' },
           { op: "magic_color", name: { tr: "Sihirli Renk", en: "Magic Color" }, tag: { tr: "CamScan", en: "CamScan" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg>' },
           { op: "shadow_removal", name: { tr: "Gölge Temizle", en: "Remove Document Shadows" }, tag: { tr: "Aydınlat", en: "Clean" }, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/></svg>' },
           { op: "deskew", name: { tr: "Otomatik Doğrult", en: "Auto Deskew Document" }, tag: "Deskew", icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="2" y1="12" x2="22" y2="12"/></svg>' },
@@ -3047,6 +3050,93 @@
         row.appendChild(input);
         card.appendChild(row);
       });
+
+      if (activeStep.op === "stamp") {
+        hasControls = true;
+        const stampPresetsDiv = document.createElement("div");
+        stampPresetsDiv.style.cssText = "display:flex;flex-direction:column;gap:6px;margin:4px 0 8px 0;";
+        const stampPresets = [
+          "ASLI GİBİDİR", "ONAYLANDI", "GİZLİDİR", "KOPYADIR", "ÖDENDİ", "İPTAL"
+        ];
+        const chipsRow = document.createElement("div");
+        chipsRow.style.cssText = "display:flex;flex-wrap:wrap;gap:4px;";
+        stampPresets.forEach(preset => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "btn btn-outline";
+          btn.style.cssText = "font-size:10px;padding:3px 7px;border-radius:3px;cursor:pointer;";
+          btn.textContent = preset;
+          btn.onclick = () => {
+            activeStep.params.text = preset;
+            renderStepsUI();
+            scheduleRender();
+          };
+          chipsRow.appendChild(btn);
+        });
+
+        const dateBtn = document.createElement("button");
+        dateBtn.type = "button";
+        dateBtn.className = "btn btn-outline";
+        dateBtn.style.cssText = "font-size:10px;padding:3px 7px;border-radius:3px;cursor:pointer;color:var(--pf-accent);";
+        const todayStr = new Date().toLocaleDateString("tr-TR");
+        dateBtn.textContent = `+ ${todayStr}`;
+        dateBtn.onclick = () => {
+          activeStep.params.text = (activeStep.params.text || "ONAYLANDI") + " - " + todayStr;
+          renderStepsUI();
+          scheduleRender();
+        };
+        chipsRow.appendChild(dateBtn);
+
+        const colorsRow = document.createElement("div");
+        colorsRow.style.cssText = "display:flex;align-items:center;gap:8px;margin-top:4px;";
+        colorsRow.innerHTML = `<span style="font-size:11px;color:var(--pf-text-muted);">${currentLang === "en" ? "Ink Color:" : "Kaşe Mürekkebi:"}</span>`;
+        const stampColors = [
+          { name: "Kırmızı", hex: "#dc2626", rgb: [220, 38, 38] },
+          { name: "Resmi Mavi", hex: "#2563eb", rgb: [37, 99, 235] },
+          { name: "Mor", hex: "#7c3aed", rgb: [124, 58, 237] },
+          { name: "Siyah", hex: "#18181b", rgb: [24, 24, 27] },
+          { name: "Yeşil", hex: "#16a34a", rgb: [22, 163, 74] }
+        ];
+        stampColors.forEach(c => {
+          const cDot = document.createElement("div");
+          const isSelected = JSON.stringify(activeStep.params.color) === JSON.stringify(c.rgb);
+          cDot.style.cssText = `width:18px;height:18px;border-radius:50%;background:${c.hex};cursor:pointer;border:2px solid ${isSelected ? "#fff" : "transparent"};transition:transform 0.15s ease;`;
+          cDot.title = c.name;
+          cDot.onclick = () => {
+            activeStep.params.color = c.rgb;
+            renderStepsUI();
+            scheduleRender();
+          };
+          colorsRow.appendChild(cDot);
+        });
+
+        stampPresetsDiv.appendChild(chipsRow);
+        stampPresetsDiv.appendChild(colorsRow);
+        card.appendChild(stampPresetsDiv);
+      } else if (activeStep.op === "qr_overlay") {
+        hasControls = true;
+        const qrPresetsDiv = document.createElement("div");
+        qrPresetsDiv.style.cssText = "display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 8px 0;";
+        const qrPresets = [
+          { label: "e-Devlet", url: "https://turkiye.gov.tr/belge-dogrulama" },
+          { label: "PixelFlow", url: "https://pixelflow.dev/verify" },
+          { label: "Mevcut URL", url: window.location.href }
+        ];
+        qrPresets.forEach(qp => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "btn btn-outline";
+          btn.style.cssText = "font-size:10px;padding:3px 7px;border-radius:3px;cursor:pointer;";
+          btn.textContent = qp.label;
+          btn.onclick = () => {
+            activeStep.params.data = qp.url;
+            renderStepsUI();
+            scheduleRender();
+          };
+          qrPresetsDiv.appendChild(btn);
+        });
+        card.appendChild(qrPresetsDiv);
+      }
 
       const PRESET_SWATCHES = {
         teal_orange: "linear-gradient(135deg, #0d3b66 0%, #00b4d8 45%, #f4a261 100%)",
