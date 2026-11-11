@@ -1817,6 +1817,13 @@
           </svg>
           <span data-tr="Sanat & FX" data-en="Art & FX">Sanat & FX</span>
         </button>
+        <button type="button" class="seg-tab" id="segTabFrames" onclick="switchLeftTab('frames')">
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <rect x="7" y="7" width="10" height="10" />
+          </svg>
+          <span data-tr="Çerçeve" data-en="Frames">Çerçeve</span>
+        </button>
         <button type="button" class="seg-tab" id="segTabDocs" onclick="switchLeftTab('docs')">
           <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -1894,6 +1901,13 @@
       <!-- Tab: Yaratıcı Sanat & FX Filtreleri -->
       <div class="tab-content-pro" id="tabContentArtfx" style="display:none;">
         <div class="preset-cards-grid" id="artfxVitrinGrid">
+          <!-- JS tarafından doldurulur -->
+        </div>
+      </div>
+
+      <!-- Tab: Akıllı Çerçeve & Paspartu Vitrini -->
+      <div class="tab-content-pro" id="tabContentFrames" style="display:none;">
+        <div class="preset-cards-grid" id="framesVitrinGrid">
           <!-- JS tarafından doldurulur -->
         </div>
       </div>
@@ -2831,6 +2845,28 @@
           { key: "desaturate_level", label: "Arka Plan Renkliliği", min: 0.0, max: 0.8, step: 0.1 }
         ]
       },
+      frame: {
+        title: "Akıllı Çerçeve & Paspartu",
+        tag: "Çerçeve",
+        defaults: { style: "polaroid", thickness: 24, bottom_extra: 60, inner_border: false, color: [255, 255, 255] },
+        selectFields: [
+          {
+            key: "style",
+            label: "Çerçeve Tarzı",
+            options: [
+              ["polaroid", "Polaroid / Retro Anlık Fotoğraf"],
+              ["passepartout", "Galeri Paspartusu (Fine Art)"],
+              ["filmstrip", "35mm Analog Film Şeridi"],
+              ["drop_shadow", "3D Kağıt & Evrak Gölgesi"],
+              ["solid", "Klasik Düz Kenarlık"]
+            ]
+          }
+        ],
+        fields: [
+          { key: "thickness", label: "Kenarlık Kalınlığı (px)", min: 4, max: 120, step: 2 },
+          { key: "bottom_extra", label: "Alt Boşluk (Polaroid)", min: 0, max: 200, step: 5 }
+        ]
+      },
       tilt_shift: {
         title: "Tilt-Shift (Minyatür Alan Derinliği)",
         tag: "Efekt",
@@ -3336,6 +3372,7 @@
       if (typeof renderPaletteUI === "function") renderPaletteUI();
       if (typeof renderStampsVitrin === "function") renderStampsVitrin();
       if (typeof renderArtfxVitrin === "function") renderArtfxVitrin();
+      if (typeof renderFramesVitrin === "function") renderFramesVitrin();
       if (typeof renderDocVitrin === "function") renderDocVitrin();
       renderCategoryDrawer();
       renderStepsUI();
@@ -5820,6 +5857,131 @@
         : `✓ Efekt uygulandı: ${title}`;
     }
 
+    const PRO_FRAME_PRESETS = [
+      {
+        id: "polaroid",
+        name: "Polaroid Retro Kart",
+        nameEn: "Polaroid Retro Card",
+        desc: "Geniş alt boşluklu nostaljik anlık kart",
+        descEn: "Classic white instant photo border",
+        iconSvg: '<div style="width:20px;height:24px;background:#fff;border:1px solid #64748b;border-radius:1px;position:relative;"><div style="position:absolute;top:2px;left:2px;right:2px;height:14px;background:#0f172a;"></div></div>',
+        style: "polaroid",
+        thickness: 24,
+        bottom_extra: 64,
+        color: [255, 255, 255]
+      },
+      {
+        id: "passepartout_fine",
+        name: "Galeri Paspartusu",
+        nameEn: "Gallery Passepartout",
+        desc: "İç çizgili mat sergi çerçevesi",
+        descEn: "Museum mat board with inner hairline",
+        iconSvg: '<div style="width:22px;height:22px;background:#f8fafc;border:2px solid #cbd5e1;display:flex;align-items:center;justify-content:center;"><div style="width:12px;height:12px;border:1px solid #475569;background:#0f172a;"></div></div>',
+        style: "passepartout",
+        thickness: 36,
+        inner_border: true,
+        color: [248, 250, 252]
+      },
+      {
+        id: "filmstrip_analog",
+        name: "35mm Analog Film Şeridi",
+        nameEn: "35mm Filmstrip",
+        desc: "Perfore delikli sinematik film kenarı",
+        descEn: "Perforated analog cinema strip border",
+        iconSvg: '<div style="width:24px;height:18px;background:#0f172a;border:1px solid #334155;border-radius:1px;display:flex;flex-direction:column;justify-content:space-between;padding:1px 0;"><div style="display:flex;gap:2px;justify-content:center;"><div style="width:2px;height:2px;background:#e2e8f0;"></div><div style="width:2px;height:2px;background:#e2e8f0;"></div><div style="width:2px;height:2px;background:#e2e8f0;"></div></div><div style="display:flex;gap:2px;justify-content:center;"><div style="width:2px;height:2px;background:#e2e8f0;"></div><div style="width:2px;height:2px;background:#e2e8f0;"></div><div style="width:2px;height:2px;background:#e2e8f0;"></div></div></div>',
+        style: "filmstrip",
+        thickness: 28,
+        color: [18, 18, 20]
+      },
+      {
+        id: "drop_shadow_float",
+        name: "3D Kağıt & Evrak Gölgesi",
+        nameEn: "3D Paper Drop Shadow",
+        desc: "Masaüstünde havada duran derin gölge",
+        descEn: "Floating realistic document drop shadow",
+        iconSvg: '<div style="width:18px;height:22px;background:#fff;box-shadow:3px 3px 6px rgba(0,0,0,0.8);border:1px solid #cbd5e1;"></div>',
+        style: "drop_shadow",
+        thickness: 28,
+        color: [242, 242, 245]
+      },
+      {
+        id: "solid_clean_white",
+        name: "Minimalist Beyaz Kenarlık",
+        nameEn: "Clean White Border",
+        desc: "Zarif ve temiz 16px çevre çerçevesi",
+        descEn: "Subtle 16px crisp white border",
+        iconSvg: '<div style="width:22px;height:22px;background:#fff;border:3px solid #0f172a;display:flex;align-items:center;justify-content:center;"></div>',
+        style: "solid",
+        thickness: 16,
+        color: [255, 255, 255]
+      },
+      {
+        id: "solid_clean_black",
+        name: "Lüks Mat Siyah Çerçeve",
+        nameEn: "Matte Black Border",
+        desc: "Sinematik mat siyah geniş kenarlık",
+        descEn: "Cinematic dark gallery border",
+        iconSvg: '<div style="width:22px;height:22px;background:#09090b;border:3px solid #38bdf8;display:flex;align-items:center;justify-content:center;"></div>',
+        style: "solid",
+        thickness: 20,
+        color: [12, 12, 14]
+      }
+    ];
+
+    function renderFramesVitrin() {
+      const grid = document.getElementById("framesVitrinGrid");
+      if (!grid) return;
+      grid.innerHTML = PRO_FRAME_PRESETS.map(f => {
+        const title = currentLang === "en" ? f.nameEn : f.name;
+        const sub = currentLang === "en" ? f.descEn : f.desc;
+        return `
+          <div class="preset-vitrin-card" onclick="applyFramePreset('${f.id}')">
+            <div class="preset-swatch" style="background:#131722;border:1px solid var(--pf-border);display:flex;align-items:center;justify-content:center;">
+              ${f.iconSvg}
+            </div>
+            <div>
+              <div class="preset-card-title">${title}</div>
+              <div class="preset-card-sub">${sub}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function applyFramePreset(frameId) {
+      const f = PRO_FRAME_PRESETS.find(x => x.id === frameId);
+      if (!f) return;
+      let step = activeSteps.find(s => s.op === "frame");
+      const params = {
+        style: f.style,
+        thickness: f.thickness,
+        color: f.color,
+        bottom_extra: f.bottom_extra || 0,
+        inner_border: !!f.inner_border
+      };
+      if (step) {
+        step.params = params;
+        step.name = `katman_${step.id}_${f.id}`;
+        selectedStepId = step.id;
+      } else {
+        const id = stepCounter++;
+        activeSteps.push({
+          id,
+          op: "frame",
+          name: `katman_${id}_${f.id}`,
+          params
+        });
+        selectedStepId = id;
+      }
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+      const title = currentLang === "en" ? f.nameEn : f.name;
+      statusMessage.textContent = (currentLang === "en")
+        ? `✓ Frame applied: ${title}`
+        : `✓ Çerçeve eklendi: ${title}`;
+    }
+
     function renderDocVitrin() {
       const grid = document.getElementById("docVitrinGrid");
       if (!grid) return;
@@ -5893,7 +6055,7 @@
     }
 
     function switchLeftTab(tabKey) {
-      const tabs = ["presets", "crop", "palette", "stamps", "artfx", "docs", "history"];
+      const tabs = ["presets", "crop", "palette", "stamps", "artfx", "frames", "docs", "history"];
       tabs.forEach(t => {
         const btn = document.getElementById("segTab" + t.charAt(0).toUpperCase() + t.slice(1));
         const content = document.getElementById("tabContent" + t.charAt(0).toUpperCase() + t.slice(1));
@@ -5907,6 +6069,7 @@
       }
       if (tabKey === "stamps") renderStampsVitrin();
       if (tabKey === "artfx") renderArtfxVitrin();
+      if (tabKey === "frames") renderFramesVitrin();
       if (tabKey === "history") updateHistoryStackUI();
     }
 

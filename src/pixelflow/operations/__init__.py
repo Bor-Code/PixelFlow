@@ -66,6 +66,10 @@ from pixelflow.operations.filters import (
     MedianBlurOperation,
     MedianBlurParams,
 )
+from pixelflow.operations.frame import (
+    FrameOperation,
+    FrameParams,
+)
 from pixelflow.operations.geometry import (
     CropOperation,
     CropParams,
@@ -164,6 +168,8 @@ __all__ = [
     "FilmGrainParams",
     "FlipOperation",
     "FlipParams",
+    "FrameOperation",
+    "FrameParams",
     "GammaOperation",
     "GammaParams",
     "GaussianBlurOperation",
