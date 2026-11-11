@@ -659,6 +659,63 @@
       color: #fff;
     }
 
+    /* 1-Tık Canlı Filtre/Preset Galerisi */
+    .preset-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .preset-card-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: #0c0e12;
+      border: 1px solid var(--pf-border);
+      border-radius: 6px;
+      padding: 5px 3px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .preset-card-item:hover {
+      border-color: var(--pf-accent);
+      transform: translateY(-1px);
+    }
+
+    .preset-card-item.active {
+      border-color: var(--pf-accent);
+      background: rgba(56, 189, 248, 0.14);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+    }
+
+    .preset-swatch {
+      width: 100%;
+      height: 28px;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
+    }
+
+    .preset-label {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: var(--pf-text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .preset-card-item.active .preset-label {
+      color: var(--pf-accent);
+      font-weight: 700;
+    }
+
     .card-tag.new {
       background: #ec4899;
     }
@@ -2775,8 +2832,52 @@
         card.appendChild(row);
       });
 
+      const PRESET_SWATCHES = {
+        teal_orange: "linear-gradient(135deg, #0d3b66 0%, #00b4d8 45%, #f4a261 100%)",
+        cyberpunk: "linear-gradient(135deg, #0f051d 0%, #7928ca 50%, #ff0080 100%)",
+        vintage_film: "linear-gradient(135deg, #3d2616 0%, #9c6644 50%, #ddb892 100%)",
+        moody_noir: "linear-gradient(135deg, #050505 0%, #444444 50%, #aaaaaa 100%)",
+        warm_sunset: "linear-gradient(135deg, #6a040f 0%, #dc2f02 50%, #ffba08 100%)",
+        cool_breeze: "linear-gradient(135deg, #102a43 0%, #334e68 50%, #829ab1 100%)",
+        spotify: "linear-gradient(135deg, #0d1b2a 0%, #1db954 100%)",
+        sunset: "linear-gradient(135deg, #3a0ca3 0%, #f72585 100%)",
+        amber: "linear-gradient(135deg, #2b1704 0%, #f59e0b 100%)",
+        ocean: "linear-gradient(135deg, #03045e 0%, #00b4d8 100%)",
+        neon_mint: "linear-gradient(135deg, #111827 0%, #10b981 100%)"
+      };
+
       (def.selectFields || []).forEach(f => {
         hasControls = true;
+        if (f.key === "preset" && f.options && f.options.length > 0) {
+          const gridWrapper = document.createElement("div");
+          gridWrapper.style.display = "flex";
+          gridWrapper.style.flexDirection = "column";
+          gridWrapper.style.gap = "6px";
+          gridWrapper.innerHTML = `<span style="font-size:11.5px;color:var(--pf-text-muted);font-weight:600">${f.label}</span>`;
+          const grid = document.createElement("div");
+          grid.className = "preset-preview-grid";
+          f.options.forEach(([optVal, optLabel]) => {
+            if (optVal === "custom") return;
+            const item = document.createElement("div");
+            item.className = `preset-card-item ${activeStep.params[f.key] === optVal ? "active" : ""}`;
+            const swatch = PRESET_SWATCHES[optVal] || "linear-gradient(135deg, #222, #555)";
+            const shortName = optLabel.split("(")[0].trim();
+            item.innerHTML = `
+              <div class="preset-swatch" style="background:${swatch};"></div>
+              <div class="preset-label" title="${optLabel}">${shortName}</div>
+            `;
+            item.onclick = () => {
+              activeStep.params[f.key] = optVal;
+              pushHistory();
+              renderStepsUI();
+              scheduleRender();
+            };
+            grid.appendChild(item);
+          });
+          gridWrapper.appendChild(grid);
+          card.appendChild(gridWrapper);
+        }
+
         const row = document.createElement("div");
         row.style.display = "flex";
         row.style.flexDirection = "column";
@@ -2795,6 +2896,7 @@
         sel.addEventListener("change", (e) => {
           activeStep.params[f.key] = e.target.value;
           scheduleRender();
+          renderStepsUI();
         });
         row.appendChild(sel);
         card.appendChild(row);
