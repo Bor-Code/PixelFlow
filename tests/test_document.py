@@ -9,6 +9,8 @@ from pixelflow.core.registry import default_registry
 from pixelflow.operations.document import (
     DeskewOperation,
     DeskewParams,
+    MagicColorOperation,
+    MagicColorParams,
     ShadowRemovalOperation,
     ShadowRemovalParams,
     detect_document_corners,
@@ -107,3 +109,22 @@ def test_detect_document_corners() -> None:
     rgba = cv2.cvtColor(canvas, cv2.COLOR_BGR2BGRA)
     rgba_corners = detect_document_corners(rgba)
     assert len(rgba_corners) == 4
+
+
+def test_magic_color_operation() -> None:
+    op_cls = default_registry.get("magic_color")
+    assert op_cls is MagicColorOperation
+
+    for ch in (1, 3, 4):
+        img = _make_shadowed_document(channels=ch)
+        op = MagicColorOperation(
+            MagicColorParams(contrast=1.3, brightness=5, sharpness=1.0, saturation_boost=1.1)
+        )
+        res = op.apply(img)
+        assert res.shape == img.shape
+        assert res.dtype == img.dtype
+
+    with pytest.raises(ValidationError):
+        MagicColorParams(contrast=0.1)
+    with pytest.raises(ValidationError):
+        MagicColorParams(brightness=150)

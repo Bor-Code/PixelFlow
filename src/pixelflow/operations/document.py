@@ -140,3 +140,45 @@ def detect_document_corners(image: np.ndarray) -> list[list[int]]:
             pts = approx.reshape(4, 2)
             return _order_corners(pts)
     return fallback
+
+
+class MagicColorParams(OperationParams):
+    contrast: float = Field(default=1.2, ge=0.5, le=3.0)
+    brightness: int = Field(default=10, ge=-100, le=100)
+    sharpness: float = Field(default=1.2, ge=0.0, le=5.0)
+    saturation_boost: float = Field(default=1.25, ge=0.5, le=3.0)
+
+
+def _enhance_magic_channel(ch: np.ndarray, contrast: float, brightness: int) -> np.ndarray:
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (19, 19))
+    bg = cv2.morphologyEx(ch, cv2.MORPH_CLOSE, kernel)
+    divided = cv2.divide(ch, bg, scale=255)
+    adjusted = cv2.convertScaleAbs(divided, alpha=contrast, beta=brightness)
+    return cast(np.ndarray, adjusted)
+
+
+def _apply_magic_color(base: np.ndarray, params: MagicColorParams) -> np.ndarray:
+    if base.ndim == 2:
+        return _enhance_magic_channel(base, params.contrast, params.brightness)
+    channels = [
+        _enhance_magic_channel(base[:, :, i], params.contrast, params.brightness) for i in range(3)
+    ]
+    merged = np.dstack(channels)
+    hsv = cv2.cvtColor(merged, cv2.COLOR_BGR2HSV).astype(np.float32)
+    hsv[:, :, 1] = np.clip(hsv[:, :, 1] * params.saturation_boost, 0, 255)
+    enhanced = cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2BGR)
+    if params.sharpness > 0.0:
+        blur = cv2.GaussianBlur(enhanced, (0, 0), 3)
+        enhanced = cv2.addWeighted(enhanced, 1.0 + params.sharpness, blur, -params.sharpness, 0)
+    return cast(np.ndarray, enhanced)
+
+
+@register_operation("magic_color")
+class MagicColorOperation(ImageOperation[MagicColorParams]):
+    params_model = MagicColorParams
+
+    def _execute(self, image: ImageArray) -> ImageArray:
+        base, alpha = split_alpha(image)
+        processed = _apply_magic_color(base, self.params)
+        merged = merge_alpha(processed, alpha)
+        return cast(ImageArray, merged.astype(image.dtype))
