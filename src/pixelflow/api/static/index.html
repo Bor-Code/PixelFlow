@@ -9,21 +9,23 @@
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
     :root {
-      --pf-bg-base: #0c0e12;
-      --pf-bg-sidebar: #13161c;
-      --pf-bg-drawer: #181c24;
-      --pf-bg-card: #202530;
-      --pf-bg-card-hover: #293040;
-      --pf-border: #282f3d;
-      --pf-border-light: #384255;
+      --pf-bg-base: #07090e;
+      --pf-bg-sidebar: #0d1117;
+      --pf-bg-drawer: #10151f;
+      --pf-bg-card: #151b27;
+      --pf-bg-card-hover: #1e2637;
+      --pf-border: rgba(255, 255, 255, 0.08);
+      --pf-border-light: rgba(56, 189, 248, 0.35);
       --pf-accent: #38bdf8;
       --pf-accent-hover: #0ea5e9;
-      --pf-accent-soft: rgba(56, 189, 248, 0.16);
-      --pf-accent-glow: rgba(56, 189, 248, 0.4);
+      --pf-accent-soft: rgba(56, 189, 248, 0.14);
+      --pf-accent-glow: rgba(56, 189, 248, 0.45);
+      --pf-purple: #a855f7;
+      --pf-purple-soft: rgba(168, 85, 247, 0.16);
       --pf-blue: #38bdf8;
-      --pf-blue-soft: rgba(56, 189, 248, 0.16);
+      --pf-blue-soft: rgba(56, 189, 248, 0.14);
       --pf-text: #e2e8f0;
-      --pf-text-muted: #8a97ac;
+      --pf-text-muted: #8492a6;
       --pf-text-white: #ffffff;
       --pf-danger: #ef4444;
       --radius-sm: 6px;
@@ -859,7 +861,7 @@
     /* ORTA KANVAS ALANI (Center Canvas Workspace) */
     .canvas-workspace {
       flex: 1;
-      background: #090b0e;
+      background: radial-gradient(circle at 50% 45%, #101524 0%, #07090e 85%);
       position: relative;
       display: flex;
       flex-direction: column;
@@ -1141,6 +1143,235 @@
       color: var(--pf-text-white);
     }
 
+    /* Workspace Mode Switcher (Üst Bar) */
+    .workspace-mode-switcher {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid var(--pf-border);
+      border-radius: 20px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .mode-tab {
+      background: transparent;
+      border: none;
+      color: var(--pf-text-muted);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 11px;
+      border-radius: 16px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.16s ease;
+    }
+
+    .mode-tab:hover {
+      color: #fff;
+    }
+
+    .mode-tab.active {
+      background: var(--pf-bg-card-hover);
+      color: var(--pf-accent);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Komut Paleti Arama Kapsülü (Topbar Ctrl+K) */
+    .command-search-capsule {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 21, 31, 0.7);
+      border: 1px solid var(--pf-border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      color: var(--pf-text-muted);
+      cursor: pointer;
+      font-size: 11.5px;
+      transition: all 0.16s ease;
+    }
+
+    .command-search-capsule:hover {
+      background: rgba(22, 28, 42, 0.95);
+      border-color: var(--pf-accent);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+    }
+
+    .command-search-capsule kbd {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: 9.5px;
+      font-family: inherit;
+      color: var(--pf-text-muted);
+    }
+
+    /* Raycast / Linear Tarzı Komut Paleti Modalı */
+    .command-palette-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 12vh;
+    }
+
+    .command-palette-box {
+      width: 90%;
+      max-width: 580px;
+      background: #0d111a;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 12px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .command-palette-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--pf-border);
+      background: #111622;
+    }
+
+    .command-palette-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .command-palette-input::placeholder {
+      color: #64748b;
+    }
+
+    .command-palette-list {
+      max-height: 380px;
+      overflow-y: auto;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .command-group-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      padding: 6px 10px 3px;
+    }
+
+    .command-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #e2e8f0;
+      font-size: 12px;
+      transition: all 0.12s ease;
+    }
+
+    .command-item:hover,
+    .command-item.selected {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+    }
+
+    .command-item .cmd-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .command-item .cmd-icon {
+      font-size: 15px;
+      width: 22px;
+      text-align: center;
+    }
+
+    .command-item .cmd-badge {
+      font-size: 9.5px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #94a3b8;
+    }
+
+    /* Kanvas Alt Merkezinde Yüzen Dynamic Island HUD */
+    .canvas-hud-island {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(13, 17, 26, 0.92);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 5px 12px;
+      border-radius: 28px;
+      z-index: 50;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 16px rgba(56, 189, 248, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .hud-group {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .hud-divider {
+      width: 1px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.12);
+      margin: 0 4px;
+    }
+
+    .hud-btn {
+      background: transparent;
+      border: none;
+      color: var(--pf-text-muted);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.14s ease;
+    }
+
+    .hud-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .hud-btn.active {
+      background: rgba(56, 189, 248, 0.18);
+      color: var(--pf-accent);
+    }
+
     /* Seçim Kutusu & Pinler */
     .selection-marquee {
       position: absolute;
@@ -1413,13 +1644,38 @@
       </div>
     </div>
 
-    <!-- Çok Sayfalı PDF Çubuğu -->
-    <div class="topbar-center" id="pdfPaginationBar" style="display:none;">
-      <button type="button" class="btn-icon" id="btnPrevPage" title="Önceki Sayfa">‹</button>
-      <span id="pdfPageIndicator" style="font-size:12.5px;font-weight:600;">Sayfa 1 / 1</span>
-      <button type="button" class="btn-icon" id="btnNextPage" title="Sonraki Sayfa">›</button>
-      <button type="button" class="btn-upload-pill" id="btnBatchPdfAll" style="padding:4px 10px;font-size:11.5px;"
-        data-tr="Tüm Sayfaları İşle" data-en="Process All Pages">Tüm Sayfaları İşle</button>
+    <!-- Merkez Kontrol Alanı (Mode Switcher + Command Search + PDF Bar) -->
+    <div class="topbar-center" id="topbarCenterHub" style="display:flex;align-items:center;gap:12px;">
+      <!-- Çalışma Alanı Modu: Fotoğraf vs Belge & Evrak -->
+      <div class="workspace-mode-switcher" id="workspaceModeSwitcher">
+        <button type="button" class="mode-tab active" id="modeTabPhoto" onclick="switchWorkspaceMode('photo')">
+          <span>🎨</span>
+          <span data-tr="Fotoğraf Stüdyosu" data-en="Photo Studio">Fotoğraf Stüdyosu</span>
+        </button>
+        <button type="button" class="mode-tab" id="modeTabDoc" onclick="switchWorkspaceMode('doc')">
+          <span>📄</span>
+          <span data-tr="Belge & Evrak" data-en="Docs & Office">Belge & Evrak</span>
+        </button>
+      </div>
+
+      <!-- Hızlı Komut Paleti Tetikleyici Kapsül -->
+      <button type="button" class="command-search-capsule" onclick="openCommandPalette()" title="Komut Arama (Ctrl+K)">
+        <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span data-tr="Hızlı komut ara..." data-en="Search commands...">Hızlı komut ara...</span>
+        <kbd>Ctrl+K</kbd>
+      </button>
+
+      <!-- Çok Sayfalı PDF Çubuğu -->
+      <div id="pdfPaginationBar" style="display:none;align-items:center;gap:4px;">
+        <button type="button" class="btn-icon" id="btnPrevPage" title="Önceki Sayfa">‹</button>
+        <span id="pdfPageIndicator" style="font-size:12.5px;font-weight:600;">Sayfa 1 / 1</span>
+        <button type="button" class="btn-icon" id="btnNextPage" title="Sonraki Sayfa">›</button>
+        <button type="button" class="btn-upload-pill" id="btnBatchPdfAll" style="padding:4px 10px;font-size:11.5px;"
+          data-tr="Tüm Sayfaları İşle" data-en="Process All Pages">Tüm Sayfaları İşle</button>
+      </div>
     </div>
 
     <div class="topbar-right">
@@ -1678,41 +1934,6 @@
 
       <!-- Aktif Kanvas Alanı (Hibrit Stüdyo Sahnesi) -->
       <div class="active-canvas-container" id="activeCanvasContainer">
-        <!-- Üst Kıyaslama ve Görünüm Seçenekleri -->
-        <div class="canvas-floating-bar" id="canvasFloatingBar">
-          <button type="button" class="floating-btn active" id="btnModeSingle" onclick="setViewMode('single')"
-            title="Yalnızca düzenlenen görüntüyü göster">
-            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-            </svg>
-            <span data-tr="Tek Görünüm" data-en="Single View">Tek Görünüm</span>
-          </button>
-          <button type="button" class="floating-btn" id="btnModeSplit" onclick="setViewMode('split')"
-            title="Öncesi ve sonrasını yan yana göster">
-            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <line x1="12" y1="3" x2="12" y2="21" />
-            </svg>
-            <span data-tr="Yan Yana" data-en="Split View">Yan Yana</span>
-          </button>
-          <button type="button" class="floating-btn" id="btnModeCurtain" onclick="setViewMode('curtain')"
-            title="Perde sürgüsü ile canlı karşılaştır">
-            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="2" x2="12" y2="22" />
-              <polyline points="8 8 12 4 16 8" />
-              <polyline points="8 16 12 20 16 16" />
-            </svg>
-            <span data-tr="Perde Kıyasla" data-en="Curtain Slider">Perde Kıyasla</span>
-          </button>
-          <button type="button" class="floating-btn" id="btnPeekOriginal" title="Basılı tutarak orijinali görün">
-            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-            <span data-tr="Orijinal (Basılı Tut)" data-en="Hold for Original">Orijinal (Basılı Tut)</span>
-          </button>
-        </div>
-
         <!-- Kanvas Sahnesi (Zoom ve Döndürme Destekli) -->
         <div class="canvas-stage" id="canvasStage">
           <!-- Yan Yana Modunda Orijinal Kutu (Sol) -->
@@ -1759,27 +1980,71 @@
           </div>
         </div>
 
-        <!-- Alt Yüzen Yakınlaştırma ve Sahne Çubuğu -->
-        <div class="canvas-zoom-bar">
-          <span id="canvasDims"
-            style="font-size:11px;color:var(--pf-text-muted);font-weight:600;margin-right:6px;padding-right:8px;border-right:1px solid var(--pf-border);">— px</span>
-          <span id="fileSizeBadge"
-            style="font-size:11px;color:var(--pf-text-muted);font-weight:600;margin-right:6px;padding-right:8px;border-right:1px solid var(--pf-border);display:none;align-items:center;gap:4px;"></span>
-          <button type="button" class="zoom-btn" onclick="zoomCanvas(-0.15)" title="Uzaklaştır (−)">−</button>
-          <span class="zoom-level" id="zoomLevelIndicator" onclick="resetZoom()"
-            title="Yakınlaştırmayı sıfırlamak için tıklayın">100%</span>
-          <button type="button" class="zoom-btn" onclick="zoomCanvas(0.15)" title="Yakınlaştır (+)">+</button>
-          <div style="width:1px;height:16px;background:var(--pf-border);margin:0 4px;"></div>
-          <button type="button" class="zoom-btn-icon" onclick="fitCanvas()" title="Ekrana Sığdır">
-            <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-            </svg>
-          </button>
-          <button type="button" class="zoom-btn-icon" onclick="rotateCanvas()" title="90° Saat Yönünde Döndür">
-            <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-            </svg>
-          </button>
+        <!-- Ultra Modern Unified Dynamic Island HUD (Kıyaslama + Zoom + Boyut) -->
+        <div class="canvas-hud-island" id="canvasHudIsland">
+          <!-- Sol Rozetler -->
+          <div class="hud-group">
+            <span id="canvasDims" style="font-size:11px;color:var(--pf-text-muted);font-weight:600;padding-right:4px;">— px</span>
+            <span id="fileSizeBadge" style="font-size:11px;color:var(--pf-accent);font-weight:600;display:none;align-items:center;gap:3px;"></span>
+          </div>
+
+          <div class="hud-divider"></div>
+
+          <!-- Görünüm / Kıyaslama Butonları -->
+          <div class="hud-group">
+            <button type="button" class="hud-btn active" id="btnModeSingle" onclick="setViewMode('single')"
+              title="Yalnızca düzenlenen görüntüyü göster">
+              <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+              </svg>
+              <span data-tr="Tek" data-en="Single">Tek</span>
+            </button>
+            <button type="button" class="hud-btn" id="btnModeSplit" onclick="setViewMode('split')"
+              title="Öncesi ve sonrasını yan yana göster">
+              <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <line x1="12" y1="3" x2="12" y2="21" />
+              </svg>
+              <span data-tr="Yan Yana" data-en="Split">Yan Yana</span>
+            </button>
+            <button type="button" class="hud-btn" id="btnModeCurtain" onclick="setViewMode('curtain')"
+              title="Perde sürgüsü ile canlı karşılaştır">
+              <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="2" x2="12" y2="22" />
+                <polyline points="8 8 12 4 16 8" />
+                <polyline points="8 16 12 20 16 16" />
+              </svg>
+              <span data-tr="Perde" data-en="Curtain">Perde</span>
+            </button>
+            <button type="button" class="hud-btn" id="btnPeekOriginal" title="Basılı tutarak orijinali görün">
+              <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <span data-tr="Orijinal" data-en="Original">Orijinal</span>
+            </button>
+          </div>
+
+          <div class="hud-divider"></div>
+
+          <!-- Yakınlaştırma & Sığdırma & Döndürme -->
+          <div class="hud-group">
+            <button type="button" class="hud-btn" onclick="zoomCanvas(-0.15)" title="Uzaklaştır (−)">−</button>
+            <span class="zoom-level" id="zoomLevelIndicator" onclick="resetZoom()"
+              style="font-size:11px;font-weight:700;color:var(--pf-accent);cursor:pointer;padding:0 3px;"
+              title="Yakınlaştırmayı sıfırlamak için tıklayın">100%</span>
+            <button type="button" class="hud-btn" onclick="zoomCanvas(0.15)" title="Yakınlaştır (+)">+</button>
+            <button type="button" class="hud-btn" onclick="fitCanvas()" title="Ekrana Sığdır">
+              <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+              </svg>
+            </button>
+            <button type="button" class="hud-btn" onclick="rotateCanvas()" title="90° Saat Yönünde Döndür">
+              <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -2080,6 +2345,25 @@
           <button type="button" class="action-btn" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);font-size:11.5px;padding:6px 10px;" onclick="copyOcrMarkdown()" data-tr="Markdown Kopyala" data-en="Copy Markdown">Markdown Kopyala</button>
           <button type="button" class="action-btn" style="background:var(--pf-accent);color:#081b2a;font-weight:700;font-size:11.5px;padding:6px 12px;" onclick="downloadOcrTxt()" data-tr="TXT İndir" data-en="Download TXT">TXT İndir</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Raycast / Linear Tarzı Akıllı Komut Paleti (Ctrl+K) -->
+  <div id="commandPaletteModal" class="command-palette-backdrop" onclick="handlePaletteBackdropClick(event)">
+    <div class="command-palette-box" onclick="event.stopPropagation()">
+      <div class="command-palette-header">
+        <svg style="width:16px;height:16px;stroke:#38bdf8;fill:none;stroke-width:2.2;flex-shrink:0;" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="commandPaletteInput" class="command-palette-input"
+          placeholder="Komut veya filtre ara... (örn: Sihirli Renk, Köşe Düzelt, OCR, LUT, Kaşe)"
+          oninput="filterCommandPalette(this.value)" onkeydown="handleCommandPaletteKey(event)" />
+        <span style="font-size:10px;color:var(--pf-text-muted);background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;flex-shrink:0;">ESC Kapat</span>
+      </div>
+      <div class="command-palette-list" id="commandPaletteList">
+        <!-- JS tarafından doldurulur -->
       </div>
     </div>
   </div>
@@ -4133,6 +4417,15 @@
     });
 
     window.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
+        e.preventDefault();
+        openCommandPalette();
+        return;
+      }
+      if (e.key === "Escape") {
+        closeCommandPalette();
+        hideContextMenu();
+      }
       if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA") return;
       if ((e.ctrlKey || e.metaKey) && (e.key === "z" || e.key === "Z")) {
         e.preventDefault();
@@ -4565,6 +4858,174 @@
         alert("Hata: " + err);
       } finally {
         if (btn) btn.disabled = false;
+      }
+    }
+
+    // Workspace Modu Yönetimi (Fotoğraf Stüdyosu vs Belge & Evrak Stüdyosu)
+    let currentWorkspaceMode = "photo";
+    function switchWorkspaceMode(mode) {
+      currentWorkspaceMode = mode;
+      const tabPhoto = document.getElementById("modeTabPhoto");
+      const tabDoc = document.getElementById("modeTabDoc");
+      if (tabPhoto) tabPhoto.classList.toggle("active", mode === "photo");
+      if (tabDoc) tabDoc.classList.toggle("active", mode === "doc");
+
+      const sidebarTitle = document.querySelector(".sidebar-header-toggle span");
+      if (mode === "doc") {
+        if (sidebarTitle) sidebarTitle.textContent = currentLang === "en" ? "Document Studio" : "Belge & Evrak Stüdyosu";
+        switchCategory("docs");
+        if (statusMessage) statusMessage.textContent = currentLang === "en" ? "Document Studio Active" : "Belge & Evrak Stüdyosu Aktif";
+      } else {
+        if (sidebarTitle) sidebarTitle.textContent = currentLang === "en" ? "Photo Studio" : "Fotoğraf Stüdyosu";
+        switchCategory("ai");
+        if (statusMessage) statusMessage.textContent = currentLang === "en" ? "Photo Studio Active" : "Fotoğraf Stüdyosu Aktif";
+      }
+    }
+
+    // Raycast / Linear Tarzı Hızlı Komut Paleti (Ctrl+K)
+    const COMMAND_ITEMS = [
+      // Belge & Evrak
+      { id: "deskew", group: "Belge & Evrak", groupEn: "Document & Office", icon: "📐", name: "Akıllı Belge Köşesi & 4-Nokta Perspektif Düzelt", nameEn: "Auto Corner Detection & Perspective Deskew", action: () => quickAdd("perspective_warp") },
+      { id: "magic_color", group: "Belge & Evrak", groupEn: "Document & Office", icon: "✨", name: "CamScanner Sihirli Renk (Magic Color)", nameEn: "CamScanner Magic Color Mode", action: () => quickAdd("magic_color") },
+      { id: "multipage", group: "Belge & Evrak", groupEn: "Document & Office", icon: "📑", name: "Çok Sayfalı Belge & Tek PDF Birleştirici", nameEn: "Multi-Page Document & PDF Merger", shortcut: "Ctrl+M", action: () => openMultipageModal() },
+      { id: "ocr", group: "Belge & Evrak", groupEn: "Document & Office", icon: "🔍", name: "Akıllı OCR Metin Denetleyici & Dışa Aktar", nameEn: "Smart OCR Text Inspector & Exporter", action: () => openOcrModal() },
+      { id: "id_compose", group: "Belge & Evrak", groupEn: "Document & Office", icon: "🪪", name: "Kimlik / Pasaport / Ehliyet Çift Yüz Birleştirici", nameEn: "ID Card / Passport Dual-Side Combiner", action: () => openIdComposerModal() },
+      { id: "official_stamp", group: "Belge & Evrak", groupEn: "Document & Office", icon: "🔴", name: "Resmi Evrak Kaşesi & Doğrulama QR Damgası", nameEn: "Official Document Stamp & QR Verification Seal", action: () => quickAdd("official_stamp") },
+      { id: "signature", group: "Belge & Evrak", groupEn: "Document & Office", icon: "✍️", name: "Dijital İmza Pad (İmzanı Çiz & Ekle)", nameEn: "Draw & Stamp Digital Signature", action: () => openSignatureModal() },
+      { id: "pii_redaction", group: "Belge & Evrak", groupEn: "Document & Office", icon: "🛡️", name: "TC Kimlik & IBAN Otomatik Sansürleme (PII)", nameEn: "Auto Redact ID & IBAN (Privacy)", action: () => runAutoPiiRedaction() },
+      { id: "doc_clean", group: "Belge & Evrak", groupEn: "Document & Office", icon: "📄", name: "Döküman Arka Plan Temizleyici (Beyazlatma)", nameEn: "Document Background Clean & Whiten", action: () => quickAdd("document_clean") },
+      { id: "remove_shadows", group: "Belge & Evrak", groupEn: "Document & Office", icon: "🌓", name: "Belge Gölge Giderme & Işık Eşitleme", nameEn: "Remove Shadows & Even Light", action: () => quickAdd("remove_shadows") },
+      { id: "binarize", group: "Belge & Evrak", groupEn: "Document & Office", icon: "🔲", name: "Net Binarize & Fotokopi Eşiği (Threshold)", nameEn: "Binarize & Photocopy Sharp Threshold", action: () => quickAdd("binarize") },
+
+      // Fotoğraf & AI
+      { id: "auto_enhance", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🪄", name: "1-Tap Akıllı İyileştirme (Auto-Enhance)", nameEn: "1-Tap Auto Enhance", action: () => quickAdd("auto_enhance") },
+      { id: "background_removal", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "✂️", name: "Arka Planı Sil & Saydam Yap (Cutout AI)", nameEn: "Remove Background (Cutout AI)", action: () => quickAdd("background_removal") },
+      { id: "inpaint", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🧹", name: "Sihirli Silgi (İstenmeyen Nesneyi Sil)", nameEn: "Magic Eraser (Inpaint Object)", action: () => quickAdd("inpaint") },
+      { id: "preset", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🎬", name: "Sinematik LUT Renk Presetleri", nameEn: "Cinematic LUT Color Presets", action: () => quickAdd("preset") },
+      { id: "duotone", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🎨", name: "Duotone İki Renkli Gradyan Eşleme", nameEn: "Duotone Two-Tone Gradient Map", action: () => quickAdd("duotone") },
+      { id: "brightness_contrast", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "☀️", name: "Parlaklık & Kontrast Ayarı", nameEn: "Brightness & Contrast Adjustment", action: () => quickAdd("brightness_contrast") },
+      { id: "vibrance", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🌈", name: "Canlılık & Doygunluk (Vibrance)", nameEn: "Vibrance & Saturation", action: () => quickAdd("vibrance") },
+      { id: "clahe", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "⚡", name: "Dinamik HDR & Gölge Açma (CLAHE)", nameEn: "Dynamic HDR & Shadow Boost (CLAHE)", action: () => quickAdd("histogram_equalization") },
+      { id: "grayscale", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🏁", name: "Siyah & Beyaz (Grayscale)", nameEn: "Black & White (Grayscale)", action: () => quickAdd("grayscale") },
+      { id: "denoise", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🌌", name: "Gece Parazit Giderme (Denoise)", nameEn: "Night Photo Denoise", action: () => quickAdd("denoise") },
+      { id: "sharpen", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🗡️", name: "Detay Keskinleştirme (Unsharp)", nameEn: "Detail Sharpen (Unsharp)", action: () => quickAdd("sharpen") },
+
+      // Araçlar & Dışa Aktar
+      { id: "open_file", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "📂", name: "Görsel veya Belge Yükle...", nameEn: "Open Image or PDF Document...", shortcut: "Ctrl+O", action: () => document.getElementById("filePicker").click() },
+      { id: "batch_zip", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "📦", name: "Toplu İşleme & ZIP İndir...", nameEn: "Batch Processing & ZIP Download...", shortcut: "Ctrl+B", action: () => openBatchModal() },
+      { id: "fit_canvas", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "⛶", name: "Ekrana Sığdır", nameEn: "Fit to Screen", action: () => fitCanvas() },
+      { id: "reset_zoom", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "🔍", name: "%100 Gerçek Boyut", nameEn: "100% Actual Size", action: () => resetZoom() },
+      { id: "rotate_90", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "↻", name: "90° Saat Yönünde Döndür", nameEn: "Rotate 90° Clockwise", action: () => rotateCanvas() },
+      { id: "view_curtain", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "🌓", name: "Canlı Perde Kıyaslama (Curtain Slider)", nameEn: "Curtain Split Slider View", action: () => setViewMode("curtain") },
+      { id: "view_split", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "👥", name: "Yan Yana Görünüm (Side-by-Side)", nameEn: "Side-by-Side Split View", action: () => setViewMode("split") },
+      { id: "undo_action", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "↩️", name: "Geri Al", nameEn: "Undo", shortcut: "Ctrl+Z", action: () => undo() },
+      { id: "redo_action", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "↪️", name: "Yinele", nameEn: "Redo", shortcut: "Ctrl+Y", action: () => redo() },
+      { id: "reset_all", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "🔄", name: "Tüm Efektleri ve Katmanları Sıfırla", nameEn: "Reset All Effects & Steps", action: () => resetAllSteps() },
+      { id: "export_png", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "💾", name: "PNG Olarak Dışa Aktar", nameEn: "Export as PNG", action: () => downloadCurrentFormat("PNG") },
+      { id: "export_jpeg", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "💾", name: "JPEG Olarak Dışa Aktar", nameEn: "Export as JPEG", action: () => downloadCurrentFormat("JPEG") },
+      { id: "export_pdf", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "📄", name: "PDF Olarak Dışa Aktar", nameEn: "Export as PDF", action: () => downloadCurrentFormat("PDF") }
+    ];
+
+    let filteredCommands = [];
+    let selectedPaletteIndex = 0;
+
+    function openCommandPalette() {
+      const modal = document.getElementById("commandPaletteModal");
+      const input = document.getElementById("commandPaletteInput");
+      if (!modal) return;
+      modal.style.display = "flex";
+      if (input) {
+        input.value = "";
+        input.focus();
+      }
+      filterCommandPalette("");
+    }
+
+    function closeCommandPalette() {
+      const modal = document.getElementById("commandPaletteModal");
+      if (modal) modal.style.display = "none";
+    }
+
+    function handlePaletteBackdropClick(e) {
+      if (e.target.id === "commandPaletteModal") closeCommandPalette();
+    }
+
+    function filterCommandPalette(query) {
+      const q = (query || "").toLowerCase().trim();
+      filteredCommands = COMMAND_ITEMS.filter(cmd => {
+        if (!q) return true;
+        const name = (cmd.name || "").toLowerCase();
+        const nameEn = (cmd.nameEn || "").toLowerCase();
+        const grp = (cmd.group || "").toLowerCase();
+        return name.includes(q) || nameEn.includes(q) || grp.includes(q);
+      });
+
+      selectedPaletteIndex = 0;
+      renderCommandPaletteList();
+    }
+
+    function renderCommandPaletteList() {
+      const listEl = document.getElementById("commandPaletteList");
+      if (!listEl) return;
+      if (filteredCommands.length === 0) {
+        listEl.innerHTML = `<div style="padding:24px;text-align:center;color:#64748b;font-size:12px;">${currentLang === "en" ? "No matching commands found." : "Eşleşen komut bulunamadı."}</div>`;
+        return;
+      }
+
+      let html = "";
+      let lastGroup = "";
+      filteredCommands.forEach((cmd, idx) => {
+        const grpName = currentLang === "en" ? (cmd.groupEn || cmd.group) : cmd.group;
+        if (grpName !== lastGroup) {
+          html += `<div class="command-group-title">${grpName}</div>`;
+          lastGroup = grpName;
+        }
+        const isSelected = idx === selectedPaletteIndex;
+        const title = currentLang === "en" ? (cmd.nameEn || cmd.name) : cmd.name;
+        html += `
+          <div class="command-item ${isSelected ? "selected" : ""}" data-idx="${idx}" onclick="executePaletteItem(${idx})">
+            <div class="cmd-left">
+              <span class="cmd-icon">${cmd.icon}</span>
+              <span>${title}</span>
+            </div>
+            ${cmd.shortcut ? `<span class="cmd-badge">${cmd.shortcut}</span>` : ""}
+          </div>
+        `;
+      });
+      listEl.innerHTML = html;
+
+      const selEl = listEl.querySelector(".command-item.selected");
+      if (selEl) selEl.scrollIntoView({ block: "nearest" });
+    }
+
+    function handleCommandPaletteKey(e) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (filteredCommands.length > 0) {
+          selectedPaletteIndex = (selectedPaletteIndex + 1) % filteredCommands.length;
+          renderCommandPaletteList();
+        }
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (filteredCommands.length > 0) {
+          selectedPaletteIndex = (selectedPaletteIndex - 1 + filteredCommands.length) % filteredCommands.length;
+          renderCommandPaletteList();
+        }
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (filteredCommands.length > 0 && filteredCommands[selectedPaletteIndex]) {
+          executePaletteItem(selectedPaletteIndex);
+        }
+      } else if (e.key === "Escape") {
+        closeCommandPalette();
+      }
+    }
+
+    function executePaletteItem(index) {
+      const cmd = filteredCommands[index];
+      closeCommandPalette();
+      if (cmd && typeof cmd.action === "function") {
+        cmd.action();
       }
     }
 
