@@ -182,3 +182,42 @@ class MagicColorOperation(ImageOperation[MagicColorParams]):
         processed = _apply_magic_color(base, self.params)
         merged = merge_alpha(processed, alpha)
         return cast(ImageArray, merged.astype(image.dtype))
+
+
+def compose_id_card(
+    front: np.ndarray,
+    back: np.ndarray,
+    layout: str = "vertical",
+    card_width: int = 800,
+    card_height: int = 504,
+    margin: int = 40,
+) -> np.ndarray:
+    f_bgr = (
+        cv2.cvtColor(front, cv2.COLOR_BGRA2BGR)
+        if front.ndim == 3 and front.shape[2] == 4
+        else front
+    )
+    b_bgr = (
+        cv2.cvtColor(back, cv2.COLOR_BGRA2BGR) if back.ndim == 3 and back.shape[2] == 4 else back
+    )
+    if f_bgr.ndim == 2:
+        f_bgr = cv2.cvtColor(f_bgr, cv2.COLOR_GRAY2BGR)
+    if b_bgr.ndim == 2:
+        b_bgr = cv2.cvtColor(b_bgr, cv2.COLOR_GRAY2BGR)
+    f_res = cv2.resize(f_bgr, (card_width, card_height), interpolation=cv2.INTER_AREA)
+    b_res = cv2.resize(b_bgr, (card_width, card_height), interpolation=cv2.INTER_AREA)
+    if layout == "horizontal":
+        cw = (card_width * 2) + (margin * 3)
+        ch = card_height + (margin * 2)
+        canvas = np.full((ch, cw, 3), 255, dtype=np.uint8)
+        canvas[margin : margin + card_height, margin : margin + card_width] = f_res
+        x2 = (margin * 2) + card_width
+        canvas[margin : margin + card_height, x2 : x2 + card_width] = b_res
+        return canvas
+    cw = card_width + (margin * 2)
+    ch = (card_height * 2) + (margin * 3)
+    canvas = np.full((ch, cw, 3), 255, dtype=np.uint8)
+    canvas[margin : margin + card_height, margin : margin + card_width] = f_res
+    y2 = (margin * 2) + card_height
+    canvas[y2 : y2 + card_height, margin : margin + card_width] = b_res
+    return canvas

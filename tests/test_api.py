@@ -191,3 +191,22 @@ async def test_detect_corners_endpoint() -> None:
         data = resp.json()
         assert "corners" in data
         assert len(data["corners"]) == 4
+
+
+@pytest.mark.anyio
+async def test_compose_id_card_endpoint() -> None:
+    app = create_app()
+    transport = httpx.ASGITransport(app=app)
+    img_bytes = encode_image_bytes(np.full((32, 32, 3), 150, dtype=np.uint8), "PNG")
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        resp = await client.post(
+            "/v1/compose-id-card",
+            files={
+                "front": ("front.png", img_bytes, "image/png"),
+                "back": ("back.png", img_bytes, "image/png"),
+            },
+            data={"layout": "horizontal"},
+        )
+        assert resp.status_code == 200
+        assert resp.headers["content-type"] == "image/png"
+        assert len(resp.content) > 0

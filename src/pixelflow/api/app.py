@@ -42,7 +42,7 @@ from pixelflow.exceptions import (
     PixelflowError,
     UnknownOperationError,
 )
-from pixelflow.operations.document import detect_document_corners
+from pixelflow.operations.document import compose_id_card, detect_document_corners
 from pixelflow.pipeline.loader import load_pipeline_from_string
 
 _ = pixelflow.operations
@@ -177,6 +177,24 @@ def _register_v1_routes(app: FastAPI) -> None:
         image = decode_image_bytes(raw, max_pixels=settings.max_image_pixels)
         corners = detect_document_corners(image)
         return DetectCornersResponseModel(corners=corners)
+
+    @app.post("/v1/compose-id-card")
+    async def compose_id_card_endpoint(
+        front: Annotated[UploadFile, File(...)],
+        back: Annotated[UploadFile, File(...)],
+        settings: Annotated[ApiSettings, Depends(get_api_settings)],
+        layout: Annotated[str, Form()] = "vertical",
+    ) -> Response:
+        f_raw = await front.read(settings.max_upload_bytes + 1)
+        b_raw = await back.read(settings.max_upload_bytes + 1)
+        if len(f_raw) > settings.max_upload_bytes or len(b_raw) > settings.max_upload_bytes:
+            msg = f"Card image exceeds maximum of {settings.max_upload_bytes} bytes"
+            raise InvalidImageError(msg)
+        f_img = decode_image_bytes(f_raw, max_pixels=settings.max_image_pixels)
+        b_img = decode_image_bytes(b_raw, max_pixels=settings.max_image_pixels)
+        composed = compose_id_card(f_img, b_img, layout=layout)
+        out_bytes = encode_image_bytes(composed, image_format="PNG")
+        return Response(content=out_bytes, media_type="image/png")
 
 
 async def _handle_batch_request(

@@ -13,6 +13,7 @@ from pixelflow.operations.document import (
     MagicColorParams,
     ShadowRemovalOperation,
     ShadowRemovalParams,
+    compose_id_card,
     detect_document_corners,
 )
 
@@ -128,3 +129,25 @@ def test_magic_color_operation() -> None:
         MagicColorParams(contrast=0.1)
     with pytest.raises(ValidationError):
         MagicColorParams(brightness=150)
+
+
+def test_compose_id_card() -> None:
+    front = np.full((100, 150, 3), 100, dtype=np.uint8)
+    back = np.full((100, 150, 3), 200, dtype=np.uint8)
+    res_v = compose_id_card(
+        front, back, layout="vertical", card_width=200, card_height=120, margin=10
+    )
+    assert res_v.shape == (120 * 2 + 10 * 3, 200 + 10 * 2, 3)
+
+    res_h = compose_id_card(
+        front, back, layout="horizontal", card_width=200, card_height=120, margin=10
+    )
+    assert res_h.shape == (120 + 10 * 2, 200 * 2 + 10 * 3, 3)
+
+    front_gray = np.full((100, 150), 100, dtype=np.uint8)
+    back_rgba = np.full((100, 150, 4), 200, dtype=np.uint8)
+    res_mixed = compose_id_card(
+        front_gray, back_rgba, layout="vertical", card_width=100, card_height=60, margin=5
+    )
+    assert res_mixed.ndim == 3
+    assert res_mixed.shape[2] == 3
