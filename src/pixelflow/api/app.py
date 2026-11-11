@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import io
 import logging
 import time
 import uuid
+import zipfile
 from collections.abc import Awaitable, Callable
 from pathlib import Path
 from typing import Annotated
@@ -151,6 +153,47 @@ def _register_v1_routes(app: FastAPI) -> None:
         settings: Annotated[ApiSettings, Depends(get_api_settings)],
     ) -> Response:
         return await _handle_multipage_request(images, pipeline, settings)
+
+    @app.post("/v1/process-batch")
+    async def process_batch_endpoint(
+        images: Annotated[list[UploadFile], File(...)],
+        pipeline: Annotated[str, Form(...)],
+        settings: Annotated[ApiSettings, Depends(get_api_settings)],
+        output_format: Annotated[str | None, Form()] = None,
+    ) -> Response:
+        return await _handle_batch_request(images, pipeline, settings, output_format)
+
+
+async def _handle_batch_request(
+    uploads: list[UploadFile],
+    pipeline_text: str,
+    settings: ApiSettings,
+    output_format: str | None = None,
+) -> Response:
+    if not uploads:
+        raise InvalidImageError("No images uploaded for batch processing")
+    pipeline_obj = load_pipeline_from_string(pipeline_text)
+    fmt = (output_format or "PNG").upper()
+    if fmt == "JPG":
+        fmt = "JPEG"
+    ext = fmt.lower()
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for idx, upload in enumerate(uploads):
+            raw = await upload.read(settings.max_upload_bytes + 1)
+            if len(raw) > settings.max_upload_bytes:
+                msg = f"File exceeds maximum of {settings.max_upload_bytes} bytes"
+                raise InvalidImageError(msg)
+            decoded = decode_image_bytes(raw, max_pixels=settings.max_image_pixels)
+            processed = pipeline_obj.execute(decoded)
+            out_bytes = encode_image_bytes(processed, image_format=fmt)
+            base_name = Path(upload.filename or f"image_{idx + 1}").stem
+            zf.writestr(f"{base_name}_processed.{ext}", out_bytes)
+    return Response(
+        content=zip_buffer.getvalue(),
+        media_type="application/zip",
+        headers={"Content-Disposition": "attachment; filename=pixelflow_batch.zip"},
+    )
 
 
 async def _handle_multipage_request(

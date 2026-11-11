@@ -1228,6 +1228,11 @@
               <span class="ps-shortcut">PDF</span>
             </div>
             <div class="ps-menu-divider"></div>
+            <div class="ps-menu-action" onclick="openBatchModal()">
+              <span data-tr="Toplu İşlem & ZIP..." data-en="Batch Process & ZIP...">Toplu İşlem & ZIP...</span>
+              <span class="ps-shortcut">Ctrl+B</span>
+            </div>
+            <div class="ps-menu-divider"></div>
             <div class="ps-menu-action" onclick="resetToOriginal()">
               <span data-tr="Orijinal Görsele Dön" data-en="Revert to Original">Orijinal Görsele Dön</span>
             </div>
@@ -1817,11 +1822,65 @@
         <span data-tr="90° Saat Yönünde Döndür" data-en="Rotate 90° Clockwise">90° Saat Yönünde Döndür</span>
       </div>
     </div>
+    <div class="context-item" onclick="hideContextMenu();openBatchModal();">
+      <div class="context-left">
+        <span class="context-icon">📦</span>
+        <span data-tr="Toplu İşlem (Batch ZIP)" data-en="Batch Process (ZIP)">Toplu İşlem (Batch ZIP)</span>
+      </div>
+      <span class="context-shortcut">Ctrl+B</span>
+    </div>
     <div class="context-divider"></div>
     <div class="context-item" onclick="hideContextMenu();resetAllSteps()">
       <div class="context-left">
         <span class="context-icon">🔄</span>
         <span data-tr="Tüm Efektleri Sıfırla" data-en="Reset All Effects">Tüm Efektleri Sıfırla</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toplu İşleme (Batch) Modalı -->
+  <div class="modal-backdrop" id="batchModalBackdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1150;align-items:center;justify-content:center;backdrop-filter:blur(6px);">
+    <div style="background:#0f141d;border:1px solid var(--pf-border);border-radius:var(--radius-sm);width:90%;max-width:520px;padding:22px;box-shadow:0 16px 40px rgba(0,0,0,0.8);display:flex;flex-direction:column;gap:14px;color:var(--pf-text-white);">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--pf-border);padding-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:16px;">📦</span>
+          <span style="font-weight:700;font-size:14px;" data-tr="Toplu Görsel İşleme & ZIP İndirme" data-en="Batch Image Processing & ZIP Export">Toplu Görsel İşleme & ZIP İndirme</span>
+        </div>
+        <button type="button" onclick="closeBatchModal()" style="background:none;border:none;color:var(--pf-text-muted);font-size:18px;cursor:pointer;line-height:1;">×</button>
+      </div>
+
+      <div style="font-size:12px;color:var(--pf-text-muted);line-height:1.5;" data-tr="Birden fazla görsel seçin. PixelFlow mevcut düzenleme filtrelerinizi ve ayarlarınızı seçilen tüm görsellere topluca uygulayarak tek bir ZIP arşivi olarak indirir." data-en="Select multiple images. PixelFlow will apply your active adjustments and filters to all selected files in parallel and download them as a ZIP archive.">
+        Birden fazla görsel seçin. PixelFlow mevcut düzenleme filtrelerinizi ve ayarlarınızı seçilen tüm görsellere topluca uygulayarak tek bir ZIP arşivi olarak indirir.
+      </div>
+
+      <div id="batchDropzone" onclick="document.getElementById('batchFileInput').click()" style="border:2px dashed var(--pf-border);border-radius:var(--radius-sm);padding:24px 16px;text-align:center;cursor:pointer;background:#090d14;transition:all 0.15s ease;">
+        <input type="file" multiple id="batchFileInput" accept="image/*" style="display:none" onchange="handleBatchFileSelect(event)">
+        <div style="font-size:24px;margin-bottom:8px;">📁</div>
+        <div style="font-size:12.5px;font-weight:600;color:var(--pf-accent);" data-tr="Görselleri Seçin veya Buraya Sürükleyin" data-en="Choose Images or Drop Here">Görselleri Seçin veya Buraya Sürükleyin</div>
+        <div id="batchFileCountText" style="font-size:11px;color:var(--pf-text-muted);margin-top:4px;" data-tr="Seçilen görsel yok" data-en="No files chosen">Seçilen görsel yok</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+        <span style="color:var(--pf-text-muted);" data-tr="Çıktı Formatı:" data-en="Output Format:">Çıktı Formatı:</span>
+        <select id="batchOutputFormat" class="select-format" style="width:130px;">
+          <option value="PNG">PNG</option>
+          <option value="JPEG">JPEG</option>
+        </select>
+      </div>
+
+      <div id="batchProgressBarContainer" style="display:none;flex-direction:column;gap:6px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--pf-text-muted);">
+          <span id="batchProgressText">İşleniyor...</span>
+          <span id="batchProgressPct">0%</span>
+        </div>
+        <div style="width:100%;height:6px;background:#0c0e12;border-radius:3px;overflow:hidden;border:1px solid var(--pf-border);">
+          <div id="batchProgressBar" style="width:0%;height:100%;background:var(--pf-accent);transition:width 0.2s ease;"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
+        <button type="button" onclick="closeBatchModal()" class="action-btn" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);" data-tr="Vazgeç" data-en="Cancel">Vazgeç</button>
+        <button type="button" id="btnRunBatch" onclick="runBatchProcessing()" class="action-btn" style="background:var(--pf-accent);color:#081b2a;font-weight:700;" data-tr="İşle ve ZIP İndir" data-en="Process & Download ZIP">İşle ve ZIP İndir</button>
       </div>
     </div>
   </div>
@@ -3754,6 +3813,9 @@
       } else if ((e.ctrlKey || e.metaKey) && (e.key === "y" || e.key === "Y")) {
         e.preventDefault();
         redo();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === "b" || e.key === "B")) {
+        e.preventDefault();
+        openBatchModal();
       }
     });
 
@@ -3818,6 +3880,105 @@
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") hideContextMenu();
     });
+
+    // Toplu İşleme (Batch Processing)
+    let selectedBatchFiles = [];
+
+    function openBatchModal() {
+      const modal = document.getElementById("batchModalBackdrop");
+      if (modal) {
+        modal.style.display = "flex";
+        selectedBatchFiles = [];
+        const countText = document.getElementById("batchFileCountText");
+        if (countText) {
+          countText.textContent = (currentLang === "en") ? "No files chosen" : "Seçilen görsel yok";
+          countText.style.color = "var(--pf-text-muted)";
+        }
+        const pContainer = document.getElementById("batchProgressBarContainer");
+        if (pContainer) pContainer.style.display = "none";
+      }
+    }
+
+    function closeBatchModal() {
+      const modal = document.getElementById("batchModalBackdrop");
+      if (modal) modal.style.display = "none";
+    }
+
+    function handleBatchFileSelect(e) {
+      if (!e.target.files || e.target.files.length === 0) return;
+      selectedBatchFiles = Array.from(e.target.files);
+      const countText = document.getElementById("batchFileCountText");
+      if (countText) {
+        countText.textContent = (currentLang === "en")
+          ? `${selectedBatchFiles.length} images selected`
+          : `${selectedBatchFiles.length} görsel seçildi`;
+        countText.style.color = "var(--pf-accent)";
+      }
+    }
+
+    async function runBatchProcessing() {
+      if (!selectedBatchFiles || selectedBatchFiles.length === 0) {
+        alert(currentLang === "en" ? "Please select at least one image." : "Lütfen en az bir görsel seçin.");
+        return;
+      }
+      const btn = document.getElementById("btnRunBatch");
+      const pContainer = document.getElementById("batchProgressBarContainer");
+      const pBar = document.getElementById("batchProgressBar");
+      const pText = document.getElementById("batchProgressText");
+      const pPct = document.getElementById("batchProgressPct");
+      const fmt = document.getElementById("batchOutputFormat") ? document.getElementById("batchOutputFormat").value : "PNG";
+
+      if (btn) btn.disabled = true;
+      if (pContainer) pContainer.style.display = "flex";
+      if (pBar) pBar.style.width = "35%";
+      if (pText) pText.textContent = (currentLang === "en") ? "Processing images in batch..." : "Görseller topluca işleniyor...";
+      if (pPct) pPct.textContent = "35%";
+
+      const payload = {
+        name: "pixelflow-batch-run",
+        version: "1.0",
+        steps: activeSteps.map(s => ({
+          op: s.op,
+          name: s.name,
+          params: s.params
+        }))
+      };
+
+      const formData = new FormData();
+      selectedBatchFiles.forEach(f => {
+        formData.append("images", f, f.name);
+      });
+      formData.append("pipeline", JSON.stringify(payload));
+      formData.append("output_format", fmt);
+
+      try {
+        if (pBar) pBar.style.width = "70%";
+        if (pPct) pPct.textContent = "70%";
+        const resp = await fetch("/v1/process-batch", { method: "POST", body: formData });
+        if (!resp.ok) {
+          const err = await resp.json();
+          throw new Error(err.message || "Toplu işlem başarısız oldu");
+        }
+        if (pBar) pBar.style.width = "100%";
+        if (pPct) pPct.textContent = "100%";
+        if (pText) pText.textContent = (currentLang === "en") ? "Downloading ZIP..." : "ZIP indiriliyor...";
+
+        const zipBlob = await resp.blob();
+        const zipUrl = URL.createObjectURL(zipBlob);
+        const a = document.createElement("a");
+        a.href = zipUrl;
+        a.download = `pixelflow_batch_${Date.now()}.zip`;
+        a.click();
+        setTimeout(closeBatchModal, 600);
+        statusMessage.textContent = (currentLang === "en")
+          ? `✓ Batch completed: ${selectedBatchFiles.length} images exported as ZIP!`
+          : `✓ Toplu işlem: ${selectedBatchFiles.length} görsel ZIP olarak indirildi!`;
+      } catch (err) {
+        alert("Hata: " + err);
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
 
     // Başlangıç Yüklemesi (Dil Tercihi ve Çekmece)
     setLanguage(currentLang);
