@@ -291,13 +291,21 @@
     }
 
     .context-item .context-icon {
-      width: 14px;
-      height: 14px;
+      width: 15px;
+      height: 15px;
       color: var(--pf-text-muted);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .context-item .context-icon svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
     }
 
     .context-item .context-shortcut {
@@ -597,12 +605,28 @@
     }
 
     .acc-title {
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       color: #e2e8f0;
       display: flex;
       align-items: center;
       gap: 7px;
+      letter-spacing: 0.04em;
+    }
+
+    .active-indicator-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--pf-accent);
+      box-shadow: 0 0 6px var(--pf-accent);
+      display: none;
+      margin-left: auto;
+      margin-right: 6px;
+    }
+
+    .pro-accordion.has-active .active-indicator-dot {
+      display: inline-block;
     }
 
     .acc-chevron {
@@ -653,7 +677,19 @@
     }
 
     .pro-tool-btn .btn-icon-wrap {
-      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--pf-accent);
+      flex-shrink: 0;
+    }
+
+    .pro-tool-btn .btn-icon-wrap svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
     }
 
     .pro-slider-row {
@@ -667,6 +703,7 @@
     .slider-meta {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 11px;
       color: var(--pf-text-muted);
       font-weight: 500;
@@ -676,7 +713,12 @@
     .slider-meta span.val {
       color: var(--pf-accent);
       font-weight: 700;
-      font-family: monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 10.5px;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 4px;
+      padding: 0 5px;
     }
 
     .tool-pills-row {
@@ -1208,9 +1250,21 @@
     }
 
     .command-item .cmd-icon {
-      font-size: 15px;
       width: 22px;
-      text-align: center;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--pf-accent);
+      flex-shrink: 0;
+    }
+
+    .command-item .cmd-icon svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
     }
 
     .command-item .cmd-badge {
@@ -1224,7 +1278,7 @@
     /* Kanvas Alt Merkezinde Yüzen Dynamic Island HUD */
     .canvas-hud-island {
       position: absolute;
-      bottom: 18px;
+      bottom: 34px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
@@ -1238,6 +1292,57 @@
       z-index: 50;
       box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 16px rgba(56, 189, 248, 0.1);
       transition: all 0.2s ease;
+    }
+
+    /* DaVinci Pro Alt Durum Çubuğu */
+    .pro-canvas-statusbar {
+      height: 24px;
+      background: #090c12;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 10.5px;
+      color: #64748b;
+      user-select: none;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .pro-canvas-statusbar .sb-sep {
+      opacity: 0.4;
+      margin: 0 4px;
+    }
+
+    .pro-canvas-statusbar .sb-item {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #94a3b8;
+    }
+
+    .pro-canvas-statusbar .pro-sb-left,
+    .pro-canvas-statusbar .pro-sb-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pro-canvas-statusbar .pro-sb-center {
+      color: var(--pf-accent);
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 40%;
+    }
+
+    .pro-canvas-statusbar kbd {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      padding: 1px 4px;
+      font-size: 9px;
+      color: #cbd5e1;
     }
 
     .hud-group {
@@ -1355,12 +1460,21 @@
       </button>
 
       <button type="button" class="btn-top-capsule" onclick="openMultipageModal()" title="Çok Sayfalı PDF Birleştirici (Ctrl+M)">
-        <span>📑</span>
+        <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+        </svg>
         <span data-tr="Çok Sayfalı PDF" data-en="Multi-Page PDF">Çok Sayfalı PDF</span>
       </button>
 
       <button type="button" class="btn-top-capsule" onclick="openBatchModal()" title="Toplu İşlem &amp; ZIP (Ctrl+B)">
-        <span>📦</span>
+        <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+          <line x1="12" y1="22.08" x2="12" y2="12" />
+        </svg>
         <span data-tr="Toplu İşlem (ZIP)" data-en="Batch (ZIP)">Toplu İşlem (ZIP)</span>
       </button>
     </div>
@@ -1462,13 +1576,25 @@
       <!-- Segmented Tabs for Left Panel -->
       <div class="pro-segmented-tabs">
         <button type="button" class="seg-tab active" id="segTabPresets" onclick="switchLeftTab('presets')">
-          <span data-tr="🎨 Sinematik" data-en="🎨 Presets">🎨 Sinematik</span>
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" opacity="0.4" />
+          </svg>
+          <span data-tr="Sinematik" data-en="Presets">Sinematik</span>
         </button>
         <button type="button" class="seg-tab" id="segTabDocs" onclick="switchLeftTab('docs')">
-          <span data-tr="📄 Belge Modu" data-en="📄 Doc Modes">📄 Belge Modu</span>
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          <span data-tr="Belge Modu" data-en="Doc Modes">Belge Modu</span>
         </button>
         <button type="button" class="seg-tab" id="segTabHistory" onclick="switchLeftTab('history')">
-          <span data-tr="🕒 Geçmiş" data-en="🕒 History">🕒 Geçmiş</span>
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          <span data-tr="Geçmiş" data-en="History">Geçmiş</span>
         </button>
       </div>
 
@@ -1658,6 +1784,25 @@
           </div>
         </div>
       </div>
+
+      <!-- DaVinci Pro Alt Durum Çubuğu -->
+      <footer class="pro-canvas-statusbar" id="proCanvasStatusbar">
+        <div class="pro-sb-left">
+          <span class="sb-item" id="sbDims">— × — px</span>
+          <span class="sb-sep">•</span>
+          <span class="sb-item" id="sbZoom">100%</span>
+          <span class="sb-sep">•</span>
+          <span class="sb-item" id="sbColorSpace">sRGB 8-bit</span>
+        </div>
+        <div class="pro-sb-center" id="sbStatusText" data-tr="Hazır" data-en="Ready">
+          Hazır
+        </div>
+        <div class="pro-sb-right">
+          <span class="sb-shortcut"><kbd>Space</kbd> + Sürükle</span>
+          <span class="sb-shortcut"><kbd>Tekerlek</kbd> Zoom</span>
+          <span class="sb-shortcut"><kbd>Ctrl+K</kbd> Komutlar</span>
+        </div>
+      </footer>
     </section>
 
     <!-- 3. SAĞ PANEL: LIGHTROOM PRO DEVELOP & ADJUSTMENTS INSPECTOR -->
@@ -1666,32 +1811,51 @@
         <div class="pro-panel-title">
           <span data-tr="Geliştirme &amp; Ayarlar" data-en="Develop &amp; Adjust">Geliştirme &amp; Ayarlar</span>
         </div>
-        <button type="button" class="btn-icon-tiny" onclick="resetAllSteps()" title="Tüm Efektleri Sıfırla">🔄</button>
+        <button type="button" class="btn-icon-tiny" onclick="resetAllSteps()" title="Tüm Efektleri Sıfırla">
+          <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <polyline points="3 3 3 8 8 8" />
+          </svg>
+        </button>
       </div>
 
       <div class="pro-accordion-list" id="proAccordionList">
         <!-- 1. Yapay Zeka & Akıllı Araçlar -->
         <div class="pro-accordion" id="accAi">
           <div class="acc-header" onclick="toggleAccordion('accAi')">
-            <span class="acc-title">🪄 <span data-tr="Yapay Zeka &amp; Akıllı Rötuş" data-en="AI &amp; Smart Retouch">Yapay Zeka &amp; Akıllı Rötuş</span></span>
+            <span class="acc-title">
+              <svg style="width:13px;height:13px;stroke:#38bdf8;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+                <polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2" />
+              </svg>
+              <span data-tr="Yapay Zeka &amp; Rötuş" data-en="AI &amp; Smart Retouch">Yapay Zeka &amp; Rötuş</span>
+            </span>
+            <span class="active-indicator-dot"></span>
             <span class="acc-chevron">▾</span>
           </div>
           <div class="acc-body">
             <div class="pro-quick-btn-grid">
               <button type="button" class="pro-tool-btn" onclick="quickAdd('auto_enhance')">
-                <span class="btn-icon-wrap">⚡</span>
+                <span class="btn-icon-wrap">
+                  <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+                </span>
                 <span data-tr="Auto-Enhance" data-en="Auto-Enhance">Auto-Enhance</span>
               </button>
               <button type="button" class="pro-tool-btn" onclick="quickAdd('background_removal')">
-                <span class="btn-icon-wrap">✂️</span>
+                <span class="btn-icon-wrap">
+                  <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3" /><circle cx="6" cy="18" r="3" /><line x1="20" y1="4" x2="8.12" y2="15.88" /><line x1="14.47" y1="14.48" x2="20" y2="20" /></svg>
+                </span>
                 <span data-tr="Arka Plan Sil" data-en="Cutout AI">Arka Plan Sil</span>
               </button>
               <button type="button" class="pro-tool-btn" onclick="quickAdd('inpaint')">
-                <span class="btn-icon-wrap">🧹</span>
+                <span class="btn-icon-wrap">
+                  <svg viewBox="0 0 24 24"><path d="M18 2l4 4-12 12H6v-4L18 2z" /><path d="M14 6l4 4" /></svg>
+                </span>
                 <span data-tr="Sihirli Silgi" data-en="Magic Eraser">Sihirli Silgi</span>
               </button>
               <button type="button" class="pro-tool-btn" onclick="quickAdd('face_blur')">
-                <span class="btn-icon-wrap">👤</span>
+                <span class="btn-icon-wrap">
+                  <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><line x1="2" y1="2" x2="22" y2="22" /></svg>
+                </span>
                 <span data-tr="Yüz Sansürü" data-en="Face Blur">Yüz Sansürü</span>
               </button>
             </div>
@@ -1701,7 +1865,15 @@
         <!-- 2. Temel Işık & Ton (Lightroom Sliders) -->
         <div class="pro-accordion" id="accTone">
           <div class="acc-header" onclick="toggleAccordion('accTone')">
-            <span class="acc-title">☀️ <span data-tr="Temel Işık &amp; Ton (Lightroom)" data-en="Basic Tone &amp; Exposure">Temel Işık &amp; Ton</span></span>
+            <span class="acc-title">
+              <svg style="width:13px;height:13px;stroke:#fbbf24;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              </svg>
+              <span data-tr="Temel Işık &amp; Ton" data-en="Basic Tone &amp; Exposure">Temel Işık &amp; Ton</span>
+            </span>
+            <span class="active-indicator-dot"></span>
             <span class="acc-chevron">▾</span>
           </div>
           <div class="acc-body">
@@ -1710,35 +1882,35 @@
                 <span data-tr="Parlaklık (Exposure)" data-en="Brightness">Parlaklık (Exposure)</span>
                 <span class="val" id="valToneBrightness">0.00</span>
               </div>
-              <input type="range" id="sliderToneBrightness" min="-0.8" max="0.8" step="0.05" value="0" oninput="handleDirectSlider('brightness_contrast', 'brightness', this.value, 'valToneBrightness')" />
+              <input type="range" id="sliderToneBrightness" min="-0.8" max="0.8" step="0.05" value="0" ondblclick="resetSliderVal(this, 0, 'valToneBrightness', 'brightness_contrast', 'brightness')" oninput="handleDirectSlider('brightness_contrast', 'brightness', this.value, 'valToneBrightness')" />
             </div>
             <div class="pro-slider-row">
               <div class="slider-meta">
                 <span data-tr="Kontrast" data-en="Contrast">Kontrast</span>
                 <span class="val" id="valToneContrast">1.00</span>
               </div>
-              <input type="range" id="sliderToneContrast" min="0.4" max="2.5" step="0.05" value="1.0" oninput="handleDirectSlider('brightness_contrast', 'contrast', this.value, 'valToneContrast')" />
+              <input type="range" id="sliderToneContrast" min="0.4" max="2.5" step="0.05" value="1.0" ondblclick="resetSliderVal(this, 1.0, 'valToneContrast', 'brightness_contrast', 'contrast')" oninput="handleDirectSlider('brightness_contrast', 'contrast', this.value, 'valToneContrast')" />
             </div>
             <div class="pro-slider-row">
               <div class="slider-meta">
                 <span data-tr="Canlılık (Vibrance)" data-en="Vibrance">Canlılık (Vibrance)</span>
                 <span class="val" id="valToneVibrance">0.00</span>
               </div>
-              <input type="range" id="sliderToneVibrance" min="-1.0" max="1.0" step="0.05" value="0" oninput="handleDirectSlider('vibrance', 'vibrance', this.value, 'valToneVibrance')" />
+              <input type="range" id="sliderToneVibrance" min="-1.0" max="1.0" step="0.05" value="0" ondblclick="resetSliderVal(this, 0, 'valToneVibrance', 'vibrance', 'vibrance')" oninput="handleDirectSlider('vibrance', 'vibrance', this.value, 'valToneVibrance')" />
             </div>
             <div class="pro-slider-row">
               <div class="slider-meta">
                 <span data-tr="Doygunluk (Saturation)" data-en="Saturation">Doygunluk (Saturation)</span>
                 <span class="val" id="valToneSaturation">0.00</span>
               </div>
-              <input type="range" id="sliderToneSaturation" min="-1.0" max="1.0" step="0.05" value="0" oninput="handleDirectSlider('vibrance', 'saturation', this.value, 'valToneSaturation')" />
+              <input type="range" id="sliderToneSaturation" min="-1.0" max="1.0" step="0.05" value="0" ondblclick="resetSliderVal(this, 0, 'valToneSaturation', 'vibrance', 'saturation')" oninput="handleDirectSlider('vibrance', 'saturation', this.value, 'valToneSaturation')" />
             </div>
             <div class="pro-slider-row">
               <div class="slider-meta">
                 <span data-tr="HDR CLAHE Gücü" data-en="HDR CLAHE Boost">HDR CLAHE Gücü</span>
                 <span class="val" id="valToneHdr">1.0</span>
               </div>
-              <input type="range" id="sliderToneHdr" min="1.0" max="5.0" step="0.2" value="1.0" oninput="handleDirectSlider('histogram_equalization', 'clip_limit', this.value, 'valToneHdr')" />
+              <input type="range" id="sliderToneHdr" min="1.0" max="5.0" step="0.2" value="1.0" ondblclick="resetSliderVal(this, 1.0, 'valToneHdr', 'histogram_equalization', 'clip_limit')" oninput="handleDirectSlider('histogram_equalization', 'clip_limit', this.value, 'valToneHdr')" />
             </div>
           </div>
         </div>
@@ -1746,41 +1918,64 @@
         <!-- 3. Belge & CamScanner Stüdyosu -->
         <div class="pro-accordion" id="accDoc">
           <div class="acc-header" onclick="toggleAccordion('accDoc')">
-            <span class="acc-title">📄 <span data-tr="Belge &amp; CamScanner Evrak" data-en="Document &amp; Office Tools">Belge &amp; CamScanner Evrak</span></span>
+            <span class="acc-title">
+              <svg style="width:13px;height:13px;stroke:#38bdf8;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              <span data-tr="Belge &amp; CamScanner Evrak" data-en="Document &amp; Office Tools">Belge &amp; CamScanner Evrak</span>
+            </span>
+            <span class="active-indicator-dot"></span>
             <span class="acc-chevron">▾</span>
           </div>
           <div class="acc-body">
             <div class="pro-quick-btn-grid">
               <button type="button" class="pro-tool-btn" onclick="quickAdd('magic_color')">
-                <span class="btn-icon-wrap">✨</span>
+                <span class="btn-icon-wrap">
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2" /></svg>
+                </span>
                 <span data-tr="Sihirli Renk" data-en="Magic Color">Sihirli Renk</span>
               </button>
               <button type="button" class="pro-tool-btn" onclick="quickAdd('perspective_warp')">
-                <span class="btn-icon-wrap">📐</span>
+                <span class="btn-icon-wrap">
+                  <svg viewBox="0 0 24 24"><path d="M3 5l18-2-3 16L4 21z" /></svg>
+                </span>
                 <span data-tr="Köşe Düzelt" data-en="Deskew">Köşe Düzelt</span>
               </button>
               <button type="button" class="pro-tool-btn" onclick="openSignatureModal()">
-                <span class="btn-icon-wrap">✍️</span>
+                <span class="btn-icon-wrap">
+                  <svg viewBox="0 0 24 24"><path d="M18 2l4 4-12 12H6v-4L18 2z" /></svg>
+                </span>
                 <span data-tr="İmza Pad" data-en="Draw Sign">İmza Pad</span>
               </button>
               <button type="button" class="pro-tool-btn" onclick="quickAdd('official_stamp')">
-                <span class="btn-icon-wrap">🔴</span>
+                <span class="btn-icon-wrap">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /></svg>
+                </span>
                 <span data-tr="Evrak Kaşesi" data-en="Official Seal">Evrak Kaşesi</span>
               </button>
               <button type="button" class="pro-tool-btn" onclick="openOcrModal()">
-                <span class="btn-icon-wrap">🔍</span>
+                <span class="btn-icon-wrap">
+                  <svg viewBox="0 0 24 24"><path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3" /><line x1="9" y1="12" x2="15" y2="12" /></svg>
+                </span>
                 <span data-tr="OCR Metin" data-en="OCR Text">OCR Metin</span>
               </button>
               <button type="button" class="pro-tool-btn" onclick="runAutoPiiRedaction()">
-                <span class="btn-icon-wrap">🛡️</span>
+                <span class="btn-icon-wrap">
+                  <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                </span>
                 <span data-tr="TC / IBAN Gizle" data-en="Mask PII">TC / IBAN Gizle</span>
               </button>
               <button type="button" class="pro-tool-btn" onclick="openIdComposerModal()">
-                <span class="btn-icon-wrap">🪪</span>
+                <span class="btn-icon-wrap">
+                  <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" /></svg>
+                </span>
                 <span data-tr="Kimlik Birleştir" data-en="ID Combine">Kimlik Birleştir</span>
               </button>
               <button type="button" class="pro-tool-btn" onclick="quickAdd('document_clean')">
-                <span class="btn-icon-wrap">📄</span>
+                <span class="btn-icon-wrap">
+                  <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                </span>
                 <span data-tr="Fon Beyazlat" data-en="Clean Whiten">Fon Beyazlat</span>
               </button>
             </div>
@@ -1790,7 +1985,14 @@
         <!-- 4. Detay & Optik (Detail & Lens) -->
         <div class="pro-accordion closed" id="accDetail">
           <div class="acc-header" onclick="toggleAccordion('accDetail')">
-            <span class="acc-title">🔍 <span data-tr="Detay, Netlik &amp; Gren" data-en="Detail, Sharpness &amp; Grain">Detay, Netlik &amp; Gren</span></span>
+            <span class="acc-title">
+              <svg style="width:13px;height:13px;stroke:#a855f7;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 2a10 10 0 0 1 10 10" />
+              </svg>
+              <span data-tr="Detay, Netlik &amp; Gren" data-en="Detail, Sharpness &amp; Grain">Detay, Netlik &amp; Gren</span>
+            </span>
+            <span class="active-indicator-dot"></span>
             <span class="acc-chevron">▾</span>
           </div>
           <div class="acc-body">
@@ -1799,21 +2001,21 @@
                 <span data-tr="Keskinleştirme (Unsharp)" data-en="Sharpen">Keskinleştirme (Unsharp)</span>
                 <span class="val" id="valDetailSharpen">0.0</span>
               </div>
-              <input type="range" id="sliderDetailSharpen" min="0" max="2.5" step="0.1" value="0" oninput="handleDirectSlider('sharpen', 'amount', this.value, 'valDetailSharpen')" />
+              <input type="range" id="sliderDetailSharpen" min="0" max="2.5" step="0.1" value="0" ondblclick="resetSliderVal(this, 0, 'valDetailSharpen', 'sharpen', 'amount')" oninput="handleDirectSlider('sharpen', 'amount', this.value, 'valDetailSharpen')" />
             </div>
             <div class="pro-slider-row">
               <div class="slider-meta">
                 <span data-tr="Vinyet Karartma (Vignette)" data-en="Vignette">Vinyet Karartma</span>
                 <span class="val" id="valDetailVignette">0.0</span>
               </div>
-              <input type="range" id="sliderDetailVignette" min="0" max="1.5" step="0.1" value="0" oninput="handleDirectSlider('vignette', 'intensity', this.value, 'valDetailVignette')" />
+              <input type="range" id="sliderDetailVignette" min="0" max="1.5" step="0.1" value="0" ondblclick="resetSliderVal(this, 0, 'valDetailVignette', 'vignette', 'intensity')" oninput="handleDirectSlider('vignette', 'intensity', this.value, 'valDetailVignette')" />
             </div>
             <div class="pro-slider-row">
               <div class="slider-meta">
                 <span data-tr="Analog Film Greni" data-en="Film Grain">Analog Film Greni</span>
                 <span class="val" id="valDetailGrain">0.0</span>
               </div>
-              <input type="range" id="sliderDetailGrain" min="0" max="1.0" step="0.05" value="0" oninput="handleDirectSlider('film_grain', 'intensity', this.value, 'valDetailGrain')" />
+              <input type="range" id="sliderDetailGrain" min="0" max="1.0" step="0.05" value="0" ondblclick="resetSliderVal(this, 0, 'valDetailGrain', 'film_grain', 'intensity')" oninput="handleDirectSlider('film_grain', 'intensity', this.value, 'valDetailGrain')" />
             </div>
           </div>
         </div>
@@ -1821,8 +2023,14 @@
         <!-- 5. Aktif Araç Parametreleri & Katmanlar -->
         <div class="pro-accordion" id="accActiveStep">
           <div class="acc-header" onclick="toggleAccordion('accActiveStep')">
-            <span class="acc-title">📋 <span data-tr="Seçili Araç Parametreleri" data-en="Selected Tool Parameters">Seçili Araç Parametreleri</span></span>
+            <span class="acc-title">
+              <svg style="width:13px;height:13px;stroke:#38bdf8;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+                <rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+              <span data-tr="Seçili Araç Parametreleri" data-en="Selected Tool Parameters">Seçili Araç Parametreleri</span>
+            </span>
             <span id="activeLayersCount" style="font-size:10.5px;color:var(--pf-accent);font-weight:600;"></span>
+            <span class="active-indicator-dot"></span>
             <span class="acc-chevron">▾</span>
           </div>
           <div class="acc-body" id="stepsList">
@@ -1837,14 +2045,14 @@
   <div id="canvasContextMenu" class="canvas-context-menu" role="menu">
     <div class="context-item" onclick="copyProcessedImageToClipboard()">
       <div class="context-left">
-        <span class="context-icon">📋</span>
+        <span class="context-icon"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
         <span data-tr="Görseli Kopyala" data-en="Copy Image">Görseli Kopyala</span>
       </div>
       <span class="context-shortcut">Ctrl+C</span>
     </div>
     <div class="context-item" onclick="hideContextMenu();exportAs(exportFormat ? exportFormat.value : 'PNG');">
       <div class="context-left">
-        <span class="context-icon">💾</span>
+        <span class="context-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
         <span data-tr="Görseli İndir" data-en="Download Image">Görseli İndir</span>
       </div>
       <span class="context-shortcut">Ctrl+S</span>
@@ -1852,38 +2060,38 @@
     <div class="context-divider"></div>
     <div class="context-item" onclick="hideContextMenu();setViewMode(currentViewMode === 'curtain' ? 'split' : (currentViewMode === 'split' ? 'single' : 'curtain'))">
       <div class="context-left">
-        <span class="context-icon">🌓</span>
+        <span class="context-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="2" x2="12" y2="22"/></svg></span>
         <span data-tr="Görünüm Modunu Değiştir" data-en="Cycle View Mode">Görünüm Modunu Değiştir</span>
       </div>
     </div>
     <div class="context-item" onclick="hideContextMenu();fitCanvas()">
       <div class="context-left">
-        <span class="context-icon">⛶</span>
+        <span class="context-icon"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></span>
         <span data-tr="Ekrana Sığdır" data-en="Fit to Screen">Ekrana Sığdır</span>
       </div>
     </div>
     <div class="context-item" onclick="hideContextMenu();resetZoom()">
       <div class="context-left">
-        <span class="context-icon">🔍</span>
+        <span class="context-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></span>
         <span data-tr="%100 Gerçek Boyut" data-en="100% Actual Size">%100 Gerçek Boyut</span>
       </div>
     </div>
     <div class="context-item" onclick="hideContextMenu();rotateCanvas()">
       <div class="context-left">
-        <span class="context-icon">↻</span>
+        <span class="context-icon"><svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg></span>
         <span data-tr="90° Saat Yönünde Döndür" data-en="Rotate 90° Clockwise">90° Saat Yönünde Döndür</span>
       </div>
     </div>
     <div class="context-item" onclick="hideContextMenu();openBatchModal();">
       <div class="context-left">
-        <span class="context-icon">📦</span>
+        <span class="context-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>
         <span data-tr="Toplu İşlem (Batch ZIP)" data-en="Batch Process (ZIP)">Toplu İşlem (Batch ZIP)</span>
       </div>
       <span class="context-shortcut">Ctrl+B</span>
     </div>
     <div class="context-item" onclick="hideContextMenu();openMultipageModal();">
       <div class="context-left">
-        <span class="context-icon">📑</span>
+        <span class="context-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
         <span data-tr="Çok Sayfalı PDF Birleştir" data-en="Multi-Page PDF Merge">Çok Sayfalı PDF Birleştir</span>
       </div>
       <span class="context-shortcut">Ctrl+M</span>
@@ -1891,7 +2099,7 @@
     <div class="context-divider"></div>
     <div class="context-item" onclick="hideContextMenu();resetAllSteps()">
       <div class="context-left">
-        <span class="context-icon">🔄</span>
+        <span class="context-icon"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg></span>
         <span data-tr="Tüm Efektleri Sıfırla" data-en="Reset All Effects">Tüm Efektleri Sıfırla</span>
       </div>
     </div>
@@ -1902,7 +2110,7 @@
     <div style="background:#0f141d;border:1px solid var(--pf-border);border-radius:var(--radius-sm);width:90%;max-width:520px;padding:22px;box-shadow:0 16px 40px rgba(0,0,0,0.8);display:flex;flex-direction:column;gap:14px;color:var(--pf-text-white);">
       <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--pf-border);padding-bottom:12px;">
         <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:16px;">📦</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="color:var(--pf-accent);"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
           <span style="font-weight:700;font-size:14px;" data-tr="Toplu Görsel İşleme & ZIP İndirme" data-en="Batch Image Processing & ZIP Export">Toplu Görsel İşleme & ZIP İndirme</span>
         </div>
         <button type="button" onclick="closeBatchModal()" style="background:none;border:none;color:var(--pf-text-muted);font-size:18px;cursor:pointer;line-height:1;">×</button>
@@ -1914,7 +2122,7 @@
 
       <div id="batchDropzone" onclick="document.getElementById('batchFileInput').click()" style="border:2px dashed var(--pf-border);border-radius:var(--radius-sm);padding:24px 16px;text-align:center;cursor:pointer;background:#090d14;transition:all 0.15s ease;">
         <input type="file" multiple id="batchFileInput" accept="image/*" style="display:none" onchange="handleBatchFileSelect(event)">
-        <div style="font-size:24px;margin-bottom:8px;">📁</div>
+        <div style="display:flex;justify-content:center;margin-bottom:8px;"><svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" fill="none" stroke-width="1.8" style="color:var(--pf-accent);"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
         <div style="font-size:12.5px;font-weight:600;color:var(--pf-accent);" data-tr="Görselleri Seçin veya Buraya Sürükleyin" data-en="Choose Images or Drop Here">Görselleri Seçin veya Buraya Sürükleyin</div>
         <div id="batchFileCountText" style="font-size:11px;color:var(--pf-text-muted);margin-top:4px;" data-tr="Seçilen görsel yok" data-en="No files chosen">Seçilen görsel yok</div>
       </div>
@@ -1949,7 +2157,7 @@
     <div style="background:#0f141d;border:1px solid var(--pf-border);border-radius:var(--radius-sm);width:90%;max-width:580px;padding:22px;box-shadow:0 16px 40px rgba(0,0,0,0.8);display:flex;flex-direction:column;gap:14px;color:var(--pf-text-white);max-height:85vh;overflow-y:auto;">
       <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--pf-border);padding-bottom:12px;">
         <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:16px;">📑</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="color:var(--pf-accent);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
           <span style="font-weight:700;font-size:14px;" data-tr="Çok Sayfalı Belge Yöneticisi & PDF Birleştirme" data-en="Multi-Page Document Manager & PDF Merge">Çok Sayfalı Belge Yöneticisi & PDF Birleştirme</span>
         </div>
         <button type="button" onclick="closeMultipageModal()" style="background:none;border:none;color:var(--pf-text-muted);font-size:18px;cursor:pointer;line-height:1;">×</button>
@@ -2004,7 +2212,7 @@
     <div style="background:#0f141d;border:1px solid var(--pf-border);border-radius:var(--radius-sm);width:90%;max-width:560px;padding:22px;box-shadow:0 16px 40px rgba(0,0,0,0.8);display:flex;flex-direction:column;gap:14px;color:var(--pf-text-white);max-height:85vh;overflow-y:auto;">
       <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--pf-border);padding-bottom:12px;">
         <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:16px;">🪪</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="color:var(--pf-accent);"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><line x1="15" y1="8" x2="17" y2="8"/><line x1="15" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>
           <span style="font-weight:700;font-size:14px;" data-tr="Kimlik / Ehliyet Çift Yüz Birleştirici" data-en="ID Card Front & Back Dual-Side Composer">Kimlik / Ehliyet Çift Yüz Birleştirici</span>
         </div>
         <button type="button" onclick="closeIdComposerModal()" style="background:none;border:none;color:var(--pf-text-muted);font-size:18px;cursor:pointer;line-height:1;">×</button>
@@ -2096,7 +2304,7 @@
     <div class="pf-modal-box" style="max-width:620px;width:92%;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid var(--pf-border);padding-bottom:10px;">
         <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:16px;">🔍</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="color:var(--pf-accent);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <strong style="font-size:15px;color:#fff;" data-tr="Akıllı OCR Metin Tanıma & Denetleyici" data-en="Smart OCR Text Inspector & Exporter">Akıllı OCR Metin Tanıma & Denetleyici</strong>
         </div>
         <button type="button" class="btn-icon" onclick="closeOcrModal()">×</button>
@@ -2935,8 +3143,10 @@
       pushHistory();
       renderCategoryDrawer();
       renderStepsUI();
+      syncProSliders();
       scheduleRender();
       statusMessage.textContent = (currentLang === "en") ? "All effects reset" : "Tüm efektler sıfırlandı";
+      updateStatusbarInfo();
     }
 
     function quickAdd(opKey) {
@@ -4669,48 +4879,89 @@
       }
     }
 
+    function getCommandSvg(id) {
+      const svgs = {
+        deskew: '<svg viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V5l14 16"/></svg>',
+        magic_color: '<svg viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/></svg>',
+        multipage: '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+        ocr: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+        id_compose: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><line x1="15" y1="8" x2="17" y2="8"/><line x1="15" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>',
+        official_stamp: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 7v2m0 6v2m-5-5h2m6 0h2"/></svg>',
+        signature: '<svg viewBox="0 0 24 24"><path d="m18 2 4 4-12 12H6v-4L18 2z"/><line x1="4" y1="22" x2="20" y2="22"/></svg>',
+        pii_redaction: '<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="9" y1="12" x2="15" y2="12"/></svg>',
+        doc_clean: '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+        remove_shadows: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor"/></svg>',
+        binarize: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7z" fill="currentColor"/></svg>',
+        auto_enhance: '<svg viewBox="0 0 24 24"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2"/></svg>',
+        background_removal: '<svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/></svg>',
+        inpaint: '<svg viewBox="0 0 24 24"><path d="m18 15-6-6-7 7a2 2 0 0 0 0 2.83l1.17 1.17a2 2 0 0 0 2.83 0l7-7z"/><path d="m14 5 4 4"/></svg>',
+        preset: '<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/></svg>',
+        duotone: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"/></svg>',
+        brightness_contrast: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>',
+        vibrance: '<svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+        clahe: '<svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+        grayscale: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v20a10 10 0 0 0 0-20z"/></svg>',
+        denoise: '<svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+        sharpen: '<svg viewBox="0 0 24 24"><polygon points="12 2 19 21 12 17 5 21 12 2"/></svg>',
+        open_file: '<svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
+        batch_zip: '<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>',
+        fit_canvas: '<svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>',
+        reset_zoom: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>',
+        rotate_90: '<svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>',
+        view_curtain: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="2" x2="12" y2="22"/></svg>',
+        view_split: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>',
+        undo_action: '<svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>',
+        redo_action: '<svg viewBox="0 0 24 24"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"/></svg>',
+        reset_all: '<svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>',
+        export_png: '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+        export_jpeg: '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+        export_pdf: '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
+      };
+      return svgs[id] || '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>';
+    }
+
     // Raycast / Linear Tarzı Hızlı Komut Paleti (Ctrl+K)
     const COMMAND_ITEMS = [
       // Belge & Evrak
-      { id: "deskew", group: "Belge & Evrak", groupEn: "Document & Office", icon: "📐", name: "Akıllı Belge Köşesi & 4-Nokta Perspektif Düzelt", nameEn: "Auto Corner Detection & Perspective Deskew", action: () => quickAdd("perspective_warp") },
-      { id: "magic_color", group: "Belge & Evrak", groupEn: "Document & Office", icon: "✨", name: "CamScanner Sihirli Renk (Magic Color)", nameEn: "CamScanner Magic Color Mode", action: () => quickAdd("magic_color") },
-      { id: "multipage", group: "Belge & Evrak", groupEn: "Document & Office", icon: "📑", name: "Çok Sayfalı Belge & Tek PDF Birleştirici", nameEn: "Multi-Page Document & PDF Merger", shortcut: "Ctrl+M", action: () => openMultipageModal() },
-      { id: "ocr", group: "Belge & Evrak", groupEn: "Document & Office", icon: "🔍", name: "Akıllı OCR Metin Denetleyici & Dışa Aktar", nameEn: "Smart OCR Text Inspector & Exporter", action: () => openOcrModal() },
-      { id: "id_compose", group: "Belge & Evrak", groupEn: "Document & Office", icon: "🪪", name: "Kimlik / Pasaport / Ehliyet Çift Yüz Birleştirici", nameEn: "ID Card / Passport Dual-Side Combiner", action: () => openIdComposerModal() },
-      { id: "official_stamp", group: "Belge & Evrak", groupEn: "Document & Office", icon: "🔴", name: "Resmi Evrak Kaşesi & Doğrulama QR Damgası", nameEn: "Official Document Stamp & QR Verification Seal", action: () => quickAdd("official_stamp") },
-      { id: "signature", group: "Belge & Evrak", groupEn: "Document & Office", icon: "✍️", name: "Dijital İmza Pad (İmzanı Çiz & Ekle)", nameEn: "Draw & Stamp Digital Signature", action: () => openSignatureModal() },
-      { id: "pii_redaction", group: "Belge & Evrak", groupEn: "Document & Office", icon: "🛡️", name: "TC Kimlik & IBAN Otomatik Sansürleme (PII)", nameEn: "Auto Redact ID & IBAN (Privacy)", action: () => runAutoPiiRedaction() },
-      { id: "doc_clean", group: "Belge & Evrak", groupEn: "Document & Office", icon: "📄", name: "Döküman Arka Plan Temizleyici (Beyazlatma)", nameEn: "Document Background Clean & Whiten", action: () => quickAdd("document_clean") },
-      { id: "remove_shadows", group: "Belge & Evrak", groupEn: "Document & Office", icon: "🌓", name: "Belge Gölge Giderme & Işık Eşitleme", nameEn: "Remove Shadows & Even Light", action: () => quickAdd("remove_shadows") },
-      { id: "binarize", group: "Belge & Evrak", groupEn: "Document & Office", icon: "🔲", name: "Net Binarize & Fotokopi Eşiği (Threshold)", nameEn: "Binarize & Photocopy Sharp Threshold", action: () => quickAdd("binarize") },
+      { id: "deskew", group: "Belge & Evrak", groupEn: "Document & Office", name: "Akıllı Belge Köşesi & 4-Nokta Perspektif Düzelt", nameEn: "Auto Corner Detection & Perspective Deskew", action: () => quickAdd("perspective_warp") },
+      { id: "magic_color", group: "Belge & Evrak", groupEn: "Document & Office", name: "CamScanner Sihirli Renk (Magic Color)", nameEn: "CamScanner Magic Color Mode", action: () => quickAdd("magic_color") },
+      { id: "multipage", group: "Belge & Evrak", groupEn: "Document & Office", name: "Çok Sayfalı Belge & Tek PDF Birleştirici", nameEn: "Multi-Page Document & PDF Merger", shortcut: "Ctrl+M", action: () => openMultipageModal() },
+      { id: "ocr", group: "Belge & Evrak", groupEn: "Document & Office", name: "Akıllı OCR Metin Denetleyici & Dışa Aktar", nameEn: "Smart OCR Text Inspector & Exporter", action: () => openOcrModal() },
+      { id: "id_compose", group: "Belge & Evrak", groupEn: "Document & Office", name: "Kimlik / Pasaport / Ehliyet Çift Yüz Birleştirici", nameEn: "ID Card / Passport Dual-Side Combiner", action: () => openIdComposerModal() },
+      { id: "official_stamp", group: "Belge & Evrak", groupEn: "Document & Office", name: "Resmi Evrak Kaşesi & Doğrulama QR Damgası", nameEn: "Official Document Stamp & QR Verification Seal", action: () => quickAdd("official_stamp") },
+      { id: "signature", group: "Belge & Evrak", groupEn: "Document & Office", name: "Dijital İmza Pad (İmzanı Çiz & Ekle)", nameEn: "Draw & Stamp Digital Signature", action: () => openSignatureModal() },
+      { id: "pii_redaction", group: "Belge & Evrak", groupEn: "Document & Office", name: "TC Kimlik & IBAN Otomatik Sansürleme (PII)", nameEn: "Auto Redact ID & IBAN (Privacy)", action: () => runAutoPiiRedaction() },
+      { id: "doc_clean", group: "Belge & Evrak", groupEn: "Document & Office", name: "Döküman Arka Plan Temizleyici (Beyazlatma)", nameEn: "Document Background Clean & Whiten", action: () => quickAdd("document_clean") },
+      { id: "remove_shadows", group: "Belge & Evrak", groupEn: "Document & Office", name: "Belge Gölge Giderme & Işık Eşitleme", nameEn: "Remove Shadows & Even Light", action: () => quickAdd("remove_shadows") },
+      { id: "binarize", group: "Belge & Evrak", groupEn: "Document & Office", name: "Net Binarize & Fotokopi Eşiği (Threshold)", nameEn: "Binarize & Photocopy Sharp Threshold", action: () => quickAdd("binarize") },
 
       // Fotoğraf & AI
-      { id: "auto_enhance", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🪄", name: "1-Tap Akıllı İyileştirme (Auto-Enhance)", nameEn: "1-Tap Auto Enhance", action: () => quickAdd("auto_enhance") },
-      { id: "background_removal", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "✂️", name: "Arka Planı Sil & Saydam Yap (Cutout AI)", nameEn: "Remove Background (Cutout AI)", action: () => quickAdd("background_removal") },
-      { id: "inpaint", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🧹", name: "Sihirli Silgi (İstenmeyen Nesneyi Sil)", nameEn: "Magic Eraser (Inpaint Object)", action: () => quickAdd("inpaint") },
-      { id: "preset", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🎬", name: "Sinematik LUT Renk Presetleri", nameEn: "Cinematic LUT Color Presets", action: () => quickAdd("preset") },
-      { id: "duotone", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🎨", name: "Duotone İki Renkli Gradyan Eşleme", nameEn: "Duotone Two-Tone Gradient Map", action: () => quickAdd("duotone") },
-      { id: "brightness_contrast", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "☀️", name: "Parlaklık & Kontrast Ayarı", nameEn: "Brightness & Contrast Adjustment", action: () => quickAdd("brightness_contrast") },
-      { id: "vibrance", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🌈", name: "Canlılık & Doygunluk (Vibrance)", nameEn: "Vibrance & Saturation", action: () => quickAdd("vibrance") },
-      { id: "clahe", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "⚡", name: "Dinamik HDR & Gölge Açma (CLAHE)", nameEn: "Dynamic HDR & Shadow Boost (CLAHE)", action: () => quickAdd("histogram_equalization") },
-      { id: "grayscale", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🏁", name: "Siyah & Beyaz (Grayscale)", nameEn: "Black & White (Grayscale)", action: () => quickAdd("grayscale") },
-      { id: "denoise", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🌌", name: "Gece Parazit Giderme (Denoise)", nameEn: "Night Photo Denoise", action: () => quickAdd("denoise") },
-      { id: "sharpen", group: "Fotoğraf & AI", groupEn: "Photo & AI", icon: "🗡️", name: "Detay Keskinleştirme (Unsharp)", nameEn: "Detail Sharpen (Unsharp)", action: () => quickAdd("sharpen") },
+      { id: "auto_enhance", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "1-Tap Akıllı İyileştirme (Auto-Enhance)", nameEn: "1-Tap Auto Enhance", action: () => quickAdd("auto_enhance") },
+      { id: "background_removal", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Arka Planı Sil & Saydam Yap (Cutout AI)", nameEn: "Remove Background (Cutout AI)", action: () => quickAdd("background_removal") },
+      { id: "inpaint", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Sihirli Silgi (İstenmeyen Nesneyi Sil)", nameEn: "Magic Eraser (Inpaint Object)", action: () => quickAdd("inpaint") },
+      { id: "preset", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Sinematik LUT Renk Presetleri", nameEn: "Cinematic LUT Color Presets", action: () => quickAdd("preset") },
+      { id: "duotone", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Duotone İki Renkli Gradyan Eşleme", nameEn: "Duotone Two-Tone Gradient Map", action: () => quickAdd("duotone") },
+      { id: "brightness_contrast", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Parlaklık & Kontrast Ayarı", nameEn: "Brightness & Contrast Adjustment", action: () => quickAdd("brightness_contrast") },
+      { id: "vibrance", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Canlılık & Doygunluk (Vibrance)", nameEn: "Vibrance & Saturation", action: () => quickAdd("vibrance") },
+      { id: "clahe", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Dinamik HDR & Gölge Açma (CLAHE)", nameEn: "Dynamic HDR & Shadow Boost (CLAHE)", action: () => quickAdd("histogram_equalization") },
+      { id: "grayscale", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Siyah & Beyaz (Grayscale)", nameEn: "Black & White (Grayscale)", action: () => quickAdd("grayscale") },
+      { id: "denoise", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Gece Parazit Giderme (Denoise)", nameEn: "Night Photo Denoise", action: () => quickAdd("denoise") },
+      { id: "sharpen", group: "Fotoğraf & AI", groupEn: "Photo & AI", name: "Detay Keskinleştirme (Unsharp)", nameEn: "Detail Sharpen (Unsharp)", action: () => quickAdd("sharpen") },
 
       // Araçlar & Dışa Aktar
-      { id: "open_file", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "📂", name: "Görsel veya Belge Yükle...", nameEn: "Open Image or PDF Document...", shortcut: "Ctrl+O", action: () => document.getElementById("filePicker").click() },
-      { id: "batch_zip", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "📦", name: "Toplu İşleme & ZIP İndir...", nameEn: "Batch Processing & ZIP Download...", shortcut: "Ctrl+B", action: () => openBatchModal() },
-      { id: "fit_canvas", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "⛶", name: "Ekrana Sığdır", nameEn: "Fit to Screen", action: () => fitCanvas() },
-      { id: "reset_zoom", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "🔍", name: "%100 Gerçek Boyut", nameEn: "100% Actual Size", action: () => resetZoom() },
-      { id: "rotate_90", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "↻", name: "90° Saat Yönünde Döndür", nameEn: "Rotate 90° Clockwise", action: () => rotateCanvas() },
-      { id: "view_curtain", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "🌓", name: "Canlı Perde Kıyaslama (Curtain Slider)", nameEn: "Curtain Split Slider View", action: () => setViewMode("curtain") },
-      { id: "view_split", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "👥", name: "Yan Yana Görünüm (Side-by-Side)", nameEn: "Side-by-Side Split View", action: () => setViewMode("split") },
-      { id: "undo_action", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "↩️", name: "Geri Al", nameEn: "Undo", shortcut: "Ctrl+Z", action: () => undo() },
-      { id: "redo_action", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "↪️", name: "Yinele", nameEn: "Redo", shortcut: "Ctrl+Y", action: () => redo() },
-      { id: "reset_all", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "🔄", name: "Tüm Efektleri ve Katmanları Sıfırla", nameEn: "Reset All Effects & Steps", action: () => resetAllSteps() },
-      { id: "export_png", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "💾", name: "PNG Olarak Dışa Aktar", nameEn: "Export as PNG", action: () => downloadCurrentFormat("PNG") },
-      { id: "export_jpeg", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "💾", name: "JPEG Olarak Dışa Aktar", nameEn: "Export as JPEG", action: () => downloadCurrentFormat("JPEG") },
-      { id: "export_pdf", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", icon: "📄", name: "PDF Olarak Dışa Aktar", nameEn: "Export as PDF", action: () => downloadCurrentFormat("PDF") }
+      { id: "open_file", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "Görsel veya Belge Yükle...", nameEn: "Open Image or PDF Document...", shortcut: "Ctrl+O", action: () => document.getElementById("filePicker").click() },
+      { id: "batch_zip", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "Toplu İşleme & ZIP İndir...", nameEn: "Batch Processing & ZIP Download...", shortcut: "Ctrl+B", action: () => openBatchModal() },
+      { id: "fit_canvas", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "Ekrana Sığdır", nameEn: "Fit to Screen", action: () => fitCanvas() },
+      { id: "reset_zoom", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "%100 Gerçek Boyut", nameEn: "100% Actual Size", action: () => resetZoom() },
+      { id: "rotate_90", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "90° Saat Yönünde Döndür", nameEn: "Rotate 90° Clockwise", action: () => rotateCanvas() },
+      { id: "view_curtain", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "Canlı Perde Kıyaslama (Curtain Slider)", nameEn: "Curtain Split Slider View", action: () => setViewMode("curtain") },
+      { id: "view_split", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "Yan Yana Görünüm (Side-by-Side)", nameEn: "Side-by-Side Split View", action: () => setViewMode("split") },
+      { id: "undo_action", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "Geri Al", nameEn: "Undo", shortcut: "Ctrl+Z", action: () => undo() },
+      { id: "redo_action", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "Yinele", nameEn: "Redo", shortcut: "Ctrl+Y", action: () => redo() },
+      { id: "reset_all", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "Tüm Efektleri ve Katmanları Sıfırla", nameEn: "Reset All Effects & Steps", action: () => resetAllSteps() },
+      { id: "export_png", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "PNG Olarak Dışa Aktar", nameEn: "Export as PNG", action: () => downloadCurrentFormat("PNG") },
+      { id: "export_jpeg", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "JPEG Olarak Dışa Aktar", nameEn: "Export as JPEG", action: () => downloadCurrentFormat("JPEG") },
+      { id: "export_pdf", group: "Araçlar & Dışa Aktar", groupEn: "Tools & Export", name: "PDF Olarak Dışa Aktar", nameEn: "Export as PDF", action: () => downloadCurrentFormat("PDF") }
     ];
 
     let filteredCommands = [];
@@ -4772,7 +5023,7 @@
         html += `
           <div class="command-item ${isSelected ? "selected" : ""}" data-idx="${idx}" onclick="executePaletteItem(${idx})">
             <div class="cmd-left">
-              <span class="cmd-icon">${cmd.icon}</span>
+              <span class="cmd-icon">${getCommandSvg(cmd.id)}</span>
               <span>${title}</span>
             </div>
             ${cmd.shortcut ? `<span class="cmd-badge">${cmd.shortcut}</span>` : ""}
@@ -4828,11 +5079,11 @@
     ];
 
     const PRO_DOC_MODES = [
-      { id: "magic_color", name: "CamScanner Sihirli Renk", nameEn: "CamScanner Magic Color", desc: "Beyaz zemin, net canlı yazılar", icon: "✨", op: "magic_color" },
-      { id: "doc_clean", name: "Döküman Arka Plan Temizle", nameEn: "Clean Background", desc: "Kağıt lekelerini & sararmayı siler", icon: "📄", op: "document_clean" },
-      { id: "binarize", name: "Yüksek Kontrast Fotokopi", nameEn: "Sharp Binarize", desc: "Taranmış siyah-beyaz net eşikleme", icon: "🔲", op: "binarize" },
-      { id: "deskew", name: "4-Köşe Perspektif Düzelt", nameEn: "Perspective Deskew", desc: "Eğik çekilmiş evrakı hizalar", icon: "📐", op: "perspective_warp" },
-      { id: "remove_shadows", name: "Gölge Giderme & Işık Eşitle", nameEn: "Remove Shadows", desc: "Telefon gölgesini ortadan kaldırır", icon: "🌓", op: "remove_shadows" }
+      { id: "magic_color", name: "CamScanner Sihirli Renk", nameEn: "CamScanner Magic Color", desc: "Beyaz zemin, net canlı yazılar", iconSvg: '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/></svg>', op: "magic_color" },
+      { id: "doc_clean", name: "Döküman Arka Plan Temizle", nameEn: "Clean Background", desc: "Kağıt lekelerini & sararmayı siler", iconSvg: '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>', op: "document_clean" },
+      { id: "binarize", name: "Yüksek Kontrast Fotokopi", nameEn: "Sharp Binarize", desc: "Taranmış siyah-beyaz net eşikleme", iconSvg: '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7z" fill="currentColor"/></svg>', op: "binarize" },
+      { id: "deskew", name: "4-Köşe Perspektif Düzelt", nameEn: "Perspective Deskew", desc: "Eğik çekilmiş evrakı hizalar", iconSvg: '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V5l14 16"/></svg>', op: "perspective_warp" },
+      { id: "remove_shadows", name: "Gölge Giderme & Işık Eşitle", nameEn: "Remove Shadows", desc: "Telefon gölgesini ortadan kaldırır", iconSvg: '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor"/></svg>', op: "remove_shadows" }
     ];
 
     function renderPresetVitrin() {
@@ -4861,7 +5112,7 @@
         const sub = currentLang === "en" ? d.descEn : d.desc;
         return `
           <div class="preset-vitrin-card" onclick="quickAdd('${d.op}')">
-            <div class="preset-swatch" style="background:#1e293b;color:var(--pf-accent);">${d.icon}</div>
+            <div class="preset-swatch" style="background:#1e293b;color:var(--pf-accent);display:flex;align-items:center;justify-content:center;">${d.iconSvg}</div>
             <div>
               <div class="preset-card-title">${title}</div>
               <div class="preset-card-sub">${sub}</div>
@@ -4869,6 +5120,39 @@
           </div>
         `;
       }).join("");
+    }
+
+    function resetSliderVal(inputEl, defaultVal, valId, op, key) {
+      if (inputEl) {
+        inputEl.value = defaultVal;
+        const valEl = document.getElementById(valId);
+        if (valEl) valEl.textContent = parseFloat(defaultVal).toFixed(defaultVal % 1 === 0 ? 1 : 2);
+        handleDirectSlider(op, key, defaultVal, valId);
+      }
+    }
+
+    function updateProActiveDots() {
+      const b = parseFloat(document.getElementById("sliderToneBrightness")?.value || "0");
+      const c = parseFloat(document.getElementById("sliderToneContrast")?.value || "1");
+      const v = parseFloat(document.getElementById("sliderToneVibrance")?.value || "0");
+      const s = parseFloat(document.getElementById("sliderToneSaturation")?.value || "0");
+      const h = parseFloat(document.getElementById("sliderToneHdr")?.value || "1");
+      const toneActive = b !== 0 || c !== 1.0 || v !== 0 || s !== 0 || h !== 1.0;
+      document.getElementById("accTone")?.classList.toggle("has-active", toneActive);
+
+      const sh = parseFloat(document.getElementById("sliderDetailSharpen")?.value || "0");
+      const vg = parseFloat(document.getElementById("sliderDetailVignette")?.value || "0");
+      const gr = parseFloat(document.getElementById("sliderDetailGrain")?.value || "0");
+      const detailActive = sh !== 0 || vg !== 0 || gr !== 0;
+      document.getElementById("accDetail")?.classList.toggle("has-active", detailActive);
+
+      const aiOps = ["auto_enhance", "background_removal", "inpaint", "face_blur"];
+      const docOps = ["magic_color", "perspective_warp", "official_stamp", "document_clean", "remove_shadows", "binarize"];
+      const hasAi = activeSteps.some(step => aiOps.includes(step.op));
+      const hasDoc = activeSteps.some(step => docOps.includes(step.op));
+      document.getElementById("accAi")?.classList.toggle("has-active", hasAi);
+      document.getElementById("accDoc")?.classList.toggle("has-active", hasDoc);
+      document.getElementById("accActiveStep")?.classList.toggle("has-active", activeSteps.length > 0);
     }
 
     function applyPresetDirect(presetKey) {
@@ -4967,6 +5251,8 @@
         selectedStepId = step.id;
       }
 
+      updateProActiveDots();
+      updateStatusbarInfo();
       scheduleRender();
       if (!handleDirectSlider._timer) {
         handleDirectSlider._timer = setTimeout(() => {
@@ -5020,6 +5306,72 @@
         if (vV) vV.textContent = "0.00";
         if (sS) sS.value = 0;
         if (vS) vS.textContent = "0.00";
+      }
+
+      // HDR CLAHE
+      const stepHdr = activeSteps.find(s => s.op === "histogram_equalization");
+      const sHdr = document.getElementById("sliderToneHdr");
+      const vHdr = document.getElementById("valToneHdr");
+      if (stepHdr && stepHdr.params.clip_limit !== undefined) {
+        if (sHdr) sHdr.value = stepHdr.params.clip_limit;
+        if (vHdr) vHdr.textContent = parseFloat(stepHdr.params.clip_limit).toFixed(1);
+      } else {
+        if (sHdr) sHdr.value = 1.0;
+        if (vHdr) vHdr.textContent = "1.0";
+      }
+
+      // Sharpen
+      const stepSh = activeSteps.find(s => s.op === "sharpen");
+      const sSh = document.getElementById("sliderDetailSharpen");
+      const vSh = document.getElementById("valDetailSharpen");
+      if (stepSh && stepSh.params.amount !== undefined) {
+        if (sSh) sSh.value = stepSh.params.amount;
+        if (vSh) vSh.textContent = parseFloat(stepSh.params.amount).toFixed(1);
+      } else {
+        if (sSh) sSh.value = 0;
+        if (vSh) vSh.textContent = "0.0";
+      }
+
+      // Vignette
+      const stepVg = activeSteps.find(s => s.op === "vignette");
+      const sVg = document.getElementById("sliderDetailVignette");
+      const vVg = document.getElementById("valDetailVignette");
+      if (stepVg && stepVg.params.intensity !== undefined) {
+        if (sVg) sVg.value = stepVg.params.intensity;
+        if (vVg) vVg.textContent = parseFloat(stepVg.params.intensity).toFixed(1);
+      } else {
+        if (sVg) sVg.value = 0;
+        if (vVg) vVg.textContent = "0.0";
+      }
+
+      // Film Grain
+      const stepGr = activeSteps.find(s => s.op === "film_grain");
+      const sGr = document.getElementById("sliderDetailGrain");
+      const vGr = document.getElementById("valDetailGrain");
+      if (stepGr && stepGr.params.intensity !== undefined) {
+        if (sGr) sGr.value = stepGr.params.intensity;
+        if (vGr) vGr.textContent = parseFloat(stepGr.params.intensity).toFixed(2);
+      } else {
+        if (sGr) sGr.value = 0;
+        if (vGr) vGr.textContent = "0.0";
+      }
+
+      updateProActiveDots();
+      updateStatusbarInfo();
+    }
+
+    function updateStatusbarInfo() {
+      const sbDims = document.getElementById("sbDims");
+      const sbZoom = document.getElementById("sbZoom");
+      const sbStatus = document.getElementById("sbStatusText");
+      if (sbDims && canvasDims && canvasDims.textContent) {
+        sbDims.textContent = canvasDims.textContent;
+      }
+      if (sbZoom) {
+        sbZoom.textContent = Math.round(canvasZoom * 100) + "%";
+      }
+      if (sbStatus && statusMessage && statusMessage.textContent) {
+        sbStatus.textContent = statusMessage.textContent;
       }
     }
 
