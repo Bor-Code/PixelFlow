@@ -17,6 +17,7 @@ import pixelflow.operations
 from pixelflow import __version__
 from pixelflow.api.config import ApiSettings, get_api_settings
 from pixelflow.api.schemas import (
+    DetectCornersResponseModel,
     ErrorDetailModel,
     HealthResponseModel,
     OperationDescriptionModel,
@@ -41,6 +42,7 @@ from pixelflow.exceptions import (
     PixelflowError,
     UnknownOperationError,
 )
+from pixelflow.operations.document import detect_document_corners
 from pixelflow.pipeline.loader import load_pipeline_from_string
 
 _ = pixelflow.operations
@@ -162,6 +164,19 @@ def _register_v1_routes(app: FastAPI) -> None:
         output_format: Annotated[str | None, Form()] = None,
     ) -> Response:
         return await _handle_batch_request(images, pipeline, settings, output_format)
+
+    @app.post("/v1/detect-corners", response_model=DetectCornersResponseModel)
+    async def detect_corners_endpoint(
+        file: Annotated[UploadFile, File(...)],
+        settings: Annotated[ApiSettings, Depends(get_api_settings)],
+    ) -> DetectCornersResponseModel:
+        raw = await file.read(settings.max_upload_bytes + 1)
+        if len(raw) > settings.max_upload_bytes:
+            msg = f"Image exceeds maximum of {settings.max_upload_bytes} bytes"
+            raise InvalidImageError(msg)
+        image = decode_image_bytes(raw, max_pixels=settings.max_image_pixels)
+        corners = detect_document_corners(image)
+        return DetectCornersResponseModel(corners=corners)
 
 
 async def _handle_batch_request(

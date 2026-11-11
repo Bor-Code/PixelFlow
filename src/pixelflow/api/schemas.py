@@ -47,3 +47,9 @@ class HealthResponseModel(BaseModel):
 
     status: str
     version: str
+
+
+class DetectCornersResponseModel(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    corners: list[list[int]]

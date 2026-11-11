@@ -175,3 +175,19 @@ async def test_process_batch_endpoint() -> None:
         assert resp.status_code == 200
         assert resp.headers["content-type"] == "application/zip"
         assert len(resp.content) > 0
+
+
+@pytest.mark.anyio
+async def test_detect_corners_endpoint() -> None:
+    app = create_app()
+    transport = httpx.ASGITransport(app=app)
+    img_bytes = encode_image_bytes(np.full((32, 32, 3), 150, dtype=np.uint8), "PNG")
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        resp = await client.post(
+            "/v1/detect-corners",
+            files={"file": ("test.png", img_bytes, "image/png")},
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "corners" in data
+        assert len(data["corners"]) == 4

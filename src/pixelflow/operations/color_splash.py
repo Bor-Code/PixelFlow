@@ -12,9 +12,7 @@ from pixelflow.core.registry import register_operation
 
 
 class ColorSplashParams(OperationParams):
-    preset_color: Literal["red", "green", "blue", "yellow", "orange", "purple", "custom"] = (
-        "red"
-    )
+    preset_color: Literal["red", "green", "blue", "yellow", "orange", "purple", "custom"] = "red"
     hue: float = Field(default=0.0, ge=0.0, le=179.0)
     hue_tolerance: float = Field(default=15.0, ge=1.0, le=90.0)
     min_saturation: float = Field(default=50.0, ge=0.0, le=255.0)

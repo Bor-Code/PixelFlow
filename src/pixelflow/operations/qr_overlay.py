@@ -46,9 +46,7 @@ def _generate_qr_rgb(params: QROverlayParams) -> np.ndarray:
     matrix = cast(np.ndarray, encoder.encode(params.data))
     b = params.border_modules
     padded = cv2.copyMakeBorder(matrix, b, b, b, b, cv2.BORDER_CONSTANT, value=255)
-    resized = cv2.resize(
-        padded, (params.size, params.size), interpolation=cv2.INTER_NEAREST
-    )
+    resized = cv2.resize(padded, (params.size, params.size), interpolation=cv2.INTER_NEAREST)
     fg = _hex_to_rgb(params.fg_color)
     bg = _hex_to_rgb(params.bg_color)
     qr_rgb = np.empty((params.size, params.size, 3), dtype=np.uint8)
@@ -79,9 +77,7 @@ def _blend_qr_into_rgb(rgb: np.ndarray, params: QROverlayParams) -> np.ndarray:
         return rgb
     qr_rgb = _generate_qr_rgb(params)
     h, w = rgb.shape[:2]
-    x, y = _get_coordinates(
-        w, h, params.size, params.margin, params.position, params.x, params.y
-    )
+    x, y = _get_coordinates(w, h, params.size, params.margin, params.position, params.x, params.y)
     x1, y1 = max(0, x), max(0, y)
     x2, y2 = min(w, x + params.size), min(h, y + params.size)
     if x1 >= x2 or y1 >= y2:

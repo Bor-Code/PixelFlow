@@ -2961,6 +2961,46 @@
         card.appendChild(row);
       });
 
+      if (activeStep.op === "perspective_warp") {
+        hasControls = true;
+        const autoBtn = document.createElement("button");
+        autoBtn.type = "button";
+        autoBtn.className = "btn btn-outline";
+        autoBtn.style.cssText = "width:100%;font-size:11.5px;padding:7px 10px;margin-bottom:10px;gap:6px;justify-content:center;display:flex;align-items:center;";
+        autoBtn.innerHTML = `
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V3h4M17 3h4v4M21 17v4h-4M7 21H3v-4"/></svg>
+          <span>${currentLang === "en" ? "Auto-Detect Document Corners" : "Otomatik Belge Köşesi Bul"}</span>
+        `;
+        autoBtn.onclick = async () => {
+          if (!currentBlob) return;
+          autoBtn.disabled = true;
+          autoBtn.textContent = currentLang === "en" ? "Detecting..." : "Köşeler Aranıyor...";
+          try {
+            const fd = new FormData();
+            fd.append("file", currentBlob, "doc.png");
+            const r = await fetch("/v1/detect-corners", { method: "POST", body: fd });
+            if (r.ok) {
+              const data = await r.json();
+              if (data.corners && data.corners.length === 4) {
+                activeStep.params.src_points = data.corners;
+                syncPerspectivePins();
+                scheduleRender();
+                statusMessage.textContent = currentLang === "en" ? "Document corners detected!" : "Belge köşeleri otomatik tespit edildi!";
+              }
+            }
+          } catch (err) {
+            console.error(err);
+          } finally {
+            autoBtn.disabled = false;
+            autoBtn.innerHTML = `
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V3h4M17 3h4v4M21 17v4h-4M7 21H3v-4"/></svg>
+              <span>${currentLang === "en" ? "Auto-Detect Document Corners" : "Otomatik Belge Köşesi Bul"}</span>
+            `;
+          }
+        };
+        card.appendChild(autoBtn);
+      }
+
       (def.fields || []).forEach(f => {
         hasControls = true;
         const row = document.createElement("div");
