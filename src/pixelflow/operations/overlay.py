@@ -34,6 +34,9 @@ class WatermarkParams(OperationParams):
     y: int = Field(default=0, ge=0)
     color: tuple[int, int, int] = (255, 255, 255)
     base_dir: str | None = None
+    font_style: Literal["sans", "serif", "mono", "bold"] = "sans"
+    box_background: bool = Field(default=False)
+    box_color: tuple[int, int, int] = (0, 0, 0)
 
     @model_validator(mode="after")
     def validate_source(self) -> WatermarkParams:
@@ -90,16 +93,29 @@ class WatermarkOperation(ImageOperation[WatermarkParams]):
             cv2.resize(rgba, (new_w, new_h), interpolation=cv2.INTER_AREA),
         )
 
+    @staticmethod
+    def _select_font(style: str) -> int:
+        fonts = {
+            "serif": cv2.FONT_HERSHEY_COMPLEX,
+            "mono": cv2.FONT_HERSHEY_PLAIN,
+            "bold": cv2.FONT_HERSHEY_DUPLEX,
+        }
+        return fonts.get(style, cv2.FONT_HERSHEY_SIMPLEX)
+
     def _render_text_watermark(self, target_w: int) -> npt.NDArray[np.uint8]:
         text = self.params.text or "Pixelflow"
-        font = cv2.FONT_HERSHEY_SIMPLEX
+        font = self._select_font(self.params.font_style)
         font_scale = max(0.4, (target_w * self.params.scale) / max(60.0, len(text) * 18.0))
         thickness = max(1, round(font_scale * 2.0))
         (tw, th), baseline = cv2.getTextSize(text, font, font_scale, thickness)
         pad = 6
-        h_box = max(1, th + baseline + pad * 2)
-        w_box = max(1, tw + pad * 2)
+        h_box, w_box = max(1, th + baseline + pad * 2), max(1, tw + pad * 2)
         canvas = np.zeros((h_box, w_box, 4), dtype=np.uint8)
+        if self.params.box_background:
+            canvas[:, :, 0] = self.params.box_color[0]
+            canvas[:, :, 1] = self.params.box_color[1]
+            canvas[:, :, 2] = self.params.box_color[2]
+            canvas[:, :, 3] = 180
         color_rgba = (
             int(self.params.color[0]),
             int(self.params.color[1]),

@@ -49,6 +49,24 @@ def test_image_watermark_and_grayscale(tmp_path: Path) -> None:
     assert np.all(out_of_bounds == 0)
 
 
+def test_watermark_typography_styles() -> None:
+    img = np.zeros((100, 100, 3), dtype=np.uint8)
+    for font in ("sans", "serif", "mono", "bold"):
+        out = WatermarkOperation(
+            {
+                "text": "'98 11 04",
+                "font_style": font,
+                "position": "bottom-right",
+                "opacity": 1.0,
+                "color": (255, 140, 0),
+                "box_background": True,
+                "box_color": (20, 20, 20),
+            }
+        ).apply(img)
+        assert out.shape == (100, 100, 3)
+        assert np.any(out > 0)
+
+
 def test_golden_image_pipeline_with_tolerance() -> None:
     src = np.zeros((32, 32, 3), dtype=np.uint8)
     src[8:24, 8:24] = [200, 100, 50]
