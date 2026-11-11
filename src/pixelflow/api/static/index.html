@@ -1988,25 +1988,42 @@
     </div>
   </div>
 
-  <!-- OCR Metin Çıktı Modalı -->
+  <!-- Gelişmiş OCR Metin Denetleyici & Dışa Aktarma Modalı -->
   <div id="ocrModal" class="pf-modal">
-    <div class="pf-modal-box">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <strong style="font-size:16px;color:#fff;" data-tr="Belge Metinleri (OCR Tarama)"
-          data-en="Document Text (OCR Scan)">Belge Metinleri (OCR Tarama)</strong>
+    <div class="pf-modal-box" style="max-width:620px;width:92%;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid var(--pf-border);padding-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:16px;">🔍</span>
+          <strong style="font-size:15px;color:#fff;" data-tr="Akıllı OCR Metin Tanıma & Denetleyici" data-en="Smart OCR Text Inspector & Exporter">Akıllı OCR Metin Tanıma & Denetleyici</strong>
+        </div>
         <button type="button" class="btn-icon" onclick="closeOcrModal()">×</button>
       </div>
-      <textarea id="ocrOutputText" rows="9"
-        style="width:100%;background:#090d16;border:1px solid var(--pf-border);border-radius:6px;color:#f8fafc;padding:12px;font-family:monospace;font-size:13px;resize:vertical;"
-        readonly></textarea>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
-        <span id="ocrStatusMsg" style="font-size:12px;color:var(--pf-text-muted);" data-tr="Hazır"
-          data-en="Ready">Hazır</span>
-        <div style="display:flex;gap:8px;">
-          <button type="button" class="btn-upload-pill" onclick="copyOcrText()" data-tr="Panoya Kopyala"
-            data-en="Copy to Clipboard">Panoya Kopyala</button>
-          <button type="button" class="btn-download-main" onclick="closeOcrModal()" data-tr="Kapat"
-            data-en="Close">Kapat</button>
+
+      <!-- Dil Seçimi ve İstatistik Barı -->
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;font-size:11.5px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="color:var(--pf-text-muted);" data-tr="Dil Modeli:" data-en="Lang Model:">Dil Modeli:</span>
+          <select id="ocrLangSelect" class="select-format" style="padding:3px 8px;font-size:11.5px;" onchange="runOcrRecognition()">
+            <option value="tur+eng">Türkçe + İngilizce</option>
+            <option value="tur">Yalnızca Türkçe</option>
+            <option value="eng">Only English</option>
+            <option value="deu">Deutsch</option>
+            <option value="fra">Français</option>
+          </select>
+        </div>
+        <span id="ocrStatsBadge" style="color:var(--pf-accent);font-weight:600;font-size:11px;">0 Karakter • 0 Kelime</span>
+      </div>
+
+      <textarea id="ocrOutputText" rows="11" oninput="updateOcrStats()"
+        style="width:100%;background:#090d16;border:1px solid var(--pf-border);border-radius:6px;color:#f8fafc;padding:12px;font-family:monospace;font-size:12.5px;line-height:1.6;resize:vertical;"
+        placeholder="OCR ile taranan metinler burada düzenlenebilir olarak görüntülenecektir..."></textarea>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:8px;">
+        <span id="ocrStatusMsg" style="font-size:11.5px;color:var(--pf-text-muted);" data-tr="Hazır" data-en="Ready">Hazır</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button type="button" class="action-btn" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);font-size:11.5px;padding:6px 10px;" onclick="copyOcrText()" data-tr="Metni Kopyala" data-en="Copy Plain Text">Metni Kopyala</button>
+          <button type="button" class="action-btn" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);font-size:11.5px;padding:6px 10px;" onclick="copyOcrMarkdown()" data-tr="Markdown Kopyala" data-en="Copy Markdown">Markdown Kopyala</button>
+          <button type="button" class="action-btn" style="background:var(--pf-accent);color:#081b2a;font-weight:700;font-size:11.5px;padding:6px 12px;" onclick="downloadOcrTxt()" data-tr="TXT İndir" data-en="Download TXT">TXT İndir</button>
         </div>
       </div>
     </div>
@@ -3816,34 +3833,74 @@
 
     function openOcrModal() { if (ocrModal) ocrModal.style.display = "flex"; }
     function closeOcrModal() { if (ocrModal) ocrModal.style.display = "none"; }
+
+    function updateOcrStats() {
+      const text = ocrOutputText ? ocrOutputText.value : "";
+      const charCount = text.length;
+      const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+      const statsBadge = document.getElementById("ocrStatsBadge");
+      if (statsBadge) {
+        statsBadge.textContent = (currentLang === "en")
+          ? `${charCount} Characters • ${wordCount} Words`
+          : `${charCount} Karakter • ${wordCount} Kelime`;
+      }
+    }
+
     function copyOcrText() {
       if (ocrOutputText) {
         navigator.clipboard.writeText(ocrOutputText.value);
-        statusMessage.textContent = "OCR metni panoya kopyalandı";
+        statusMessage.textContent = (currentLang === "en") ? "OCR text copied to clipboard" : "OCR metni panoya kopyalandı";
       }
+    }
+
+    function copyOcrMarkdown() {
+      if (!ocrOutputText) return;
+      const text = ocrOutputText.value;
+      const md = `### PixelFlow OCR Belge Raporu\n*Tarih: ${new Date().toLocaleString()}*\n\n\`\`\`text\n${text}\n\`\`\`\n`;
+      navigator.clipboard.writeText(md);
+      statusMessage.textContent = (currentLang === "en") ? "Markdown report copied to clipboard" : "Markdown raporu panoya kopyalandı";
+    }
+
+    function downloadOcrTxt() {
+      if (!ocrOutputText) return;
+      const text = ocrOutputText.value;
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `pixelflow_ocr_${Date.now()}.txt`;
+      a.click();
+      statusMessage.textContent = (currentLang === "en") ? "TXT file downloaded" : "TXT dosyası indirildi";
     }
 
     async function runOcrRecognition() {
       const targetImg = (imgAfter && imgAfter.src && imgAfter.style.display !== "none") ? imgAfter : imgBefore;
       if (!targetImg || !targetImg.src) {
-        statusMessage.textContent = "Lütfen önce bir görsel veya belge yükleyin";
+        statusMessage.textContent = (currentLang === "en") ? "Please load an image or document first" : "Lütfen önce bir görsel veya belge yükleyin";
         return;
       }
       openOcrModal();
-      ocrStatusMsg.textContent = "OCR metinleri taranıyor...";
-      ocrOutputText.value = "Taranıyor...";
+      ocrStatusMsg.textContent = (currentLang === "en") ? "Scanning text via OCR..." : "OCR metinleri taranıyor...";
+      ocrOutputText.value = (currentLang === "en") ? "Scanning..." : "Taranıyor...";
+      updateOcrStats();
+
+      const lang = document.getElementById("ocrLangSelect")?.value || "tur+eng";
       if (typeof Tesseract !== "undefined") {
         try {
-          const res = await Tesseract.recognize(targetImg.src, "tur+eng");
+          const res = await Tesseract.recognize(targetImg.src, lang);
           ocrOutputText.value = res.data.text || "(Metin tespit edilemedi)";
-          ocrStatusMsg.textContent = `Tamamlandı • Güven: %${Math.round(res.data.confidence)}`;
+          ocrStatusMsg.textContent = (currentLang === "en")
+            ? `Completed • Confidence: %${Math.round(res.data.confidence)}`
+            : `Tamamlandı • Güven: %${Math.round(res.data.confidence)}`;
+          updateOcrStats();
           return;
         } catch (e) {
           console.warn("Tesseract offline:", e);
         }
       }
       ocrOutputText.value = "T.C. RESMİ BELGE & TAAHHÜTNAME\nEvrak No: PKF-2026/8941\nİsim: Ahmet Yılmaz\nT.C. Kimlik: 12345678901\nAdres: Atatürk Bulvarı No: 42 Çankaya\nİban: TR330006100511123456789001\nTelefon: 0532 555 44 33";
-      ocrStatusMsg.textContent = "Yerel belge metni hazırlandı";
+      ocrStatusMsg.textContent = (currentLang === "en") ? "Local document text loaded" : "Yerel belge metni hazırlandı";
+      updateOcrStats();
     }
 
     async function runAutoPiiRedaction() {
