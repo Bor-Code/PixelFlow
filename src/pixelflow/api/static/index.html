@@ -545,6 +545,33 @@
       border-right: none;
     }
 
+    .btn-reopen-panel {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 90;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: #0d121f;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: var(--pf-accent);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      transition: all 0.15s ease;
+    }
+
+    .btn-reopen-panel:hover {
+      background: #162035;
+      border-color: var(--pf-accent);
+      transform: translateX(2px);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.3);
+    }
+
     .panel-header-pro {
       height: 42px;
       padding: 0 14px;
@@ -581,37 +608,43 @@
     }
 
     .pro-segmented-tabs {
-      display: flex;
-      padding: 6px 8px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 6px;
       gap: 4px;
       background: #090c13;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       flex-shrink: 0;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-
-    .pro-segmented-tabs::-webkit-scrollbar {
-      display: none;
     }
 
     .seg-tab {
-      flex: 1 0 auto;
       background: transparent;
       border: 1px solid transparent;
       color: #718096;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
-      padding: 5px 8px;
+      padding: 5px 2px;
       border-radius: 6px;
       cursor: pointer;
       text-align: center;
       transition: all 0.14s ease;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+    }
+
+    .seg-tab svg {
+      margin-right: 0 !important;
     }
 
     .seg-tab:hover {
       color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.04);
     }
 
     .seg-tab.active {
@@ -1610,6 +1643,14 @@
         <span data-tr="Görsel Aç" data-en="Open Image">Görsel Aç</span>
       </button>
 
+      <button type="button" class="btn-top-capsule" id="topbarToggleLeftBtn" onclick="toggleLeftPanel()" title="Sol Paneli Göster / Gizle (Ctrl+[)">
+        <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+          <line x1="9" y1="3" x2="9" y2="21" />
+        </svg>
+        <span data-tr="Sol Panel" data-en="Left Panel">Sol Panel</span>
+      </button>
+
       <button type="button" class="btn-top-capsule" onclick="openMultipageModal()" title="Çok Sayfalı PDF Birleştirici (Ctrl+M)">
         <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -1737,7 +1778,7 @@
         <div class="pro-panel-title">
           <span data-tr="Preset Vitrini &amp; Şablonlar" data-en="Presets &amp; Templates">Preset Vitrini &amp; Şablonlar</span>
         </div>
-        <button type="button" class="btn-icon-tiny" onclick="toggleLeftPanel()" title="Paneli Gizle / Göster">◨</button>
+        <button type="button" class="btn-icon-tiny" onclick="toggleLeftPanel()" title="Sol Paneli Gizle (Ctrl+[)">◀</button>
       </div>
 
       <!-- Segmented Tabs for Left Panel -->
@@ -1874,6 +1915,14 @@
 
     <!-- 2. ORTA KANVAS ÇALIŞMA ALANI (SİNEMATİK STÜDYO) -->
     <section class="canvas-workspace" id="canvasWorkspace">
+      <!-- Sol Panel Yeniden Açma Butonu (Gizlendiğinde Görünür) -->
+      <button type="button" class="btn-reopen-panel" id="btnReopenLeftPanel" onclick="toggleLeftPanel()" title="Sol Paneli Aç (Ctrl+[)">
+        <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;vertical-align:middle;">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+        <span data-tr="Sol Paneli Aç" data-en="Open Left Panel">Sol Paneli Aç</span>
+      </button>
+
       <!-- Fotor / Lightroom Boş Durum (Empty State Dropzone) -->
       <div class="empty-state-view" id="emptyStateView">
         <div class="empty-drop-card">
@@ -4675,6 +4724,11 @@
         openCommandPalette();
         return;
       }
+      if ((e.ctrlKey || e.metaKey) && e.key === "[") {
+        e.preventDefault();
+        toggleLeftPanel();
+        return;
+      }
       if (e.key === "Escape") {
         closeCommandPalette();
         hideContextMenu();
@@ -5863,7 +5917,13 @@
 
     function toggleLeftPanel() {
       const p = document.getElementById("proLeftPanel");
-      if (p) p.classList.toggle("collapsed");
+      const btn = document.getElementById("btnReopenLeftPanel");
+      const topBtn = document.getElementById("topbarToggleLeftBtn");
+      if (p) {
+        const isCollapsed = p.classList.toggle("collapsed");
+        if (btn) btn.style.display = isCollapsed ? "inline-flex" : "none";
+        if (topBtn) topBtn.classList.toggle("active", !isCollapsed);
+      }
     }
 
     function updateHistoryStackUI() {
