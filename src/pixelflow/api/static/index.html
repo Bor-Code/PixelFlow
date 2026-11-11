@@ -1598,8 +1598,9 @@
               <span class="viewport-badge" style="left:8px;top:8px;" data-tr="Öncesi" data-en="Before">Öncesi</span>
             </div>
             <div id="curtainHandle"
-              style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:var(--pf-accent);color:#081b2a;display:none;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(56, 189, 248, 0.8);z-index:25;cursor:ew-resize;">
-              <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;background:var(--pf-accent);color:#081b2a;display:none;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(56, 189, 248, 0.9);z-index:25;cursor:ew-resize;user-select:none;">
+              <div style="position:absolute;top:-1200px;bottom:-1200px;left:50%;width:2px;background:var(--pf-accent);box-shadow:0 0 6px rgba(56, 189, 248, 0.7);pointer-events:none;transform:translateX(-50%);"></div>
+              <svg style="width:14px;height:14px;position:relative;z-index:2;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 stroke-width="2.5">
                 <polyline points="7 16 3 12 7 8" />
                 <polyline points="17 8 21 12 17 16" />
@@ -2704,7 +2705,7 @@
         imgAfter.style.display = "block";
         timingBadge.textContent = "Orijinal";
         statusMessage.textContent = "Görsel hazır • Düzenlemeye başlayabilirsiniz";
-        drawLiveHistogram(imgAfter);
+        if (currentViewMode === "curtain") setTimeout(updateCurtain, 10);
         syncPerspectivePins();
         return;
       }
@@ -2738,7 +2739,7 @@
         lastProcessedUrl = outUrl;
         imgAfter.onload = () => {
           canvasDims.textContent = `${imgAfter.naturalWidth} × ${imgAfter.naturalHeight} px`;
-          drawLiveHistogram(imgAfter);
+          if (currentViewMode === "curtain") setTimeout(updateCurtain, 10);
           syncPerspectivePins();
         };
         imgAfter.src = outUrl;
@@ -2760,6 +2761,7 @@
       stage.style.transform = `scale(${currentZoom}) rotate(${currentRotation}deg)`;
       const indicator = document.getElementById("zoomLevelIndicator");
       if (indicator) indicator.textContent = `${Math.round(currentZoom * 100)}%`;
+      if (currentViewMode === "curtain") setTimeout(updateCurtain, 10);
     }
 
     function zoomCanvas(delta) {
@@ -2782,19 +2784,50 @@
       applyStageTransform();
     }
 
+    let curtainPercent = 50;
+    let isDraggingCurtain = false;
+
     function updateCurtain(pct) {
+      if (typeof pct === "number") curtainPercent = Math.max(0, Math.min(100, pct));
       const cOverlay = document.getElementById("curtainOverlay");
       const cHandle = document.getElementById("curtainHandle");
       const imgCurtain = document.getElementById("imgCurtainBefore");
-      if (!cOverlay || !imgAfter) return;
-      const clamped = Math.max(0, Math.min(100, pct));
-      cOverlay.style.width = `${clamped}%`;
-      if (cHandle) cHandle.style.left = `${clamped}%`;
+      if (!cOverlay || !imgAfter || !imgAfter.naturalWidth || imgAfter.style.display === "none") return;
+
+      const w = imgAfter.clientWidth || imgAfter.offsetWidth;
+      const h = imgAfter.clientHeight || imgAfter.offsetHeight;
+      const t = imgAfter.offsetTop;
+      const l = imgAfter.offsetLeft;
+      if (!w || !h) return;
+
+      const splitW = (w * curtainPercent) / 100;
+
+      cOverlay.style.top = `${t}px`;
+      cOverlay.style.left = `${l}px`;
+      cOverlay.style.width = `${splitW}px`;
+      cOverlay.style.height = `${h}px`;
+
+      if (cHandle) {
+        cHandle.style.top = `${t + h / 2}px`;
+        cHandle.style.left = `${l + splitW}px`;
+      }
+
       if (imgCurtain && imgBefore && imgBefore.src) {
         imgCurtain.src = imgBefore.src;
-        if (imgAfter.clientWidth) imgCurtain.style.width = `${imgAfter.clientWidth}px`;
-        if (imgAfter.clientHeight) imgCurtain.style.height = `${imgAfter.clientHeight}px`;
+        imgCurtain.style.top = "0px";
+        imgCurtain.style.left = "0px";
+        imgCurtain.style.width = `${w}px`;
+        imgCurtain.style.height = `${h}px`;
       }
+    }
+
+    function handleCurtainDrag(clientX) {
+      if (!imgAfter || !imgAfter.offsetWidth) return;
+      const rect = imgAfter.getBoundingClientRect();
+      if (rect.width <= 0) return;
+      const x = clientX - rect.left;
+      const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
+      updateCurtain(pct);
     }
 
     function setViewMode(mode) {
@@ -2982,6 +3015,11 @@
 
     boxAfter.addEventListener("mousedown", (e) => {
       if (!imgAfter.src || imgAfter.style.display === "none") return;
+      if (currentViewMode === "curtain") {
+        isDraggingCurtain = true;
+        handleCurtainDrag(e.clientX);
+        return;
+      }
       const rect = imgAfter.getBoundingClientRect();
       if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
 
@@ -2996,14 +3034,35 @@
       selectionMarquee.style.display = "block";
     });
 
-    boxAfter.addEventListener("mousemove", (e) => {
-      if (currentViewMode === "curtain" && !isDraggingMarquee && activePin === null) {
-        const rect = boxAfter.getBoundingClientRect();
-        if (rect.width > 0) {
-          const pct = ((e.clientX - rect.left) / rect.width) * 100;
-          updateCurtain(pct);
-        }
+    const curtainHandleEl = document.getElementById("curtainHandle");
+    if (curtainHandleEl) {
+      curtainHandleEl.addEventListener("mousedown", (e) => {
+        isDraggingCurtain = true;
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      curtainHandleEl.addEventListener("touchstart", () => {
+        isDraggingCurtain = true;
+      }, { passive: true });
+    }
+
+    window.addEventListener("mousemove", (e) => {
+      if (isDraggingCurtain && currentViewMode === "curtain") {
+        handleCurtainDrag(e.clientX);
       }
+    });
+
+    window.addEventListener("touchmove", (e) => {
+      if (isDraggingCurtain && currentViewMode === "curtain" && e.touches[0]) {
+        handleCurtainDrag(e.touches[0].clientX);
+      }
+    }, { passive: true });
+
+    window.addEventListener("mouseup", () => {
+      isDraggingCurtain = false;
+    });
+    window.addEventListener("touchend", () => {
+      isDraggingCurtain = false;
     });
 
     window.addEventListener("mousemove", (e) => {
