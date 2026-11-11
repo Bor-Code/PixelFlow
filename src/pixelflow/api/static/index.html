@@ -1762,6 +1762,14 @@
           </svg>
           <span data-tr="Palet" data-en="Palette">Palet</span>
         </button>
+        <button type="button" class="seg-tab" id="segTabStamps" onclick="switchLeftTab('stamps')">
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9" />
+            <circle cx="12" cy="12" r="5" />
+            <path d="M12 7v2m0 6v2m-5-5h2m6 0h2" />
+          </svg>
+          <span data-tr="Damgalar" data-en="Stamps">Damgalar</span>
+        </button>
         <button type="button" class="seg-tab" id="segTabDocs" onclick="switchLeftTab('docs')">
           <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -1817,6 +1825,22 @@
           <button type="button" class="btn btn-secondary" style="flex:1;font-size:10px;padding:5px;" onclick="copyPaletteAsJson()">
             <span data-tr="JSON Kopyala" data-en="Copy JSON">JSON Kopyala</span>
           </button>
+        </div>
+      </div>
+
+      <!-- Tab: Damga & Kaşe Kütüphanesi -->
+      <div class="tab-content-pro" id="tabContentStamps" style="display:none;">
+        <div style="margin-bottom:10px;padding:8px;background:rgba(255,255,255,0.03);border:1px solid var(--pf-border);border-radius:6px;">
+          <div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:4px;" data-tr="ÖZEL METİNLİ KAŞE" data-en="CUSTOM TEXT STAMP">ÖZEL METİNLİ KAŞE</div>
+          <div style="display:flex;gap:4px;">
+            <input type="text" id="customStampTextInput" placeholder="Örn: ONAYLANDI / DRAFT" style="flex:1;font-size:11px;padding:4px 6px;background:#0d1117;border:1px solid var(--pf-border);border-radius:4px;color:#f1f5f9;" value="GİZLİDİR" />
+            <button type="button" class="btn btn-primary" style="font-size:10px;padding:4px 8px;" onclick="applyCustomTextStamp()">
+              <span data-tr="Bas" data-en="Apply">Bas</span>
+            </button>
+          </div>
+        </div>
+        <div class="preset-cards-grid" id="stampsVitrinGrid">
+          <!-- JS tarafından doldurulur -->
         </div>
       </div>
 
@@ -3248,6 +3272,7 @@
       if (typeof renderPresetVitrin === "function") renderPresetVitrin();
       if (typeof renderCropRatioVitrin === "function") renderCropRatioVitrin();
       if (typeof renderPaletteUI === "function") renderPaletteUI();
+      if (typeof renderStampsVitrin === "function") renderStampsVitrin();
       if (typeof renderDocVitrin === "function") renderDocVitrin();
       renderCategoryDrawer();
       renderStepsUI();
@@ -5537,6 +5562,77 @@
       }
     }
 
+    const PRO_STAMP_PRESETS = [
+      { id: "confidential", name: "GİZLİDİR", nameEn: "CONFIDENTIAL", text: "GİZLİDİR", desc: "Kırmızı Resmi Gizlilik Kaşesi", descEn: "Official Red Confidential Seal", color: [220, 38, 38], angle: -14, opacity: 0.9, scale: 0.9 },
+      { id: "certified", name: "ASLI GİBİDİR", nameEn: "CERTIFIED COPY", text: "ASLI GİBİDİR", desc: "Mavi Resmi Onay & Suret Kaşesi", descEn: "Official Blue Certified Copy Seal", color: [29, 78, 216], angle: -8, opacity: 0.9, scale: 0.9 },
+      { id: "approved", name: "ONAYLANDI", nameEn: "APPROVED", text: "ONAYLANDI", desc: "Yeşil Kabul & Tasdik Damgası", descEn: "Green Approval Verification Seal", color: [22, 163, 74], angle: -10, opacity: 0.9, scale: 0.9 },
+      { id: "draft", name: "TASLAK / DRAFT", nameEn: "DRAFT", text: "TASLAK", desc: "Turuncu Çalışma Taslağı Filigranı", descEn: "Orange Working Draft Stamp", color: [217, 119, 6], angle: -18, opacity: 0.8, scale: 0.95 },
+      { id: "paid", name: "ÖDENDİ / PAID", nameEn: "PAID IN FULL", text: "ÖDENDİ", desc: "Maliye & Muhasebe Tahsilat Kaşesi", descEn: "Accounting Payment Receipt Stamp", color: [13, 148, 136], angle: -12, opacity: 0.88, scale: 0.9 },
+      { id: "cancelled", name: "İPTAL EDİLDİ", nameEn: "CANCELLED / VOID", text: "İPTAL EDİLDİ", desc: "Kırmızı İptal & Hükümsüz Kaşesi", descEn: "Red Void & Nullified Stamp", color: [185, 28, 28], angle: -15, opacity: 0.9, scale: 0.9 }
+    ];
+
+    function renderStampsVitrin() {
+      const grid = document.getElementById("stampsVitrinGrid");
+      if (!grid) return;
+      grid.innerHTML = PRO_STAMP_PRESETS.map(s => {
+        const title = currentLang === "en" ? s.nameEn : s.name;
+        const sub = currentLang === "en" ? s.descEn : s.desc;
+        const rgb = `rgb(${s.color[0]}, ${s.color[1]}, ${s.color[2]})`;
+        return `
+          <div class="preset-vitrin-card" onclick="applyStampPreset('${s.id}')">
+            <div class="preset-swatch" style="background:#0d1117;border:1px solid var(--pf-border);display:flex;align-items:center;justify-content:center;">
+              <div style="border:1.5px solid ${rgb};padding:2px 4px;font-size:7.5px;font-weight:800;color:${rgb};transform:rotate(${s.angle}deg);border-radius:2px;letter-spacing:0.5px;">${s.text.slice(0, 8)}</div>
+            </div>
+            <div>
+              <div class="preset-card-title">${title}</div>
+              <div class="preset-card-sub">${sub}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function applyStampPreset(presetId) {
+      const preset = PRO_STAMP_PRESETS.find(p => p.id === presetId);
+      if (!preset) return;
+      applyStampWithParams(preset.text, preset.color, preset.angle, preset.opacity, preset.scale);
+    }
+
+    function applyCustomTextStamp() {
+      const input = document.getElementById("customStampTextInput");
+      const text = (input?.value || "ONAYLANDI").trim();
+      applyStampWithParams(text, [220, 38, 38], -12, 0.88, 0.9);
+    }
+
+    function applyStampWithParams(text, color, angle, opacity, scale) {
+      const W = originalImage?.naturalWidth || 800;
+      const H = originalImage?.naturalHeight || 600;
+      const x = Math.max(20, Math.round(W * 0.15));
+      const y = Math.max(40, Math.round(H * 0.25));
+
+      let step = activeSteps.find(s => s.op === "stamp");
+      if (step) {
+        step.params = { text, color, angle, opacity, scale, x, y, box_border: true };
+        step.name = `katman_${step.id}_damga_${text.replace(/\s+/g, '_').slice(0, 10)}`;
+        selectedStepId = step.id;
+      } else {
+        const id = stepCounter++;
+        activeSteps.push({
+          id,
+          op: "stamp",
+          name: `katman_${id}_damga_${text.replace(/\s+/g, '_').slice(0, 10)}`,
+          params: { text, color, angle, opacity, scale, x, y, box_border: true }
+        });
+        selectedStepId = id;
+      }
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+      statusMessage.textContent = (currentLang === "en")
+        ? `✓ Stamp applied: "${text}"`
+        : `✓ Damga vuruldu: "${text}"`;
+    }
+
     function renderDocVitrin() {
       const grid = document.getElementById("docVitrinGrid");
       if (!grid) return;
@@ -5610,7 +5706,7 @@
     }
 
     function switchLeftTab(tabKey) {
-      const tabs = ["presets", "crop", "palette", "docs", "history"];
+      const tabs = ["presets", "crop", "palette", "stamps", "docs", "history"];
       tabs.forEach(t => {
         const btn = document.getElementById("segTab" + t.charAt(0).toUpperCase() + t.slice(1));
         const content = document.getElementById("tabContent" + t.charAt(0).toUpperCase() + t.slice(1));
@@ -5622,6 +5718,7 @@
         if (!currentExtractedPalette || currentExtractedPalette.length === 0) extractImageColorPalette();
         else renderPaletteUI();
       }
+      if (tabKey === "stamps") renderStampsVitrin();
       if (tabKey === "history") updateHistoryStackUI();
     }
 
