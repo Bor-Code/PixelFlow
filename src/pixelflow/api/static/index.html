@@ -33,6 +33,101 @@
       --radius-lg: 16px;
     }
 
+    /* 1. Tokyo Night (Oceanic Cyan - Varsayılan) */
+    body.theme-tokyo {
+      --pf-bg-base: #07090e;
+      --pf-bg-sidebar: #0d1117;
+      --pf-bg-drawer: #10151f;
+      --pf-bg-card: #151b27;
+      --pf-bg-card-hover: #1e2637;
+      --pf-border: rgba(255, 255, 255, 0.08);
+      --pf-border-light: rgba(56, 189, 248, 0.35);
+      --pf-accent: #38bdf8;
+      --pf-accent-hover: #0ea5e9;
+      --pf-accent-soft: rgba(56, 189, 248, 0.14);
+      --pf-accent-glow: rgba(56, 189, 248, 0.45);
+    }
+
+    /* 2. DaVinci Resolve Studio (Amber Gold & Obsidian) */
+    body.theme-davinci {
+      --pf-bg-base: #09090b;
+      --pf-bg-sidebar: #121215;
+      --pf-bg-drawer: #18181d;
+      --pf-bg-card: #1f1f26;
+      --pf-bg-card-hover: #2a2a35;
+      --pf-border: rgba(255, 255, 255, 0.08);
+      --pf-border-light: rgba(245, 158, 11, 0.4);
+      --pf-accent: #f59e0b;
+      --pf-accent-hover: #d97706;
+      --pf-accent-soft: rgba(245, 158, 11, 0.14);
+      --pf-accent-glow: rgba(245, 158, 11, 0.45);
+    }
+    body.theme-davinci .canvas-workspace {
+      background: radial-gradient(circle at 50% 45%, #191612 0%, #08080a 85%);
+    }
+    body.theme-davinci .btn-download-main {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #1a0f00;
+    }
+    body.theme-davinci .pro-badge {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+      color: #1c1002;
+    }
+
+    /* 3. Cyberpunk Neon (Magenta & Deep Violet) */
+    body.theme-cyberpunk {
+      --pf-bg-base: #080410;
+      --pf-bg-sidebar: #0f0822;
+      --pf-bg-drawer: #170d33;
+      --pf-bg-card: #201344;
+      --pf-bg-card-hover: #2e1c61;
+      --pf-border: rgba(236, 72, 153, 0.15);
+      --pf-border-light: rgba(236, 72, 153, 0.45);
+      --pf-accent: #ec4899;
+      --pf-accent-hover: #db2777;
+      --pf-accent-soft: rgba(236, 72, 153, 0.16);
+      --pf-accent-glow: rgba(236, 72, 153, 0.5);
+    }
+    body.theme-cyberpunk .canvas-workspace {
+      background: radial-gradient(circle at 50% 45%, #1c0a2d 0%, #06020c 85%);
+    }
+    body.theme-cyberpunk .btn-download-main {
+      background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(236, 72, 153, 0.4);
+    }
+    body.theme-cyberpunk .pro-badge {
+      background: linear-gradient(135deg, #ec4899, #a855f7);
+      color: #ffffff;
+    }
+
+    /* 4. Titanium Monochrome (Apple Pro Display) */
+    body.theme-titanium {
+      --pf-bg-base: #0a0b0d;
+      --pf-bg-sidebar: #131518;
+      --pf-bg-drawer: #191c20;
+      --pf-bg-card: #21252a;
+      --pf-bg-card-hover: #2c3138;
+      --pf-border: rgba(255, 255, 255, 0.10);
+      --pf-border-light: rgba(226, 232, 240, 0.4);
+      --pf-accent: #f1f5f9;
+      --pf-accent-hover: #ffffff;
+      --pf-accent-soft: rgba(241, 245, 249, 0.14);
+      --pf-accent-glow: rgba(241, 245, 249, 0.35);
+    }
+    body.theme-titanium .canvas-workspace {
+      background: radial-gradient(circle at 50% 45%, #17191d 0%, #070809 85%);
+    }
+    body.theme-titanium .btn-download-main {
+      background: #f1f5f9;
+      color: #0f172a;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+    }
+    body.theme-titanium .pro-badge {
+      background: linear-gradient(135deg, #94a3b8, #e2e8f0);
+      color: #0f172a;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -180,6 +275,55 @@
       font-weight: 600;
       outline: none;
       cursor: pointer;
+    }
+
+    /* Sağ Üst Stüdyo Renk Teması Seçici (Studio Theme Pill) */
+    .theme-switcher-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--pf-bg-card);
+      border: 1px solid var(--pf-border);
+      border-radius: 18px;
+      padding: 3px 6px;
+      user-select: none;
+    }
+
+    .theme-btn {
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.15s ease;
+    }
+
+    .theme-btn:hover {
+      transform: scale(1.15);
+    }
+
+    .theme-btn.active {
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .theme-dot {
+      width: 9.5px;
+      height: 9.5px;
+      border-radius: 50%;
+      display: block;
+      pointer-events: none;
+      transition: transform 0.15s ease;
+    }
+
+    .theme-btn.active .theme-dot {
+      transform: scale(1.1);
     }
 
     /* Sağ Üst Dil Seçici (TR / EN Language Switcher) */
@@ -1513,6 +1657,22 @@
             <polyline points="23 4 23 10 17 10" />
             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
           </svg>
+        </button>
+      </div>
+
+      <!-- Stüdyo Renk Teması Seçici (Studio Theme Pill) -->
+      <div class="theme-switcher-pill" id="themeSwitcher" role="group" aria-label="Studio Theme">
+        <button type="button" class="theme-btn active" id="themeBtnTokyo" onclick="setStudioTheme('tokyo')" title="Tokyo Night (Oceanic Cyan)">
+          <span class="theme-dot" style="background:#38bdf8;"></span>
+        </button>
+        <button type="button" class="theme-btn" id="themeBtnDavinci" onclick="setStudioTheme('davinci')" title="DaVinci Resolve (Studio Gold)">
+          <span class="theme-dot" style="background:#f59e0b;"></span>
+        </button>
+        <button type="button" class="theme-btn" id="themeBtnCyberpunk" onclick="setStudioTheme('cyberpunk')" title="Cyberpunk (Neon Magenta)">
+          <span class="theme-dot" style="background:#ec4899;"></span>
+        </button>
+        <button type="button" class="theme-btn" id="themeBtnTitanium" onclick="setStudioTheme('titanium')" title="Titanium (Monochrome)">
+          <span class="theme-dot" style="background:#f1f5f9;"></span>
         </button>
       </div>
 
@@ -5375,8 +5535,28 @@
       }
     }
 
-    // Başlangıç Yüklemesi (Dil Tercihi ve Çekmece)
+    // Stüdyo Renk Teması Yöneticisi (Tokyo Night / DaVinci Gold / Cyberpunk / Titanium)
+    function setStudioTheme(themeName) {
+      const themes = ["tokyo", "davinci", "cyberpunk", "titanium"];
+      const validTheme = themes.includes(themeName) ? themeName : "tokyo";
+      themes.forEach(t => {
+        document.body.classList.remove("theme-" + t);
+        const btn = document.getElementById("themeBtn" + t.charAt(0).toUpperCase() + t.slice(1));
+        if (btn) btn.classList.toggle("active", t === validTheme);
+      });
+      document.body.classList.add("theme-" + validTheme);
+      try {
+        localStorage.setItem("pixelflow_theme", validTheme);
+      } catch (e) {}
+    }
+
+    // Başlangıç Yüklemesi (Dil Tercihi, Tema ve Çekmece)
     setLanguage(currentLang);
+    const savedTheme = (() => {
+      try { return localStorage.getItem("pixelflow_theme") || "tokyo"; }
+      catch (e) { return "tokyo"; }
+    })();
+    setStudioTheme(savedTheme);
   </script>
 </body>
 
