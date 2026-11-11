@@ -1669,6 +1669,15 @@
         </svg>
         <span data-tr="Toplu İşlem (ZIP)" data-en="Batch (ZIP)">Toplu İşlem (ZIP)</span>
       </button>
+
+      <button type="button" class="btn-top-capsule" onclick="openExifModal()" title="Görsel Meta Verisi &amp; EXIF Denetçisi (Ctrl+I)">
+        <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+        <span data-tr="EXIF &amp; Bilgi" data-en="EXIF &amp; Info">EXIF &amp; Bilgi</span>
+      </button>
     </div>
 
     <!-- Merkez Hızlı Komut Paleti & PDF Sayfa Sayacı -->
@@ -2650,6 +2659,77 @@
           <button type="button" class="action-btn" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);font-size:11.5px;padding:6px 10px;" onclick="copyOcrText()" data-tr="Metni Kopyala" data-en="Copy Plain Text">Metni Kopyala</button>
           <button type="button" class="action-btn" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);font-size:11.5px;padding:6px 10px;" onclick="copyOcrMarkdown()" data-tr="Markdown Kopyala" data-en="Copy Markdown">Markdown Kopyala</button>
           <button type="button" class="action-btn" style="background:var(--pf-accent);color:#081b2a;font-weight:700;font-size:11.5px;padding:6px 12px;" onclick="downloadOcrTxt()" data-tr="TXT İndir" data-en="Download TXT">TXT İndir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXIF & Görsel Meta Verisi / Gizlilik Denetçisi Modal (Ctrl+I) -->
+  <div id="exifModal" class="command-palette-backdrop" style="display:none;" onclick="handleExifBackdropClick(event)">
+    <div class="command-palette-box" style="max-width:600px;padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);background:#0d111a;" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(56,189,248,0.12);display:flex;align-items:center;justify-content:center;color:#38bdf8;">
+            <svg style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+          </div>
+          <div>
+            <h3 style="font-size:15px;font-weight:700;color:#fff;margin:0;" data-tr="EXIF &amp; Görsel Meta Verisi Denetçisi" data-en="EXIF &amp; Image Metadata Inspector">EXIF &amp; Görsel Meta Verisi Denetçisi</h3>
+            <span style="font-size:11px;color:var(--pf-text-muted);" data-tr="Kamera, çekim detayları ve GPS gizlilik temizleme" data-en="Camera, shooting details and GPS privacy cleaner">Kamera, çekim detayları ve GPS gizlilik temizleme</span>
+          </div>
+        </div>
+        <button type="button" class="btn-icon" onclick="closeExifModal()" title="Kapat (ESC)">×</button>
+      </div>
+
+      <!-- Gizlilik / GPS Durum Kartı -->
+      <div id="exifPrivacyAlert" style="margin-bottom:14px;padding:10px 14px;border-radius:8px;font-size:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(234,179,8,0.1);border:1px solid rgba(234,179,8,0.3);color:#fef08a;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:16px;">⚠️</span>
+          <span id="exifPrivacyText">Cihaz / Meta verisi inceleniyor...</span>
+        </div>
+        <button type="button" id="btnStripExif" class="action-btn" onclick="wipeExifAndPrivacy()" style="background:#ef4444;color:#fff;border:none;padding:5px 10px;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;flex-shrink:0;">
+          Gizliliği Temizle (Strip EXIF)
+        </button>
+      </div>
+
+      <!-- Bilgi Grid Tablosu -->
+      <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;margin-bottom:14px;font-size:12px;">
+        <div style="background:#090d16;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);">
+          <div style="color:var(--pf-text-muted);font-size:10.5px;text-transform:uppercase;font-weight:600;margin-bottom:4px;" data-tr="Dosya Adı &amp; Çözünürlük" data-en="File &amp; Dimensions">Dosya Adı &amp; Çözünürlük</div>
+          <div id="exifFileInfo" style="color:#f8fafc;font-weight:500;">-</div>
+        </div>
+        <div style="background:#090d16;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);">
+          <div style="color:var(--pf-text-muted);font-size:10.5px;text-transform:uppercase;font-weight:600;margin-bottom:4px;" data-tr="Dosya Boyutu &amp; Format" data-en="File Size &amp; Format">Dosya Boyutu &amp; Format</div>
+          <div id="exifFormatInfo" style="color:#f8fafc;font-weight:500;">-</div>
+        </div>
+        <div style="background:#090d16;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);">
+          <div style="color:var(--pf-text-muted);font-size:10.5px;text-transform:uppercase;font-weight:600;margin-bottom:4px;" data-tr="Kamera &amp; Cihaz" data-en="Camera &amp; Device">Kamera &amp; Cihaz</div>
+          <div id="exifCameraInfo" style="color:#f8fafc;font-weight:500;">-</div>
+        </div>
+        <div style="background:#090d16;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);">
+          <div style="color:var(--pf-text-muted);font-size:10.5px;text-transform:uppercase;font-weight:600;margin-bottom:4px;" data-tr="Çekim Tarihi &amp; Yazılım" data-en="Capture Date &amp; Software">Çekim Tarihi &amp; Yazılım</div>
+          <div id="exifDateInfo" style="color:#f8fafc;font-weight:500;">-</div>
+        </div>
+      </div>
+
+      <!-- Detaylı Ham EXIF Dökümü -->
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:11px;color:var(--pf-text-muted);font-weight:600;" data-tr="Ham EXIF / Meta Veri Kaydı:" data-en="Raw EXIF / Metadata Record:">Ham EXIF / Meta Veri Kaydı:</span>
+          <button type="button" class="btn-icon-tiny" onclick="copyExifInfo()" style="padding:2px 8px;font-size:11px;background:rgba(255,255,255,0.06);border-radius:4px;" title="Raporu Kopyala">📋 Kopyala</button>
+        </div>
+        <pre id="exifRawDump" style="background:#06080d;border:1px solid rgba(255,255,255,0.08);border-radius:6px;color:#94a3b8;padding:10px;font-size:11.5px;font-family:monospace;max-height:120px;overflow-y:auto;margin:0;white-space:pre-wrap;"></pre>
+      </div>
+
+      <!-- Alt Bar Aksiyonları -->
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span id="exifStatusMsg" style="font-size:11.5px;color:var(--pf-text-muted);">Görsel hazır.</span>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="action-btn" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);font-size:11.5px;padding:6px 12px;" onclick="closeExifModal()" data-tr="Kapat" data-en="Close">Kapat</button>
+          <button type="button" class="action-btn" style="background:var(--pf-accent);color:#081b2a;font-weight:700;font-size:11.5px;padding:6px 14px;" onclick="wipeExifAndPrivacy()" data-tr="Meta Verisiz İndir" data-en="Export Without EXIF">Meta Verisiz İndir</button>
         </div>
       </div>
     </div>
@@ -4718,6 +4798,144 @@
       statusMessage.textContent = `✓ ${boxes.length} adet hassas bilgi maskelendi.`;
     }
 
+    // EXIF, Görsel Meta Verisi & Gizlilik Denetçisi
+    let currentMetadataCache = null;
+
+    async function openExifModal() {
+      const modal = document.getElementById("exifModal");
+      if (!modal) return;
+      modal.style.display = "flex";
+      await populateExifModal();
+    }
+
+    function closeExifModal() {
+      const modal = document.getElementById("exifModal");
+      if (modal) modal.style.display = "none";
+    }
+
+    function handleExifBackdropClick(e) {
+      if (e.target.id === "exifModal") closeExifModal();
+    }
+
+    async function populateExifModal() {
+      const fileInfo = document.getElementById("exifFileInfo");
+      const formatInfo = document.getElementById("exifFormatInfo");
+      const cameraInfo = document.getElementById("exifCameraInfo");
+      const dateInfo = document.getElementById("exifDateInfo");
+      const alertBox = document.getElementById("exifPrivacyAlert");
+      const alertText = document.getElementById("exifPrivacyText");
+      const rawDump = document.getElementById("exifRawDump");
+      const statusMsg = document.getElementById("exifStatusMsg");
+
+      if (!currentBlob) {
+        if (alertText) alertText.textContent = "Henüz bir görsel yüklenmedi.";
+        if (fileInfo) fileInfo.textContent = "Görsel Yok";
+        if (formatInfo) formatInfo.textContent = "-";
+        if (cameraInfo) cameraInfo.textContent = "-";
+        if (dateInfo) dateInfo.textContent = "-";
+        if (rawDump) rawDump.textContent = "Meta verisi incelenecek aktif görsel bulunamadı.";
+        return;
+      }
+
+      if (statusMsg) statusMsg.textContent = "Meta verileri taranıyor...";
+      try {
+        const formData = new FormData();
+        formData.append("file", currentBlob, currentFileName);
+        const resp = await fetch("/v1/metadata", { method: "POST", body: formData });
+        if (resp.ok) {
+          const meta = await resp.json();
+          currentMetadataCache = meta;
+          const w = meta.width || (imgBefore ? imgBefore.naturalWidth : 0);
+          const h = meta.height || (imgBefore ? imgBefore.naturalHeight : 0);
+          const sizeKb = (currentBlob.size / 1024).toFixed(1);
+
+          if (fileInfo) fileInfo.textContent = `${currentFileName} (${w} × ${h} px)`;
+          if (formatInfo) formatInfo.textContent = `${sizeKb} KB • ${meta.format || "Bilinmiyor"} (${meta.mode || "sRGB"})`;
+          if (cameraInfo) {
+            const cam = [meta.make, meta.model].filter(Boolean).join(" ");
+            cameraInfo.textContent = cam || "Cihaz bilgisi yok / Temiz";
+          }
+          if (dateInfo) {
+            dateInfo.textContent = meta.datetime || meta.software || "Meta tarih kaydı yok";
+          }
+
+          if (meta.has_gps) {
+            if (alertBox) {
+              alertBox.style.background = "rgba(239, 68, 68, 0.15)";
+              alertBox.style.borderColor = "rgba(239, 68, 68, 0.4)";
+              alertBox.style.color = "#fca5a5";
+            }
+            if (alertText) alertText.innerHTML = "<strong>Kritik Uyarı:</strong> Görselde GPS Konumu ve Cihaz Bilgisi Tespit Edildi!";
+          } else if (meta.make || meta.model || meta.datetime) {
+            if (alertBox) {
+              alertBox.style.background = "rgba(234, 179, 8, 0.12)";
+              alertBox.style.borderColor = "rgba(234, 179, 8, 0.35)";
+              alertBox.style.color = "#fef08a";
+            }
+            if (alertText) alertText.textContent = "Kamera / cihaz meta verisi mevcut. Gizlilik için temizleyebilirsiniz.";
+          } else {
+            if (alertBox) {
+              alertBox.style.background = "rgba(34, 197, 94, 0.12)";
+              alertBox.style.borderColor = "rgba(34, 197, 94, 0.35)";
+              alertBox.style.color = "#86efac";
+            }
+            if (alertText) alertText.textContent = "✓ Görsel temiz: EXIF veya GPS konum izi bulunmuyor.";
+          }
+
+          if (rawDump) {
+            rawDump.textContent = JSON.stringify(meta, null, 2);
+          }
+          if (statusMsg) statusMsg.textContent = "Analiz tamamlandı.";
+          return;
+        }
+      } catch (err) {
+        console.warn("Metadata endpoint error:", err);
+      }
+
+      const w = imgBefore ? imgBefore.naturalWidth : 0;
+      const h = imgBefore ? imgBefore.naturalHeight : 0;
+      const sizeKb = (currentBlob.size / 1024).toFixed(1);
+      if (fileInfo) fileInfo.textContent = `${currentFileName} (${w} × ${h} px)`;
+      if (formatInfo) formatInfo.textContent = `${sizeKb} KB • Görsel`;
+      if (cameraInfo) cameraInfo.textContent = "Doğrudan piksel verisi";
+      if (dateInfo) dateInfo.textContent = new Date().toLocaleDateString();
+      if (rawDump) rawDump.textContent = JSON.stringify({ filename: currentFileName, width: w, height: h, sizeBytes: currentBlob.size }, null, 2);
+      if (statusMsg) statusMsg.textContent = "Temel piksel boyutları okundu.";
+    }
+
+    async function wipeExifAndPrivacy() {
+      if (!currentBlob) return;
+      const statusMsg = document.getElementById("exifStatusMsg");
+      if (statusMsg) statusMsg.textContent = "Meta verileri ve gizlilik izleri temizleniyor...";
+
+      const canvas = document.createElement("canvas");
+      const img = (imgAfter && imgAfter.src && imgAfter.style.display !== "none") ? imgAfter : imgBefore;
+      if (!img) return;
+      canvas.width = img.naturalWidth || 800;
+      canvas.height = img.naturalHeight || 600;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        currentBlob = blob;
+        const newUrl = URL.createObjectURL(blob);
+        if (imgBefore) imgBefore.src = newUrl;
+        if (imgAfter) imgAfter.src = newUrl;
+        if (statusMessage) statusMessage.textContent = "✓ Tüm EXIF ve GPS konum izleri başarıyla temizlendi!";
+        if (statusMsg) statusMsg.textContent = "✓ Temizlendi! Meta verisiz saf piksel.";
+        populateExifModal();
+      }, "image/png");
+    }
+
+    function copyExifInfo() {
+      const rawDump = document.getElementById("exifRawDump");
+      if (rawDump && rawDump.textContent) {
+        navigator.clipboard.writeText(rawDump.textContent);
+        if (statusMessage) statusMessage.textContent = "EXIF bilgileri panoya kopyalandı";
+      }
+    }
+
     // Olay Dinleyicileri
     const openPicker = () => filePicker.click();
     const btnTop = document.getElementById("btnTopUpload");
@@ -4761,6 +4979,11 @@
         openCommandPalette();
         return;
       }
+      if ((e.ctrlKey || e.metaKey) && (e.key === "i" || e.key === "I")) {
+        e.preventDefault();
+        openExifModal();
+        return;
+      }
       if ((e.ctrlKey || e.metaKey) && e.key === "[") {
         e.preventDefault();
         toggleLeftPanel();
@@ -4768,6 +4991,7 @@
       }
       if (e.key === "Escape") {
         closeCommandPalette();
+        closeExifModal();
         hideContextMenu();
       }
       if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA") return;
@@ -5269,6 +5493,9 @@
 
     // Raycast / Linear Tarzı Hızlı Komut Paleti (Ctrl+K)
     const COMMAND_ITEMS = [
+      // Araçlar & Güvenlik
+      { id: "exif_inspector", group: "Araçlar & Gizlilik", groupEn: "Tools & Privacy", name: "EXIF & Görsel Meta Verisi / Gizlilik Temizleyici", nameEn: "EXIF & Image Metadata Privacy Cleaner", shortcut: "Ctrl+I", action: () => openExifModal() },
+
       // Belge & Evrak
       { id: "deskew", group: "Belge & Evrak", groupEn: "Document & Office", name: "Akıllı Belge Köşesi & 4-Nokta Perspektif Düzelt", nameEn: "Auto Corner Detection & Perspective Deskew", action: () => quickAdd("perspective_warp") },
       { id: "magic_color", group: "Belge & Evrak", groupEn: "Document & Office", name: "CamScanner Sihirli Renk (Magic Color)", nameEn: "CamScanner Magic Color Mode", action: () => quickAdd("magic_color") },
