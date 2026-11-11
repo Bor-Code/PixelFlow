@@ -2,8 +2,10 @@ from pixelflow.core.io import (
     decode_image_bytes,
     encode_image_bytes,
     encode_multipage_pdf,
+    extract_metadata,
     load_image,
     save_image,
+    strip_metadata,
 )
 from pixelflow.core.operation import ImageArray, ImageOperation, OperationParams
 from pixelflow.core.pipeline import Pipeline, StepExecutionMetrics
@@ -20,7 +22,9 @@ __all__ = [
     "default_registry",
     "encode_image_bytes",
     "encode_multipage_pdf",
+    "extract_metadata",
     "load_image",
     "register_operation",
     "save_image",
+    "strip_metadata",
 ]

@@ -23,8 +23,10 @@ from pixelflow.core.io import (
     decode_image_bytes,
     encode_image_bytes,
     encode_multipage_pdf,
+    extract_metadata,
     load_image,
     save_image,
+    strip_metadata,
 )
 from pixelflow.core.logging import StructuredJsonFormatter, get_structured_logger, log_structured
 from pixelflow.core.operation import (
@@ -262,3 +264,17 @@ def test_structured_logger() -> None:
     )
     formatted = formatter.format(record)
     assert '"a": 1' in formatted
+
+
+def test_metadata_extraction_and_stripping() -> None:
+    img = np.full((30, 40, 3), 100, dtype=np.uint8)
+    jpg_bytes = encode_image_bytes(img, "JPEG")
+    meta = extract_metadata(jpg_bytes)
+    assert meta["width"] == 40
+    assert meta["height"] == 30
+    assert meta["has_gps"] is False
+    cleaned = strip_metadata(jpg_bytes, "JPEG")
+    assert len(cleaned) > 0
+    clean_meta = extract_metadata(cleaned)
+    assert clean_meta["width"] == 40
+

@@ -32,6 +32,7 @@ from pixelflow.core.io import (
     decode_image_bytes,
     encode_image_bytes,
     encode_multipage_pdf,
+    extract_metadata,
 )
 from pixelflow.core.logging import get_structured_logger, log_structured
 from pixelflow.core.registry import default_registry
@@ -164,6 +165,17 @@ def _register_v1_routes(app: FastAPI) -> None:
         output_format: Annotated[str | None, Form()] = None,
     ) -> Response:
         return await _handle_batch_request(images, pipeline, settings, output_format)
+
+    @app.post("/v1/metadata")
+    async def metadata_endpoint(
+        file: Annotated[UploadFile, File(...)],
+        settings: Annotated[ApiSettings, Depends(get_api_settings)],
+    ) -> dict[str, str | int | float | bool | None]:
+        raw = await file.read(settings.max_upload_bytes + 1)
+        if len(raw) > settings.max_upload_bytes:
+            msg = f"Image exceeds maximum of {settings.max_upload_bytes} bytes"
+            raise InvalidImageError(msg)
+        return extract_metadata(raw)
 
     @app.post("/v1/detect-corners", response_model=DetectCornersResponseModel)
     async def detect_corners_endpoint(

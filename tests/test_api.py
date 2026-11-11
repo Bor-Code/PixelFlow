@@ -210,3 +210,21 @@ async def test_compose_id_card_endpoint() -> None:
         assert resp.status_code == 200
         assert resp.headers["content-type"] == "image/png"
         assert len(resp.content) > 0
+
+
+@pytest.mark.anyio
+async def test_metadata_endpoint() -> None:
+    app = create_app()
+    transport = httpx.ASGITransport(app=app)
+    img_bytes = encode_image_bytes(np.full((40, 50, 3), 120, dtype=np.uint8), "PNG")
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        resp = await client.post(
+            "/v1/metadata",
+            files={"file": ("test.png", img_bytes, "image/png")},
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["width"] == 50
+        assert data["height"] == 40
+        assert data["has_gps"] is False
+

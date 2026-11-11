@@ -4,7 +4,7 @@ from io import BytesIO
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageFile, ImageOps, UnidentifiedImageError
+from PIL import ExifTags, Image, ImageFile, ImageOps, UnidentifiedImageError
 
 from pixelflow.core.operation import ImageArray, validate_image_array
 from pixelflow.exceptions import InvalidImageError
@@ -170,3 +170,32 @@ def _extension_to_format(ext: str) -> str:
         ".pdf": "PDF",
     }
     return mapping[ext]
+
+
+def extract_metadata(data: bytes) -> dict[str, str | int | float | bool | None]:
+    with Image.open(BytesIO(data)) as img:
+        res: dict[str, str | int | float | bool | None] = {
+            "format": img.format,
+            "width": img.width,
+            "height": img.height,
+            "mode": img.mode,
+            "has_gps": False,
+        }
+        exif = img.getexif()
+        if exif:
+            for tag_id, val in exif.items():
+                tag_name = ExifTags.TAGS.get(tag_id, str(tag_id))
+                if "GPS" in tag_name:
+                    res["has_gps"] = True
+                elif tag_name in ("Make", "Model", "DateTime", "Software"):
+                    res[tag_name.lower()] = str(val)
+        return res
+
+
+def strip_metadata(data: bytes, output_format: str = "JPEG") -> bytes:
+    with Image.open(BytesIO(data)) as img:
+        cleaned = Image.fromarray(np.array(img))
+        out = BytesIO()
+        cleaned.save(out, format=output_format)
+        return out.getvalue()
+

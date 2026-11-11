@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, cast
 
 import cv2
 import numpy as np
@@ -104,4 +104,4 @@ class FrameOperation(ImageOperation[FrameParams]):
         alpha_framed = cv2.copyMakeBorder(
             alpha, pad_top, pad_bot, pad_lr, pad_lr, cv2.BORDER_CONSTANT, value=255
         )
-        return merge_alpha(framed, alpha_framed)
+        return merge_alpha(framed, cast(ImageArray, alpha_framed.astype(np.uint8)))
