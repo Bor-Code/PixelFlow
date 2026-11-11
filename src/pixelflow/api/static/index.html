@@ -1770,6 +1770,12 @@
           </svg>
           <span data-tr="Damgalar" data-en="Stamps">Damgalar</span>
         </button>
+        <button type="button" class="seg-tab" id="segTabArtfx" onclick="switchLeftTab('artfx')">
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+          <span data-tr="Sanat & FX" data-en="Art & FX">Sanat & FX</span>
+        </button>
         <button type="button" class="seg-tab" id="segTabDocs" onclick="switchLeftTab('docs')">
           <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -1840,6 +1846,13 @@
           </div>
         </div>
         <div class="preset-cards-grid" id="stampsVitrinGrid">
+          <!-- JS tarafından doldurulur -->
+        </div>
+      </div>
+
+      <!-- Tab: Yaratıcı Sanat & FX Filtreleri -->
+      <div class="tab-content-pro" id="tabContentArtfx" style="display:none;">
+        <div class="preset-cards-grid" id="artfxVitrinGrid">
           <!-- JS tarafından doldurulur -->
         </div>
       </div>
@@ -3273,6 +3286,7 @@
       if (typeof renderCropRatioVitrin === "function") renderCropRatioVitrin();
       if (typeof renderPaletteUI === "function") renderPaletteUI();
       if (typeof renderStampsVitrin === "function") renderStampsVitrin();
+      if (typeof renderArtfxVitrin === "function") renderArtfxVitrin();
       if (typeof renderDocVitrin === "function") renderDocVitrin();
       renderCategoryDrawer();
       renderStepsUI();
@@ -5633,6 +5647,125 @@
         : `✓ Damga vuruldu: "${text}"`;
     }
 
+    const PRO_ART_FX_PRESETS = [
+      {
+        id: "vhs_glitch",
+        name: "VHS Retro & Glitch",
+        nameEn: "VHS Retro & Glitch",
+        desc: "Kromatik RGB sapma ve tarama çizgileri",
+        descEn: "RGB chromatic split & analog scanlines",
+        grad: "linear-gradient(135deg, #ec4899, #06b6d4)",
+        op: "glitch",
+        params: { offset: 12, color_channel: "red_blue", scanlines: true, scanline_spacing: 4, scanline_intensity: 0.35, slice_glitch: false }
+      },
+      {
+        id: "tilt_shift",
+        name: "Tilt-Shift Minyatür",
+        nameEn: "Tilt-Shift Miniature",
+        desc: "Diorama & alan derinliği odak etkisi",
+        descEn: "Diorama selective blur & depth of field",
+        grad: "linear-gradient(135deg, #10b981, #6366f1)",
+        op: "tilt_shift",
+        params: { focus_y: 0.5, focus_width: 0.25, blur_amount: 15 }
+      },
+      {
+        id: "splash_red",
+        name: "Kırmızı Vurgulu Splash",
+        nameEn: "Red Selective Splash",
+        desc: "Yalnızca kırmızı tonları renkli bırakır",
+        descEn: "Keeps reds saturated, greyscale background",
+        grad: "linear-gradient(135deg, #ef4444, #475569)",
+        op: "color_splash",
+        params: { target_hue: 0, hue_tolerance: 18, saturation_threshold: 30, blur_background: false }
+      },
+      {
+        id: "splash_gold",
+        name: "Altın & Sarı Splash",
+        nameEn: "Golden Yellow Splash",
+        desc: "Sarı ve altın ışıltısını öne çıkarır",
+        descEn: "Highlights yellows and warm golden glows",
+        grad: "linear-gradient(135deg, #f59e0b, #475569)",
+        op: "color_splash",
+        params: { target_hue: 30, hue_tolerance: 18, saturation_threshold: 30, blur_background: false }
+      },
+      {
+        id: "cyberpunk_duo",
+        name: "Cyberpunk Neon Duotone",
+        nameEn: "Cyberpunk Neon Duotone",
+        desc: "Neon mor ve parlak camgöbeği 2-tonlu etki",
+        descEn: "Neon magenta and bright cyan 2-tone look",
+        grad: "linear-gradient(135deg, #a855f7, #06b6d4)",
+        op: "duotone",
+        params: { preset: "cyberpunk", intensity: 1.0, contrast: 1.1 }
+      },
+      {
+        id: "spotify_duo",
+        name: "Spotify Indie Rock Duotone",
+        nameEn: "Spotify Indie Duotone",
+        desc: "Koyu lacivert ve asit yeşili kapak stili",
+        descEn: "Deep navy and acid green cover art look",
+        grad: "linear-gradient(135deg, #0d1b2a, #1db954)",
+        op: "duotone",
+        params: { preset: "spotify", intensity: 1.0, contrast: 1.0 }
+      },
+      {
+        id: "film_grain_35mm",
+        name: "35mm Analog Gren & Loşluk",
+        nameEn: "35mm Film Grain & Dark Edge",
+        desc: "Nostaljik gümüş gren ve vinyet çerçeve",
+        descEn: "Nostalgic film grain with soft edge vignette",
+        grad: "linear-gradient(135deg, #78350f, #1e293b)",
+        op: "film_grain",
+        params: { intensity: 0.35, grain_type: "fine", colored: false }
+      }
+    ];
+
+    function renderArtfxVitrin() {
+      const grid = document.getElementById("artfxVitrinGrid");
+      if (!grid) return;
+      grid.innerHTML = PRO_ART_FX_PRESETS.map(fx => {
+        const title = currentLang === "en" ? fx.nameEn : fx.name;
+        const sub = currentLang === "en" ? fx.descEn : fx.desc;
+        return `
+          <div class="preset-vitrin-card" onclick="applyArtFxPreset('${fx.id}')">
+            <div class="preset-swatch" style="background:${fx.grad};"></div>
+            <div>
+              <div class="preset-card-title">${title}</div>
+              <div class="preset-card-sub">${sub}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function applyArtFxPreset(fxId) {
+      const fx = PRO_ART_FX_PRESETS.find(f => f.id === fxId);
+      if (!fx) return;
+
+      let step = activeSteps.find(s => s.op === fx.op);
+      if (step) {
+        step.params = JSON.parse(JSON.stringify(fx.params));
+        step.name = `katman_${step.id}_${fx.id}`;
+        selectedStepId = step.id;
+      } else {
+        const id = stepCounter++;
+        activeSteps.push({
+          id,
+          op: fx.op,
+          name: `katman_${id}_${fx.id}`,
+          params: JSON.parse(JSON.stringify(fx.params))
+        });
+        selectedStepId = id;
+      }
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+      const title = currentLang === "en" ? fx.nameEn : fx.name;
+      statusMessage.textContent = (currentLang === "en")
+        ? `✓ Applied FX: ${title}`
+        : `✓ Efekt uygulandı: ${title}`;
+    }
+
     function renderDocVitrin() {
       const grid = document.getElementById("docVitrinGrid");
       if (!grid) return;
@@ -5706,7 +5839,7 @@
     }
 
     function switchLeftTab(tabKey) {
-      const tabs = ["presets", "crop", "palette", "stamps", "docs", "history"];
+      const tabs = ["presets", "crop", "palette", "stamps", "artfx", "docs", "history"];
       tabs.forEach(t => {
         const btn = document.getElementById("segTab" + t.charAt(0).toUpperCase() + t.slice(1));
         const content = document.getElementById("tabContent" + t.charAt(0).toUpperCase() + t.slice(1));
@@ -5719,6 +5852,7 @@
         else renderPaletteUI();
       }
       if (tabKey === "stamps") renderStampsVitrin();
+      if (tabKey === "artfx") renderArtfxVitrin();
       if (tabKey === "history") updateHistoryStackUI();
     }
 
