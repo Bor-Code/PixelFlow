@@ -115,7 +115,11 @@ def save_image(image: ImageArray, path: str | Path) -> Path:
     return out_path
 
 
-def encode_image_bytes(image: ImageArray, image_format: str = "PNG") -> bytes:
+def encode_image_bytes(
+    image: ImageArray,
+    image_format: str = "PNG",
+    quality: int | None = None,
+) -> bytes:
     validate_image_array(image)
     fmt = image_format.upper()
     if fmt == "JPG":
@@ -124,7 +128,10 @@ def encode_image_bytes(image: ImageArray, image_format: str = "PNG") -> bytes:
         raise InvalidImageError(f"Unsupported output image format: '{image_format}'")
     pil_img = _numpy_to_pil(image, target_format=fmt)
     buffer = BytesIO()
-    pil_img.save(buffer, format=fmt)
+    save_kwargs: dict[str, object] = {}
+    if quality is not None and fmt in ("JPEG", "WEBP"):
+        save_kwargs["quality"] = max(1, min(100, quality))
+    pil_img.save(buffer, format=fmt, **save_kwargs)
     return buffer.getvalue()
 
 

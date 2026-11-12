@@ -1783,6 +1783,12 @@
         </button>
       </div>
 
+      <button type="button" class="btn-top-capsule" id="btnOpenExportOptimizer" onclick="openExportOptimizerModal()" title="Squoosh Tarzı Dışa Aktarma &amp; Sıkıştırma (Ctrl+E)" style="background:linear-gradient(135deg, rgba(56,189,248,0.18), rgba(168,85,247,0.18));border:1px solid rgba(56,189,248,0.4);color:#38bdf8;font-weight:600;">
+        <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;" viewBox="0 0 24 24">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+        <span data-tr="Squoosh Optimize" data-en="Squoosh Optimize">Squoosh Optimize</span>
+      </button>
       <select id="exportFormat" class="select-format">
         <option value="PNG">PNG</option>
         <option value="JPEG">JPEG</option>
@@ -2162,6 +2168,16 @@
             <div class="corner-pin" id="pin_br" title="Sağ Alt Köşe" style="display:none;"></div>
             <div class="corner-pin" id="pin_bl" title="Sol Alt Köşe" style="display:none;"></div>
             <div class="selection-marquee" id="selectionMarquee"></div>
+
+            <!-- 800% Piksel Büyüteç HUD -->
+            <div id="pixelLoupe" style="position:absolute;width:150px;height:150px;border-radius:50%;border:2.5px solid var(--pf-accent);box-shadow:0 0 25px rgba(0,0,0,0.85), inset 0 0 10px rgba(0,0,0,0.6);overflow:hidden;pointer-events:none;display:none;z-index:45;background:#05070a;transform:translate(-50%, -50%);">
+              <canvas id="loupeCanvas" width="150" height="150" style="width:100%;height:100%;display:block;image-rendering:pixelated;"></canvas>
+              <div style="position:absolute;top:50%;left:50%;width:14px;height:14px;transform:translate(-50%,-50%);pointer-events:none;border:1px solid rgba(255,255,255,0.85);box-shadow:0 0 3px #000;"></div>
+              <div id="loupeColorBadge" style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);background:rgba(5,7,10,0.92);padding:2px 8px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;gap:5px;font-size:10px;font-family:monospace;color:#fff;pointer-events:none;white-space:nowrap;">
+                <span id="loupeSwatch" style="width:9px;height:9px;border-radius:2px;display:inline-block;border:1px solid #fff;background:#38bdf8;"></span>
+                <span id="loupeHex">#38BDF8</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -2228,6 +2244,14 @@
               <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
               </svg>
+            </button>
+            <button type="button" class="hud-btn" id="btnToggleLoupe" onclick="toggleLoupe()" title="800% Piksel Büyüteci &amp; Renk Pipeti (Z)">
+              <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <circle cx="11" cy="11" r="2" />
+              </svg>
+              <span data-tr="Büyüteç" data-en="Loupe">Büyüteç</span>
             </button>
           </div>
         </div>
@@ -2927,6 +2951,86 @@
         <div style="display:flex;gap:8px;">
           <button type="button" class="action-btn" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);font-size:11.5px;padding:6px 12px;" onclick="closeExifModal()" data-tr="Kapat" data-en="Close">Kapat</button>
           <button type="button" class="action-btn" style="background:var(--pf-accent);color:#081b2a;font-weight:700;font-size:11.5px;padding:6px 14px;" onclick="wipeExifAndPrivacy()" data-tr="Meta Verisiz İndir" data-en="Export Without EXIF">Meta Verisiz İndir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profesyonel Dışa Aktarma & Sıkıştırma Stüdyosu (Squoosh Engine Modal) -->
+  <div id="exportOptimizerModal" class="command-palette-backdrop" style="display:none;" onclick="handleExportOptBackdropClick(event)">
+    <div class="command-palette-box" style="max-width:680px;padding:22px;border-radius:14px;border:1px solid rgba(255,255,255,0.12);box-shadow:0 25px 60px -10px rgba(0,0,0,0.85);background:#0d111a;" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg, rgba(56,189,248,0.2), rgba(168,85,247,0.25));border:1px solid rgba(56,189,248,0.4);display:flex;align-items:center;justify-content:center;color:#38bdf8;">
+            <svg style="width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2.2;" viewBox="0 0 24 24">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#f8fafc;" data-tr="Profesyonel Dışa Aktarma &amp; Sıkıştırma Stüdyosu" data-en="Pro Export &amp; Compression Studio">Profesyonel Dışa Aktarma &amp; Sıkıştırma Stüdyosu</div>
+            <div style="font-size:11px;color:var(--pf-text-muted);" data-tr="Squoosh motoru ile canlı dosya boyutu karşılaştırması ve kalite optimizasyonu" data-en="Live size comparison &amp; quality optimization powered by Squoosh engine">Squoosh motoru ile canlı dosya boyutu karşılaştırması ve kalite optimizasyonu</div>
+          </div>
+        </div>
+        <button type="button" class="btn-icon" onclick="closeExportOptimizerModal()" title="Kapat (ESC)">×</button>
+      </div>
+
+      <!-- Kıyaslama İstatistik Kartı -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;font-size:12px;">
+        <div style="background:#090d16;padding:12px;border-radius:9px;border:1px solid rgba(255,255,255,0.06);text-align:center;">
+          <div style="color:var(--pf-text-muted);font-size:10.5px;text-transform:uppercase;font-weight:600;margin-bottom:4px;" data-tr="Orijinal Boyut" data-en="Original Size">Orijinal Boyut</div>
+          <div id="optOrigSize" style="color:#cbd5e1;font-size:14px;font-weight:700;">-</div>
+        </div>
+        <div style="background:#090d16;padding:12px;border-radius:9px;border:1px solid rgba(255,255,255,0.06);text-align:center;">
+          <div style="color:var(--pf-text-muted);font-size:10.5px;text-transform:uppercase;font-weight:600;margin-bottom:4px;" data-tr="Optimize Boyut" data-en="Optimized Size">Optimize Boyut</div>
+          <div id="optNewSize" style="color:#38bdf8;font-size:14px;font-weight:700;">Hesaplanıyor...</div>
+        </div>
+        <div style="background:rgba(16,185,129,0.08);padding:12px;border-radius:9px;border:1px solid rgba(16,185,129,0.3);text-align:center;">
+          <div style="color:#34d399;font-size:10.5px;text-transform:uppercase;font-weight:600;margin-bottom:4px;" data-tr="Alan Tasarrufu" data-en="Storage Savings">Alan Tasarrufu</div>
+          <div id="optSavingsBadge" style="color:#10b981;font-size:14px;font-weight:700;">-%0</div>
+        </div>
+      </div>
+
+      <!-- Ayar Kontrolleri -->
+      <div style="background:#090d16;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);margin-bottom:16px;">
+        <!-- Format Seçimi -->
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--pf-accent);text-transform:uppercase;margin-bottom:8px;" data-tr="Hedef Format" data-en="Target Format">Hedef Format</div>
+          <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;">
+            <button type="button" class="btn-filter-pill active" id="btnOptFmtWebp" onclick="setOptFormat('WEBP')">WebP (Modern &amp; Küçük)</button>
+            <button type="button" class="btn-filter-pill" id="btnOptFmtJpeg" onclick="setOptFormat('JPEG')">JPEG (Evrensel)</button>
+            <button type="button" class="btn-filter-pill" id="btnOptFmtPng" onclick="setOptFormat('PNG')">PNG (Kayıpsız)</button>
+          </div>
+        </div>
+
+        <!-- Kalite Sürgüsü -->
+        <div class="pro-slider-row" id="rowOptQuality">
+          <div class="slider-meta">
+            <span data-tr="Sıkıştırma Kalitesi" data-en="Compression Quality">Sıkıştırma Kalitesi</span>
+            <span class="val" id="valOptQuality">82%</span>
+          </div>
+          <input type="range" id="sliderOptQuality" min="10" max="100" step="1" value="82" oninput="updateOptQuality(this.value)" />
+        </div>
+
+        <!-- EXIF Strip Checkbox -->
+        <label style="display:flex;align-items:center;gap:8px;font-size:11.5px;color:#cbd5e1;cursor:pointer;margin-top:10px;">
+          <input type="checkbox" id="chkOptStripExif" checked onchange="scheduleOptRecalc()" />
+          <span data-tr="Gizlilik Koruması: Kamera EXIF ve Konum Meta Verilerini Temizle" data-en="Privacy Shield: Strip Camera EXIF &amp; Location Metadata">Gizlilik Koruması: Kamera EXIF ve Konum Meta Verilerini Temizle</span>
+        </label>
+      </div>
+
+      <!-- Alt Butonlar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span id="optStatusText" style="font-size:11.5px;color:var(--pf-text-muted);">Hazır.</span>
+        <div style="display:flex;gap:8px;">
+          <button type="button" class="action-btn" style="background:transparent;border:1px solid var(--pf-border);color:var(--pf-text-muted);font-size:11.5px;padding:7px 14px;" onclick="closeExportOptimizerModal()" data-tr="Vazgeç" data-en="Cancel">Vazgeç</button>
+          <button type="button" class="action-btn" style="background:linear-gradient(135deg, #0284c7, #38bdf8);color:#081b2a;font-weight:700;font-size:11.5px;padding:7px 18px;display:flex;align-items:center;gap:6px;" onclick="downloadOptimizedImage()">
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;" viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            <span data-tr="Optimize İndir" data-en="Download Optimized">Optimize İndir</span>
+          </button>
         </div>
       </div>
     </div>
@@ -5344,6 +5448,208 @@
       exportAs(exportFormat.value);
     });
 
+    // ==========================================
+    // 800% Piksel Büyüteç & Canlı Renk Pipeti (Loupe)
+    // ==========================================
+    let loupeActive = false;
+    let currentLoupeHex = "#000000";
+
+    function toggleLoupe() {
+      loupeActive = !loupeActive;
+      const btn = document.getElementById("btnToggleLoupe");
+      if (btn) btn.classList.toggle("active", loupeActive);
+      const loupeEl = document.getElementById("pixelLoupe");
+      if (loupeEl && !loupeActive) loupeEl.style.display = "none";
+      statusMessage.textContent = loupeActive
+        ? (currentLang === "en" ? "Loupe active: Move over image, click to copy Hex" : "Büyüteç aktif: Görsel üzerinde gezinin, tıklayarak Hex kopyalayın")
+        : (currentLang === "en" ? "Loupe deactivated" : "Büyüteç kapatıldı");
+    }
+
+    function initLoupeInspector() {
+      const box = document.getElementById("boxAfter");
+      const img = document.getElementById("imgAfter");
+      const loupeEl = document.getElementById("pixelLoupe");
+      const loupeCanvas = document.getElementById("loupeCanvas");
+      const loupeHex = document.getElementById("loupeHex");
+      const loupeSwatch = document.getElementById("loupeSwatch");
+      if (!box || !img || !loupeEl || !loupeCanvas) return;
+
+      const ctx = loupeCanvas.getContext("2d");
+      if (!ctx) return;
+      ctx.imageSmoothingEnabled = false;
+
+      box.addEventListener("mousemove", e => {
+        if (!loupeActive || img.style.display === "none" || !img.src) {
+          loupeEl.style.display = "none";
+          return;
+        }
+
+        const rect = img.getBoundingClientRect();
+        if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+          loupeEl.style.display = "none";
+          return;
+        }
+
+        loupeEl.style.display = "block";
+        const boxRect = box.getBoundingClientRect();
+        const posX = e.clientX - boxRect.left;
+        const posY = e.clientY - boxRect.top;
+        loupeEl.style.left = posX + "px";
+        loupeEl.style.top = posY + "px";
+
+        const natW = img.naturalWidth || img.width || 1;
+        const natH = img.naturalHeight || img.height || 1;
+        const scaleX = natW / rect.width;
+        const scaleY = natH / rect.height;
+        const natX = Math.floor((e.clientX - rect.left) * scaleX);
+        const natY = Math.floor((e.clientY - rect.top) * scaleY);
+
+        const sampleSize = 18;
+        const half = Math.floor(sampleSize / 2);
+        const sx = Math.max(0, Math.min(natW - sampleSize, natX - half));
+        const sy = Math.max(0, Math.min(natH - sampleSize, natY - half));
+
+        ctx.clearRect(0, 0, 150, 150);
+        try {
+          ctx.drawImage(img, sx, sy, sampleSize, sampleSize, 0, 0, 150, 150);
+
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+          ctx.lineWidth = 0.5;
+          const step = 150 / sampleSize;
+          for (let i = 0; i <= 150; i += step) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 150); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(150, i); ctx.stroke();
+          }
+
+          const centerData = ctx.getImageData(75, 75, 1, 1).data;
+          const r = centerData[0], g = centerData[1], b = centerData[2];
+          const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+          currentLoupeHex = hex;
+
+          if (loupeHex) loupeHex.textContent = hex;
+          if (loupeSwatch) loupeSwatch.style.backgroundColor = hex;
+        } catch (err) {}
+      });
+
+      box.addEventListener("mouseleave", () => {
+        if (loupeEl) loupeEl.style.display = "none";
+      });
+
+      box.addEventListener("click", () => {
+        if (loupeActive && currentLoupeHex) {
+          navigator.clipboard.writeText(currentLoupeHex);
+          statusMessage.textContent = currentLang === "en" ? `✓ Copied hex: ${currentLoupeHex}` : `✓ Renk kodu kopyalandı: ${currentLoupeHex}`;
+        }
+      });
+    }
+
+    // ==========================================
+    // Squoosh Tarzı Dışa Aktarma & Sıkıştırma Stüdyosu
+    // ==========================================
+    let optFormat = "WEBP";
+    let optQuality = 82;
+    let optDebounceTimer = null;
+    let optCurrentBlob = null;
+
+    function openExportOptimizerModal() {
+      const modal = document.getElementById("exportOptimizerModal");
+      if (!modal) return;
+      modal.style.display = "flex";
+      const origSize = document.getElementById("optOrigSize");
+      if (origSize && currentFile) {
+        origSize.textContent = formatBytes(currentFile.size);
+      } else if (origSize) {
+        origSize.textContent = "—";
+      }
+      calcOptimizedPreview();
+    }
+
+    function closeExportOptimizerModal() {
+      const modal = document.getElementById("exportOptimizerModal");
+      if (modal) modal.style.display = "none";
+    }
+
+    function handleExportOptBackdropClick(e) {
+      if (e.target.id === "exportOptimizerModal") closeExportOptimizerModal();
+    }
+
+    function setOptFormat(fmt) {
+      optFormat = fmt;
+      ["Webp", "Jpeg", "Png"].forEach(f => {
+        const b = document.getElementById("btnOptFmt" + f);
+        if (b) b.classList.toggle("active", f.toUpperCase() === fmt);
+      });
+      const qRow = document.getElementById("rowOptQuality");
+      if (qRow) qRow.style.display = (fmt === "PNG") ? "none" : "block";
+      scheduleOptRecalc();
+    }
+
+    function updateOptQuality(val) {
+      optQuality = parseInt(val, 10);
+      const v = document.getElementById("valOptQuality");
+      if (v) v.textContent = optQuality + "%";
+      scheduleOptRecalc();
+    }
+
+    function scheduleOptRecalc() {
+      clearTimeout(optDebounceTimer);
+      optDebounceTimer = setTimeout(calcOptimizedPreview, 120);
+    }
+
+    async function calcOptimizedPreview() {
+      const img = document.getElementById("imgAfter");
+      if (!img || !img.src) return;
+      const statusText = document.getElementById("optStatusText");
+      if (statusText) statusText.textContent = (currentLang === "en") ? "Compressing preview..." : "Sıkıştırma hesaplanıyor...";
+
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.drawImage(img, 0, 0);
+
+      const mime = optFormat === "WEBP" ? "image/webp" : (optFormat === "JPEG" ? "image/jpeg" : "image/png");
+      const quality = optFormat === "PNG" ? undefined : (optQuality / 100);
+
+      canvas.toBlob(blob => {
+        if (!blob) return;
+        optCurrentBlob = blob;
+        const newSizeEl = document.getElementById("optNewSize");
+        const savingsEl = document.getElementById("optSavingsBadge");
+        if (newSizeEl) newSizeEl.textContent = formatBytes(blob.size);
+
+        const refSize = currentFile ? currentFile.size : (img.src.length * 0.75);
+        if (refSize > 0 && savingsEl) {
+          const ratio = Math.round(((refSize - blob.size) / refSize) * 100);
+          if (ratio >= 0) {
+            savingsEl.textContent = `-%${ratio} Kazanç`;
+            savingsEl.style.color = "#10b981";
+          } else {
+            savingsEl.textContent = `+%${Math.abs(ratio)}`;
+            savingsEl.style.color = "#f59e0b";
+          }
+        }
+        if (statusText) statusText.textContent = (currentLang === "en") ? "Optimization ready." : "Optimizasyon hazır.";
+      }, mime, quality);
+    }
+
+    function downloadOptimizedImage() {
+      if (!optCurrentBlob) return;
+      const url = URL.createObjectURL(optCurrentBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      const ext = optFormat.toLowerCase();
+      const baseName = (currentFile?.name || "pixelflow_export").replace(/\.[^/.]+$/, "");
+      a.download = `${baseName}_optimized.${ext === "jpeg" ? "jpg" : ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      closeExportOptimizerModal();
+      statusMessage.textContent = (currentLang === "en") ? `✓ Optimized file downloaded (${formatBytes(optCurrentBlob.size)})` : `✓ Optimize dosya indirildi (${formatBytes(optCurrentBlob.size)})`;
+    }
+
     window.addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
         e.preventDefault();
@@ -5355,6 +5661,11 @@
         openExifModal();
         return;
       }
+      if ((e.ctrlKey || e.metaKey) && (e.key === "e" || e.key === "E")) {
+        e.preventDefault();
+        openExportOptimizerModal();
+        return;
+      }
       if ((e.ctrlKey || e.metaKey) && e.key === "[") {
         e.preventDefault();
         toggleLeftPanel();
@@ -5363,9 +5674,14 @@
       if (e.key === "Escape") {
         closeCommandPalette();
         closeExifModal();
+        closeExportOptimizerModal();
         hideContextMenu();
       }
       if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA") return;
+      if (!e.ctrlKey && !e.metaKey && (e.key === "z" || e.key === "Z")) {
+        toggleLoupe();
+        return;
+      }
       if ((e.ctrlKey || e.metaKey) && (e.key === "z" || e.key === "Z")) {
         e.preventDefault();
         if (e.shiftKey) redo(); else undo();
@@ -5865,6 +6181,8 @@
     // Raycast / Linear Tarzı Hızlı Komut Paleti (Ctrl+K)
     const COMMAND_ITEMS = [
       // Araçlar & Güvenlik
+      { id: "export_optimizer", group: "Dışa Aktarma & Sıkıştırma", groupEn: "Export & Compression", name: "Squoosh Tarzı Dışa Aktarma & Sıkıştırma Stüdyosu", nameEn: "Squoosh-Style Export Optimizer", shortcut: "Ctrl+E", action: () => openExportOptimizerModal() },
+      { id: "loupe_inspector", group: "Görünüm & Renk", groupEn: "View & Color", name: "800% Piksel Büyüteci & Canlı Renk Pipeti", nameEn: "800% Pixel Loupe & Live Eyedropper", shortcut: "Z", action: () => toggleLoupe() },
       { id: "exif_inspector", group: "Araçlar & Gizlilik", groupEn: "Tools & Privacy", name: "EXIF & Görsel Meta Verisi / Gizlilik Temizleyici", nameEn: "EXIF & Image Metadata Privacy Cleaner", shortcut: "Ctrl+I", action: () => openExifModal() },
 
       // Belge & Evrak
@@ -7576,6 +7894,7 @@
     })();
     setStudioTheme(savedTheme);
     setupColorWheels();
+    initLoupeInspector();
   </script>
 </body>
 

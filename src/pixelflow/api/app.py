@@ -146,8 +146,11 @@ def _register_v1_routes(app: FastAPI) -> None:
         pipeline: Annotated[str, Form(...)],
         settings: Annotated[ApiSettings, Depends(get_api_settings)],
         output_format: Annotated[str | None, Form()] = None,
+        quality: Annotated[int | None, Form()] = None,
     ) -> Response:
-        return await _handle_process_request(image, pipeline, settings, output_format)
+        return await _handle_process_request(
+            image, pipeline, settings, output_format, quality
+        )
 
     @app.post("/v1/process-multipage")
     async def process_multipage_endpoint(
@@ -265,6 +268,7 @@ async def _handle_process_request(
     pipeline_text: str,
     settings: ApiSettings,
     output_format: str | None = None,
+    quality: int | None = None,
 ) -> Response:
     content_type = (upload.content_type or "").lower().strip()
     if content_type not in settings.allowed_mime_types:
@@ -284,7 +288,9 @@ async def _handle_process_request(
     if target_format == "JPG":
         target_format = "JPEG"
     output_media = FORMAT_TO_MIME.get(target_format, content_type)
-    output_bytes = encode_image_bytes(processed, image_format=target_format)
+    output_bytes = encode_image_bytes(
+        processed, image_format=target_format, quality=quality
+    )
     return Response(content=output_bytes, media_type=output_media)
 
 

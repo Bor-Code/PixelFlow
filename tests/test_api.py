@@ -83,6 +83,15 @@ async def test_process_endpoint_success() -> None:
         assert pdf_resp.headers["content-type"] == "application/pdf"
         assert pdf_resp.content.startswith(b"%PDF")
 
+        jpeg_resp = await client.post(
+            "/v1/process",
+            files={"image": ("in.png", img_bytes, "image/png")},
+            data={"pipeline": pipe_json, "output_format": "JPEG", "quality": "60"},
+        )
+        assert jpeg_resp.status_code == 200
+        assert jpeg_resp.headers["content-type"] == "image/jpeg"
+        assert len(jpeg_resp.content) > 0
+
 
 @pytest.mark.anyio
 async def test_process_endpoint_limits() -> None:
