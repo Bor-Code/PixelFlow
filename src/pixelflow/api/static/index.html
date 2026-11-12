@@ -2247,12 +2247,36 @@
               </svg>
               <span data-tr="Perde" data-en="Curtain">Perde</span>
             </button>
-            <button type="button" class="hud-btn" id="btnPeekOriginal" title="Basılı tutarak orijinali görün">
+            <button type="button" class="hud-btn" id="btnPeekOriginal" title="Basılı tutarak orijinali görün (Space)">
               <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                 <circle cx="12" cy="12" r="3" />
               </svg>
               <span data-tr="Orijinal" data-en="Original">Orijinal</span>
+            </button>
+          </div>
+
+          <div class="hud-divider"></div>
+
+          <!-- Yüzen Hızlı Eylemler (Floating Quick Actions) -->
+          <div class="hud-group">
+            <button type="button" class="hud-btn" onclick="quickFlipHorizontal()" title="Yatay Aynala (Flip Horizontal)">
+              <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3m8-18h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3M12 2v20"/>
+              </svg>
+              <span data-tr="Aynala" data-en="Flip">Aynala</span>
+            </button>
+            <button type="button" class="hud-btn" onclick="quickAdd('auto_enhance')" title="1-Tık Akıllı İyileştirme (Auto-Enhance)">
+              <svg style="width:12px;height:12px;color:#f59e0b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/>
+              </svg>
+              <span data-tr="Sihirli" data-en="Enhance">Sihirli</span>
+            </button>
+            <button type="button" class="hud-btn" onclick="openExportOptimizerModal()" title="Squoosh Tarzı Canlı Sıkıştırma &amp; Dışa Aktar (Ctrl+E)">
+              <svg style="width:12px;height:12px;color:#ec4899;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              <span data-tr="Sıkıştır" data-en="Optimize">Sıkıştır</span>
             </button>
           </div>
 
@@ -8109,6 +8133,80 @@
       } catch (e) {}
     }
 
+    // Yüzen Akıllı Hızlı Araç Çubuğu (Canvas Floating Dynamic Toolbar)
+    let isPeekingOriginal = false;
+    let peekBackupSrc = "";
+
+    function quickFlipHorizontal() {
+      quickAdd("flip", { mode: "horizontal" });
+    }
+
+    function startPeekOriginal() {
+      if (!imgBefore || !imgBefore.src || !imgAfter || isPeekingOriginal) return;
+      isPeekingOriginal = true;
+      peekBackupSrc = imgAfter.src;
+      imgAfter.src = imgBefore.src;
+      const badgeA = document.getElementById("badgeAfter");
+      if (badgeA) {
+        badgeA.style.display = "block";
+        badgeA.textContent = (currentLang === "en") ? "ORIGINAL (HOLDING SPACE)" : "ORİJİNAL (BASILI)";
+        badgeA.style.background = "rgba(239, 68, 68, 0.9)";
+        badgeA.style.color = "#ffffff";
+        badgeA.style.boxShadow = "0 0 10px rgba(239, 68, 68, 0.6)";
+      }
+      const btn = document.getElementById("btnPeekOriginal");
+      if (btn) btn.classList.add("active");
+    }
+
+    function stopPeekOriginal() {
+      if (!isPeekingOriginal || !imgAfter) return;
+      isPeekingOriginal = false;
+      if (peekBackupSrc) {
+        imgAfter.src = peekBackupSrc;
+      }
+      const badgeA = document.getElementById("badgeAfter");
+      if (badgeA) {
+        badgeA.style.display = currentViewMode === "split" ? "block" : "none";
+        badgeA.textContent = (currentLang === "en") ? "Processed" : "Düzenlenen";
+        badgeA.style.background = "";
+        badgeA.style.color = "";
+        badgeA.style.boxShadow = "";
+      }
+      const btn = document.getElementById("btnPeekOriginal");
+      if (btn) btn.classList.remove("active");
+    }
+
+    function initFloatingQuickDock() {
+      const btnPeek = document.getElementById("btnPeekOriginal");
+      if (btnPeek) {
+        btnPeek.addEventListener("mousedown", (e) => { e.preventDefault(); startPeekOriginal(); });
+        btnPeek.addEventListener("touchstart", (e) => { e.preventDefault(); startPeekOriginal(); }, { passive: false });
+        btnPeek.addEventListener("mouseup", (e) => { e.preventDefault(); stopPeekOriginal(); });
+        btnPeek.addEventListener("mouseleave", (e) => { e.preventDefault(); stopPeekOriginal(); });
+        btnPeek.addEventListener("touchend", (e) => { e.preventDefault(); stopPeekOriginal(); });
+      }
+
+      window.addEventListener("keydown", (e) => {
+        if (e.code === "Space" && !e.repeat) {
+          const tag = document.activeElement ? document.activeElement.tagName : "";
+          if (tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+            e.preventDefault();
+            startPeekOriginal();
+          }
+        }
+      });
+
+      window.addEventListener("keyup", (e) => {
+        if (e.code === "Space") {
+          const tag = document.activeElement ? document.activeElement.tagName : "";
+          if (tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+            e.preventDefault();
+            stopPeekOriginal();
+          }
+        }
+      });
+    }
+
     // Başlangıç Yüklemesi (Dil Tercihi, Tema ve Çekmece)
     setLanguage(currentLang);
     const savedTheme = (() => {
@@ -8118,6 +8216,7 @@
     setStudioTheme(savedTheme);
     setupColorWheels();
     initLoupeInspector();
+    initFloatingQuickDock();
   </script>
 </body>
 
