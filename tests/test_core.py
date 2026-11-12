@@ -184,6 +184,15 @@ def test_io_modes_and_errors(tmp_path: Path) -> None:
     assert decode_image_bytes(encode_image_bytes(one_ch, "PNG")).shape == (8, 8)
 
 
+def test_io_quality_compression() -> None:
+    img = np.random.randint(0, 255, (64, 64, 3), dtype=np.uint8)
+    high_q = encode_image_bytes(img, "JPEG", quality=95)
+    low_q = encode_image_bytes(img, "JPEG", quality=20)
+    assert len(high_q) > len(low_q)
+    webp_q = encode_image_bytes(img, "WEBP", quality=50)
+    assert len(webp_q) > 0
+
+
 def test_io_edge_cases(tmp_path: Path) -> None:
     with pytest.raises(InvalidImageError):
         load_image(tmp_path / "nonexistent.png")
