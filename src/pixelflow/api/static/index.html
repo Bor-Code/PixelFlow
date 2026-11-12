@@ -1866,6 +1866,14 @@
           </svg>
           <span data-tr="Yerel Rötuş" data-en="Local Mask">Yerel Rötuş</span>
         </button>
+        <button type="button" class="seg-tab" id="segTabBiometric" onclick="switchLeftTab('biometric')">
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="12" cy="10" r="3" />
+            <path d="M7 21v-2a5 5 0 0 1 10 0v2" />
+          </svg>
+          <span data-tr="Vesikalık" data-en="Biometric">Vesikalık</span>
+        </button>
         <button type="button" class="seg-tab" id="segTabDocs" onclick="switchLeftTab('docs')">
           <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -2047,6 +2055,28 @@
 
         <div style="font-size:11px;font-weight:700;color:var(--pf-text-muted);text-transform:uppercase;margin:8px 0 6px;" data-tr="Hızlı Maske Şablonları" data-en="Quick Mask Presets">Hızlı Maske Şablonları</div>
         <div class="preset-cards-grid" id="maskVitrinGrid">
+          <!-- JS tarafından doldurulur -->
+        </div>
+      </div>
+
+      <!-- Tab: Biyometrik Vesikalık & Vize Fotoğraf Stüdyosu -->
+      <div class="tab-content-pro" id="tabContentBiometric" style="display:none;">
+        <div style="padding:10px 12px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.06);margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--pf-accent);text-transform:uppercase;margin-bottom:8px;" data-tr="Baskı Kartı Düzeni" data-en="Print Sheet Layout">Baskı Kartı Düzeni</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:10px;">
+            <button type="button" class="btn-filter-pill active" id="btnBioLayout4" onclick="setBioLayout('4_up')">4'lü</button>
+            <button type="button" class="btn-filter-pill" id="btnBioLayout6" onclick="setBioLayout('6_up')">6'lı</button>
+            <button type="button" class="btn-filter-pill" id="btnBioLayout8" onclick="setBioLayout('8_up')">8'li</button>
+            <button type="button" class="btn-filter-pill" id="btnBioLayout1" onclick="setBioLayout('single')">Tekli</button>
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:#cbd5e1;cursor:pointer;">
+            <input type="checkbox" id="chkBioCutLines" checked onchange="toggleBioCutLines(this.checked)" />
+            <span data-tr="Kesim Kılavuz Çizgileri (Hairline Grid)" data-en="Cut Guide Lines">Kesim Kılavuz Çizgileri</span>
+          </label>
+        </div>
+
+        <div style="font-size:11px;font-weight:700;color:var(--pf-text-muted);text-transform:uppercase;margin:8px 0 6px;" data-tr="Ülke &amp; Şablon Standartları" data-en="Country &amp; Standards">Ülke &amp; Şablon Standartları</div>
+        <div class="preset-cards-grid" id="biometricVitrinGrid">
           <!-- JS tarafından doldurulur -->
         </div>
       </div>
@@ -3599,6 +3629,52 @@
           { key: "block_size", label: "Detay Penceresi", min: 7, max: 31, step: 2 },
           { key: "constant", label: "Zemin Temizliği", min: 0.0, max: 12.0, step: 1.0 }
         ]
+      },
+      biometric_sheet: {
+        title: "Biyometrik Vesikalık & Baskı Şablonu",
+        tag: "Belge",
+        defaults: {
+          preset: "icao_35x45",
+          layout: "4_up",
+          dpi: 300,
+          sheet_width_mm: 150.0,
+          sheet_height_mm: 100.0,
+          draw_cut_lines: true
+        },
+        selectFields: [
+          { key: "preset", label: "Standart / Ülke", options: [["icao_35x45", "35x45mm (Schengen, TR Kimlik/Pasaport)"], ["us_visa_50x50", "50x50mm (ABD Vize / Green Card)"], ["standard_50x60", "50x60mm (Standart Büyük Vesikalık)"]] },
+          { key: "layout", label: "Baskı Düzeni", options: [["4_up", "4'lü 10x15cm Kartı"], ["6_up", "6'lı 10x15cm Kartı"], ["8_up", "8'li 10x15cm Kartı"], ["single", "Tekli Fotoğraf"]] }
+        ],
+        booleanFields: [
+          { key: "draw_cut_lines", label: "Kesim Kılavuz Çizgileri Çiz" }
+        ],
+        fields: []
+      },
+      markup: {
+        title: "Vektör İşaretleme & Revizyon Rozeti",
+        tag: "Çizim",
+        defaults: {
+          kind: "badge",
+          text: "REVİZYON 1",
+          x1: 50,
+          y1: 50,
+          x2: 200,
+          y2: 200,
+          color: [239, 68, 68],
+          stroke_width: 3,
+          fill_opacity: 0.2
+        },
+        selectFields: [
+          { key: "kind", label: "İşaretleme Türü", options: [["badge", "Revizyon / Onay Rozeti"], ["arrow", "Yön Oku"], ["box", "Vurgu / Sınır Kutusu"]] }
+        ],
+        fields: [
+          { key: "stroke_width", label: "Çizgi / Yazı Kalınlığı", min: 1, max: 12, step: 1 },
+          { key: "fill_opacity", label: "Kutu Dolgu Saydamlığı", min: 0.0, max: 1.0, step: 0.05 },
+          { key: "x1", label: "Konum X1", min: 0, max: 2000, step: 10 },
+          { key: "y1", label: "Konum Y1", min: 0, max: 2000, step: 10 },
+          { key: "x2", label: "Bitiş X2", min: 0, max: 2000, step: 10 },
+          { key: "y2", label: "Bitiş Y2", min: 0, max: 2000, step: 10 }
+        ]
       }
     };
 
@@ -3735,7 +3811,9 @@
       auto_pii: "Auto Mask PII (ID/IBAN)",
       ocr_read: "Read Text (OCR)",
       redact: "Redact Sensitive Region",
-      adaptive_threshold: "B&W Document Scan (Adaptive)"
+      adaptive_threshold: "B&W Document Scan (Adaptive)",
+      biometric_sheet: "Biometric Passport & Visa Sheet",
+      markup: "Vector Markup & Revision Stamp"
     };
 
     let activeCategory = "ai";
@@ -6184,6 +6262,10 @@
       { id: "export_optimizer", group: "Dışa Aktarma & Sıkıştırma", groupEn: "Export & Compression", name: "Squoosh Tarzı Dışa Aktarma & Sıkıştırma Stüdyosu", nameEn: "Squoosh-Style Export Optimizer", shortcut: "Ctrl+E", action: () => openExportOptimizerModal() },
       { id: "loupe_inspector", group: "Görünüm & Renk", groupEn: "View & Color", name: "800% Piksel Büyüteci & Canlı Renk Pipeti", nameEn: "800% Pixel Loupe & Live Eyedropper", shortcut: "Z", action: () => toggleLoupe() },
       { id: "exif_inspector", group: "Araçlar & Gizlilik", groupEn: "Tools & Privacy", name: "EXIF & Görsel Meta Verisi / Gizlilik Temizleyici", nameEn: "EXIF & Image Metadata Privacy Cleaner", shortcut: "Ctrl+I", action: () => openExifModal() },
+      { id: "biometric_passport", group: "Belge & Evrak", groupEn: "Document & Office", name: "Biyometrik Vesikalık & 10x15cm Baskı Şablonu", nameEn: "Biometric Passport & 10x15cm Print Sheet", action: () => { switchLeftTab("biometric"); if (document.getElementById("proLeftPanel")?.classList.contains("collapsed")) toggleLeftPanel(); applyBiometricPreset("icao_35x45"); } },
+      { id: "markup_revision", group: "Çizim & Revizyon", groupEn: "Markup & Revision", name: "Kırmızı Revizyon Damgası (REVİZYON 1)", nameEn: "Red Revision Stamp", action: () => addQuickMarkup("badge", "REVİZYON 1", [239, 68, 68]) },
+      { id: "markup_approval", group: "Çizim & Revizyon", groupEn: "Markup & Revision", name: "Yeşil Onay Rozeti (ONAYLANDI)", nameEn: "Green Approved Stamp", action: () => addQuickMarkup("badge", "ONAYLANDI", [16, 185, 129]) },
+      { id: "markup_arrow", group: "Çizim & Revizyon", groupEn: "Markup & Revision", name: "Dikkat & Açıklama Oku (Arrow)", nameEn: "Callout Arrow", action: () => addQuickMarkup("arrow", "", [239, 68, 68]) },
 
       // Belge & Evrak
       { id: "deskew", group: "Belge & Evrak", groupEn: "Document & Office", name: "Akıllı Belge Köşesi & 4-Nokta Perspektif Düzelt", nameEn: "Auto Corner Detection & Perspective Deskew", action: () => quickAdd("perspective_warp") },
@@ -7616,8 +7698,148 @@
       });
     }
 
+    const PRO_BIOMETRIC_PRESETS = [
+      {
+        id: "schengen_passport",
+        preset: "icao_35x45",
+        name: "35x45mm ICAO Biyometrik",
+        nameEn: "35x45mm ICAO Biometric",
+        desc: "Schengen vizesi, Türkiye pasaport & yeni kimlik kartı",
+        descEn: "Schengen Visa, Turkey Passport & National ID",
+        iconSvg: '<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#38bdf8;fill:none;stroke-width:2;"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="9" r="3"/><path d="M7 19v-1a5 5 0 0 1 10 0v1"/></svg>'
+      },
+      {
+        id: "us_visa",
+        preset: "us_visa_50x50",
+        name: "50x50mm ABD Vizesi (2x2\")",
+        nameEn: "50x50mm US Visa (2x2\")",
+        desc: "Green Card, DS-160 ve ABD vize başvuru standardı",
+        descEn: "Green Card, DS-160 & US Visa standard",
+        iconSvg: '<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#f59e0b;fill:none;stroke-width:2;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 20v-1a5 5 0 0 1 10 0v1"/></svg>'
+      },
+      {
+        id: "standard_license",
+        preset: "standard_50x60",
+        name: "50x60mm Standart Vesikalık",
+        nameEn: "50x60mm Large Portrait",
+        desc: "Diplomalar, kurumsal kartlar ve resmi evraklar",
+        descEn: "Diplomas, corporate cards & official forms",
+        iconSvg: '<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#a855f7;fill:none;stroke-width:2;"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="10" r="3.5"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/></svg>'
+      }
+    ];
+
+    let currentBioPreset = "icao_35x45";
+    let currentBioLayout = "4_up";
+    let currentBioCutLines = true;
+
+    function renderBiometricVitrin() {
+      const grid = document.getElementById("biometricVitrinGrid");
+      if (!grid) return;
+      grid.innerHTML = PRO_BIOMETRIC_PRESETS.map(b => {
+        const title = currentLang === "en" ? b.nameEn : b.name;
+        const sub = currentLang === "en" ? b.descEn : b.desc;
+        const isSelected = (currentBioPreset === b.preset);
+        return `
+          <div class="preset-vitrin-card ${isSelected ? 'active' : ''}" onclick="applyBiometricPreset('${b.preset}')">
+            <div class="preset-swatch" style="background:#131722;border:1px solid var(--pf-border);display:flex;align-items:center;justify-content:center;">
+              ${b.iconSvg}
+            </div>
+            <div>
+              <div class="preset-card-title">${title}</div>
+              <div class="preset-card-sub">${sub}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function applyBiometricPreset(presetKey) {
+      currentBioPreset = presetKey;
+      let step = activeSteps.find(s => s.op === "biometric_sheet");
+      const params = {
+        preset: presetKey,
+        layout: currentBioLayout,
+        dpi: 300,
+        sheet_width_mm: 150.0,
+        sheet_height_mm: 100.0,
+        draw_cut_lines: currentBioCutLines
+      };
+      if (step) {
+        step.params = params;
+        selectedStepId = step.id;
+      } else {
+        const id = stepCounter++;
+        activeSteps.push({
+          id,
+          op: "biometric_sheet",
+          name: `katman_${id}_biometric`,
+          params
+        });
+        selectedStepId = id;
+      }
+      renderBiometricVitrin();
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+      statusMessage.textContent = currentLang === "en" ? `✓ Biometric template applied (${presetKey})` : `✓ Biyometrik şablon uygulandı (${presetKey})`;
+    }
+
+    function setBioLayout(layout) {
+      currentBioLayout = layout;
+      ["4", "6", "8", "1"].forEach(k => {
+        const keyMap = { "4": "4_up", "6": "6_up", "8": "8_up", "1": "single" };
+        const b = document.getElementById("btnBioLayout" + k);
+        if (b) b.classList.toggle("active", keyMap[k] === layout);
+      });
+      let step = activeSteps.find(s => s.op === "biometric_sheet");
+      if (step) {
+        step.params.layout = layout;
+        pushHistory();
+        renderStepsUI();
+        scheduleRender();
+      } else {
+        applyBiometricPreset(currentBioPreset);
+      }
+    }
+
+    function toggleBioCutLines(checked) {
+      currentBioCutLines = checked;
+      let step = activeSteps.find(s => s.op === "biometric_sheet");
+      if (step) {
+        step.params.draw_cut_lines = checked;
+        pushHistory();
+        renderStepsUI();
+        scheduleRender();
+      }
+    }
+
+    function addQuickMarkup(kind, text, color) {
+      const id = stepCounter++;
+      activeSteps.push({
+        id,
+        op: "markup",
+        name: `katman_${id}_${kind}`,
+        params: {
+          kind,
+          text: text || "REVİZYON 1",
+          x1: 40,
+          y1: 40,
+          x2: 180,
+          y2: 180,
+          color: color || [239, 68, 68],
+          stroke_width: 3,
+          fill_opacity: kind === "box" ? 0.25 : 0.0
+        }
+      });
+      selectedStepId = id;
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+      statusMessage.textContent = currentLang === "en" ? `✓ Markup added: ${kind}` : `✓ Vektör işaretleme eklendi: ${kind}`;
+    }
+
     function switchLeftTab(tabKey) {
-      const tabs = ["presets", "crop", "palette", "stamps", "artfx", "frames", "mask", "docs", "history"];
+      const tabs = ["presets", "crop", "palette", "stamps", "artfx", "frames", "mask", "biometric", "docs", "history"];
       tabs.forEach(t => {
         const btn = document.getElementById("segTab" + t.charAt(0).toUpperCase() + t.slice(1));
         const content = document.getElementById("tabContent" + t.charAt(0).toUpperCase() + t.slice(1));
@@ -7633,6 +7855,7 @@
       if (tabKey === "artfx") renderArtfxVitrin();
       if (tabKey === "frames") renderFramesVitrin();
       if (tabKey === "mask") renderMaskVitrin();
+      if (tabKey === "biometric") renderBiometricVitrin();
       if (tabKey === "history") updateHistoryStackUI();
     }
 

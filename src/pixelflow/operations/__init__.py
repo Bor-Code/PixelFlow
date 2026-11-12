@@ -6,6 +6,10 @@ from pixelflow.operations.background import (
     BackgroundRemovalOperation,
     BackgroundRemovalParams,
 )
+from pixelflow.operations.biometric import (
+    BiometricSheetOperation,
+    BiometricSheetParams,
+)
 from pixelflow.operations.blend import (
     BlendOperation,
     BlendParams,
@@ -96,6 +100,10 @@ from pixelflow.operations.inpaint import (
     InpaintOperation,
     InpaintParams,
 )
+from pixelflow.operations.markup import (
+    MarkupOperation,
+    MarkupParams,
+)
 from pixelflow.operations.morphology import (
     MorphologyOperation,
     MorphologyParams,
@@ -158,6 +166,8 @@ __all__ = [
     "BackgroundRemovalParams",
     "BilateralFilterOperation",
     "BilateralFilterParams",
+    "BiometricSheetOperation",
+    "BiometricSheetParams",
     "BlendOperation",
     "BlendParams",
     "BrightnessContrastOperation",
@@ -200,6 +210,8 @@ __all__ = [
     "InpaintParams",
     "MagicColorOperation",
     "MagicColorParams",
+    "MarkupOperation",
+    "MarkupParams",
     "MedianBlurOperation",
     "MedianBlurParams",
     "MorphologyOperation",
