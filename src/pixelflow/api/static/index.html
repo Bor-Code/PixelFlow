@@ -1853,6 +1853,13 @@
           </svg>
           <span data-tr="Çerçeve" data-en="Frames">Çerçeve</span>
         </button>
+        <button type="button" class="seg-tab" id="segTabMask" onclick="switchLeftTab('mask')">
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9" stroke-dasharray="3 3" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          <span data-tr="Yerel Rötuş" data-en="Local Mask">Yerel Rötuş</span>
+        </button>
         <button type="button" class="seg-tab" id="segTabDocs" onclick="switchLeftTab('docs')">
           <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -1967,6 +1974,73 @@
       <!-- Tab: Akıllı Çerçeve & Paspartu Vitrini -->
       <div class="tab-content-pro" id="tabContentFrames" style="display:none;">
         <div class="preset-cards-grid" id="framesVitrinGrid">
+          <!-- JS tarafından doldurulur -->
+        </div>
+      </div>
+
+      <!-- Tab: Yerel Rötuş & Maskeleme (Selective Retouch Studio) -->
+      <div class="tab-content-pro" id="tabContentMask" style="display:none;">
+        <div style="padding:10px 12px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.06);margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--pf-accent);text-transform:uppercase;margin-bottom:8px;" data-tr="Maske Şekli &amp; Tip" data-en="Mask Shape &amp; Type">Maske Şekli &amp; Tip</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
+            <button type="button" class="btn-filter-pill active" id="btnMaskRadial" onclick="setMaskShape('radial')">Radyal</button>
+            <button type="button" class="btn-filter-pill" id="btnMaskLinear" onclick="setMaskShape('linear')">Doğrusal</button>
+            <button type="button" class="btn-filter-pill" id="btnMaskBox" onclick="setMaskShape('box')">Kutu</button>
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:#cbd5e1;cursor:pointer;margin-bottom:4px;">
+            <input type="checkbox" id="chkMaskInvert" onchange="toggleMaskInvert(this.checked)" />
+            <span data-tr="Maskeyi Tersine Çevir" data-en="Invert Mask">Maskeyi Tersine Çevir</span>
+          </label>
+        </div>
+
+        <div style="padding:10px 12px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid rgba(255,255,255,0.06);margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--pf-accent);text-transform:uppercase;margin-bottom:8px;" data-tr="Bölgesel İyileştirme Ayarları" data-en="Local Adjustment Settings">Bölgesel İyileştirme Ayarları</div>
+          <div class="pro-slider-row">
+            <div class="slider-meta">
+              <span data-tr="Pozlama (Exposure)" data-en="Exposure">Pozlama (Exposure)</span>
+              <span class="val" id="valMaskExposure">+0.30</span>
+            </div>
+            <input type="range" id="sliderMaskExposure" min="-1.5" max="1.5" step="0.05" value="0.3" oninput="updateMaskParam('exposure', parseFloat(this.value), 'valMaskExposure')" />
+          </div>
+          <div class="pro-slider-row">
+            <div class="slider-meta">
+              <span data-tr="Kontrast" data-en="Contrast">Kontrast</span>
+              <span class="val" id="valMaskContrast">1.10</span>
+            </div>
+            <input type="range" id="sliderMaskContrast" min="0.5" max="2.0" step="0.05" value="1.1" oninput="updateMaskParam('contrast', parseFloat(this.value), 'valMaskContrast')" />
+          </div>
+          <div class="pro-slider-row">
+            <div class="slider-meta">
+              <span data-tr="Doygunluk" data-en="Saturation">Doygunluk</span>
+              <span class="val" id="valMaskSaturation">1.20</span>
+            </div>
+            <input type="range" id="sliderMaskSaturation" min="0.0" max="2.0" step="0.05" value="1.2" oninput="updateMaskParam('saturation', parseFloat(this.value), 'valMaskSaturation')" />
+          </div>
+          <div class="pro-slider-row">
+            <div class="slider-meta">
+              <span data-tr="Sıcaklık (Warmth)" data-en="Warmth">Sıcaklık (Warmth)</span>
+              <span class="val" id="valMaskWarmth">0.00</span>
+            </div>
+            <input type="range" id="sliderMaskWarmth" min="-0.8" max="0.8" step="0.05" value="0.0" oninput="updateMaskParam('warmth', parseFloat(this.value), 'valMaskWarmth')" />
+          </div>
+          <div class="pro-slider-row">
+            <div class="slider-meta">
+              <span data-tr="Kenar Yumuşatma" data-en="Feather">Kenar Yumuşatma</span>
+              <span class="val" id="valMaskFeather">0.25</span>
+            </div>
+            <input type="range" id="sliderMaskFeather" min="0.05" max="0.8" step="0.05" value="0.25" oninput="updateMaskParam('feather', parseFloat(this.value), 'valMaskFeather')" />
+          </div>
+          <div class="pro-slider-row">
+            <div class="slider-meta">
+              <span data-tr="Bölgesel Bulanıklık" data-en="Blur Radius">Bölgesel Bulanıklık</span>
+              <span class="val" id="valMaskBlur">0</span>
+            </div>
+            <input type="range" id="sliderMaskBlur" min="0" max="25" step="1" value="0" oninput="updateMaskParam('blur_radius', parseInt(this.value, 10), 'valMaskBlur')" />
+          </div>
+        </div>
+
+        <div style="font-size:11px;font-weight:700;color:var(--pf-text-muted);text-transform:uppercase;margin:8px 0 6px;" data-tr="Hızlı Maske Şablonları" data-en="Quick Mask Presets">Hızlı Maske Şablonları</div>
+        <div class="preset-cards-grid" id="maskVitrinGrid">
           <!-- JS tarafından doldurulur -->
         </div>
       </div>
@@ -2396,6 +2470,73 @@
                 <span class="val" id="valDetailGrain">0.0</span>
               </div>
               <input type="range" id="sliderDetailGrain" min="0" max="1.0" step="0.05" value="0" ondblclick="resetSliderVal(this, 0, 'valDetailGrain', 'film_grain', 'intensity')" oninput="handleDirectSlider('film_grain', 'intensity', this.value, 'valDetailGrain')" />
+            </div>
+          </div>
+        </div>
+
+        <!-- DaVinci Resolve 3-Yollu Renk Çarkları (Lift/Gamma/Gain) -->
+        <div class="pro-accordion closed" id="accColorWheels">
+          <div class="acc-header" onclick="toggleAccordion('accColorWheels')">
+            <span class="acc-title">
+              <svg style="width:13px;height:13px;stroke:#ec4899;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+                <circle cx="8" cy="8" r="5" />
+                <circle cx="16" cy="8" r="5" />
+                <circle cx="12" cy="15" r="5" />
+              </svg>
+              <span data-tr="3-Yollu Renk Çarkları (Lift/Gamma/Gain)" data-en="3-Way Color Wheels">3-Yollu Renk Çarkları (Lift/Gamma/Gain)</span>
+            </span>
+            <span class="active-indicator-dot"></span>
+            <span class="acc-chevron">▾</span>
+          </div>
+          <div class="acc-body" style="padding:10px 8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span style="font-size:10px;color:var(--pf-text-muted);text-transform:uppercase;font-weight:700;">DaVinci Resolve CDL</span>
+              <button type="button" class="btn-icon-tiny" onclick="resetAllColorWheels()" style="padding:2px 8px;font-size:10px;background:rgba(255,255,255,0.06);border-radius:4px;" title="Tüm Çarkları Sıfırla">↺ Sıfırla</button>
+            </div>
+            <!-- 3 Wheels Grid -->
+            <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:6px;text-align:center;">
+              <!-- Lift (Shadows) -->
+              <div class="color-wheel-card" style="background:#090d16;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+                <div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:2px;" data-tr="GÖLGELER" data-en="SHADOWS">GÖLGELER</div>
+                <div style="font-size:9px;color:var(--pf-text-muted);margin-bottom:6px;">Lift</div>
+                <div class="color-wheel-disc-wrap" id="wheelLiftWrap" style="position:relative;width:76px;height:76px;margin:0 auto;border-radius:50%;cursor:crosshair;touch-action:none;background:radial-gradient(circle, #fff 0%, transparent 70%), conic-gradient(red, yellow, lime, cyan, blue, magenta, red);box-shadow:inset 0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.5);">
+                  <div class="wheel-puck" id="wheelLiftPuck" style="position:absolute;top:50%;left:50%;width:10px;height:10px;margin-left:-5px;margin-top:-5px;border-radius:50%;background:#ffffff;border:1.5px solid #000;box-shadow:0 0 4px #000;pointer-events:none;"></div>
+                </div>
+                <div style="margin-top:6px;">
+                  <input type="range" id="sliderWheelLiftMaster" min="-0.5" max="0.5" step="0.02" value="0.0" style="width:100%;height:3px;" title="Lift Master" oninput="handleWheelMaster('lift', parseFloat(this.value))" />
+                  <div style="display:flex;justify-content:space-between;font-size:9px;color:#64748b;margin-top:2px;">
+                    <span>Y</span><span id="valWheelLiftMaster">0.00</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Gamma (Midtones) -->
+              <div class="color-wheel-card" style="background:#090d16;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+                <div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:2px;" data-tr="ORTA TON" data-en="MIDTONES">ORTA TON</div>
+                <div style="font-size:9px;color:var(--pf-text-muted);margin-bottom:6px;">Gamma</div>
+                <div class="color-wheel-disc-wrap" id="wheelGammaWrap" style="position:relative;width:76px;height:76px;margin:0 auto;border-radius:50%;cursor:crosshair;touch-action:none;background:radial-gradient(circle, #fff 0%, transparent 70%), conic-gradient(red, yellow, lime, cyan, blue, magenta, red);box-shadow:inset 0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.5);">
+                  <div class="wheel-puck" id="wheelGammaPuck" style="position:absolute;top:50%;left:50%;width:10px;height:10px;margin-left:-5px;margin-top:-5px;border-radius:50%;background:#ffffff;border:1.5px solid #000;box-shadow:0 0 4px #000;pointer-events:none;"></div>
+                </div>
+                <div style="margin-top:6px;">
+                  <input type="range" id="sliderWheelGammaMaster" min="0.2" max="2.5" step="0.05" value="1.0" style="width:100%;height:3px;" title="Gamma Master" oninput="handleWheelMaster('gamma', parseFloat(this.value))" />
+                  <div style="display:flex;justify-content:space-between;font-size:9px;color:#64748b;margin-top:2px;">
+                    <span>Y</span><span id="valWheelGammaMaster">1.00</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Gain (Highlights) -->
+              <div class="color-wheel-card" style="background:#090d16;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+                <div style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:2px;" data-tr="AÇIK TON" data-en="HIGHLIGHTS">AÇIK TON</div>
+                <div style="font-size:9px;color:var(--pf-text-muted);margin-bottom:6px;">Gain</div>
+                <div class="color-wheel-disc-wrap" id="wheelGainWrap" style="position:relative;width:76px;height:76px;margin:0 auto;border-radius:50%;cursor:crosshair;touch-action:none;background:radial-gradient(circle, #fff 0%, transparent 70%), conic-gradient(red, yellow, lime, cyan, blue, magenta, red);box-shadow:inset 0 0 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.5);">
+                  <div class="wheel-puck" id="wheelGainPuck" style="position:absolute;top:50%;left:50%;width:10px;height:10px;margin-left:-5px;margin-top:-5px;border-radius:50%;background:#ffffff;border:1.5px solid #000;box-shadow:0 0 4px #000;pointer-events:none;"></div>
+                </div>
+                <div style="margin-top:6px;">
+                  <input type="range" id="sliderWheelGainMaster" min="0.2" max="2.5" step="0.05" value="1.0" style="width:100%;height:3px;" title="Gain Master" oninput="handleWheelMaster('gain', parseFloat(this.value))" />
+                  <div style="display:flex;justify-content:space-between;font-size:9px;color:#64748b;margin-top:2px;">
+                    <span>Y</span><span id="valWheelGainMaster">1.00</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -2857,6 +2998,53 @@
       },
 
       // Ayar & Renk
+      color_wheels: {
+        title: "3-Yollu Renk Çarkları (Lift/Gamma/Gain)",
+        tag: "Renk",
+        defaults: {
+          lift: [0.0, 0.0, 0.0],
+          gamma: [1.0, 1.0, 1.0],
+          gain: [1.0, 1.0, 1.0],
+          lift_master: 0.0,
+          gamma_master: 1.0,
+          gain_master: 1.0
+        },
+        fields: [
+          { key: "lift_master", label: "Gölgeler (Lift Master)", min: -0.5, max: 0.5, step: 0.02 },
+          { key: "gamma_master", label: "Orta Tonlar (Gamma Master)", min: 0.2, max: 2.5, step: 0.05 },
+          { key: "gain_master", label: "Açık Tonlar (Gain Master)", min: 0.2, max: 2.5, step: 0.05 }
+        ]
+      },
+      selective_adjust: {
+        title: "Yerel Rötuş & Gradyan Maske",
+        tag: "Rötuş",
+        defaults: {
+          shape: "radial",
+          center: [0.5, 0.5],
+          size: [0.35, 0.35],
+          feather: 0.25,
+          angle: 0.0,
+          invert: false,
+          exposure: 0.3,
+          contrast: 1.1,
+          saturation: 1.2,
+          warmth: 0.0,
+          blur_radius: 0
+        },
+        selectFields: [
+          { key: "shape", label: "Maske Şekli", options: [["radial", "Radyal Daire"], ["linear", "Doğrusal Gradyan"], ["box", "Kutu / Dikdörtgen"]] }
+        ],
+        booleanFields: [
+          { key: "invert", label: "Maskeyi Ters Çevir" }
+        ],
+        fields: [
+          { key: "exposure", label: "Pozlama (Exposure)", min: -1.5, max: 1.5, step: 0.05 },
+          { key: "contrast", label: "Kontrast", min: 0.5, max: 2.0, step: 0.05 },
+          { key: "saturation", label: "Doygunluk", min: 0.0, max: 2.0, step: 0.05 },
+          { key: "warmth", label: "Sıcaklık (Warmth)", min: -0.8, max: 0.8, step: 0.05 },
+          { key: "feather", label: "Kenar Yumuşatma", min: 0.05, max: 0.8, step: 0.05 }
+        ]
+      },
       brightness_contrast: {
         title: "Parlaklık & Kontrast",
         tag: "Renk",
@@ -3402,6 +3590,8 @@
 
     // İngilizce Efekt Başlık Eşlemeleri
     const EFFECT_TITLE_EN = {
+      color_wheels: "3-Way Color Wheels (Lift/Gamma/Gain)",
+      selective_adjust: "Local Retouch & Gradient Mask",
       auto_enhance: "1-Tap Auto-Enhance",
       background_removal: "Remove Background (Cutout)",
       inpaint: "Magic Eraser (Inpaint)",
@@ -6798,8 +6988,318 @@
       statusMessage.textContent = (currentLang === "en") ? `✓ Preset applied: ${presetKey}` : `✓ Filtre uygulandı: ${presetKey}`;
     }
 
+    const PRO_MASK_PRESETS = [
+      {
+        id: "portrait_glow",
+        name: "Portre Yüz Aydınlatma",
+        nameEn: "Portrait Face Glow",
+        desc: "Radyal merkez aydınlatma & yumuşak ten parlaklığı",
+        descEn: "Radial center exposure boost & warm skin glow",
+        params: { shape: "radial", center: [0.5, 0.4], size: [0.35, 0.35], exposure: 0.4, contrast: 1.1, saturation: 1.15, warmth: 0.1, feather: 0.3, blur_radius: 0, invert: false }
+      },
+      {
+        id: "cinematic_vignette",
+        name: "Sinematik Odak Karartma",
+        nameEn: "Cinematic Focus Falloff",
+        desc: "Kenarları sinematik koyulaştırıp merkeze odaklama",
+        descEn: "Darken edges smoothly and direct focus to center",
+        params: { shape: "radial", center: [0.5, 0.5], size: [0.45, 0.45], exposure: -0.45, contrast: 1.1, saturation: 0.9, warmth: -0.1, feather: 0.4, blur_radius: 0, invert: true }
+      },
+      {
+        id: "sky_drama",
+        name: "Gökyüzü & Dramatik Ufuk",
+        nameEn: "Dramatic Sky & Horizon",
+        desc: "Doğrusal gradyan ile gökyüzünü koyulaştırıp doygunlaştırır",
+        descEn: "Linear gradient darkening sky with enriched tones",
+        params: { shape: "linear", center: [0.5, 0.3], size: [0.5, 0.5], angle: 0.0, exposure: -0.4, contrast: 1.25, saturation: 1.3, warmth: -0.2, feather: 0.3, blur_radius: 0, invert: false }
+      },
+      {
+        id: "bokeh_bg",
+        name: "Arka Plan Bokeh Bulanıklık",
+        nameEn: "Background Bokeh Blur",
+        desc: "Dış alanı yumuşak alan derinliği efektiyle bulanıklaştırır",
+        descEn: "Blurs outside area with soft depth-of-field effect",
+        params: { shape: "radial", center: [0.5, 0.5], size: [0.4, 0.4], exposure: -0.1, contrast: 1.0, saturation: 1.0, warmth: 0.0, feather: 0.35, blur_radius: 12, invert: true }
+      }
+    ];
+
+    function renderMaskVitrin() {
+      const grid = document.getElementById("maskVitrinGrid");
+      if (!grid) return;
+      grid.innerHTML = PRO_MASK_PRESETS.map(m => {
+        const title = currentLang === "en" ? m.nameEn : m.name;
+        const sub = currentLang === "en" ? m.descEn : m.desc;
+        return `
+          <div class="preset-vitrin-card" onclick="applyMaskPreset('${m.id}')">
+            <div class="preset-swatch" style="background:#131722;border:1px solid var(--pf-border);display:flex;align-items:center;justify-content:center;">
+              <svg style="width:16px;height:16px;stroke:var(--pf-accent);fill:none;stroke-width:2;" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" stroke-dasharray="3 3"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </div>
+            <div>
+              <div class="preset-card-title">${title}</div>
+              <div class="preset-card-sub">${sub}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function applyMaskPreset(presetId) {
+      const m = PRO_MASK_PRESETS.find(x => x.id === presetId);
+      if (!m) return;
+      let step = activeSteps.find(s => s.op === "selective_adjust");
+      const params = JSON.parse(JSON.stringify(m.params));
+      if (step) {
+        step.params = params;
+        selectedStepId = step.id;
+      } else {
+        const id = stepCounter++;
+        activeSteps.push({
+          id,
+          op: "selective_adjust",
+          name: `katman_${id}_mask`,
+          params
+        });
+        selectedStepId = id;
+      }
+      syncMaskUIFromStep(params);
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+      statusMessage.textContent = currentLang === "en" ? `✓ Mask preset applied: ${m.nameEn}` : `✓ Maske şablonu uygulandı: ${m.name}`;
+    }
+
+    function syncMaskUIFromStep(p) {
+      if (!p) return;
+      ["radial", "linear", "box"].forEach(s => {
+        const b = document.getElementById("btnMask" + s.charAt(0).toUpperCase() + s.slice(1));
+        if (b) b.classList.toggle("active", p.shape === s);
+      });
+      const chk = document.getElementById("chkMaskInvert");
+      if (chk) chk.checked = !!p.invert;
+      const sExp = document.getElementById("sliderMaskExposure");
+      const vExp = document.getElementById("valMaskExposure");
+      if (sExp && p.exposure !== undefined) { sExp.value = p.exposure; if (vExp) vExp.textContent = (p.exposure > 0 ? "+" : "") + p.exposure.toFixed(2); }
+      const sCt = document.getElementById("sliderMaskContrast");
+      const vCt = document.getElementById("valMaskContrast");
+      if (sCt && p.contrast !== undefined) { sCt.value = p.contrast; if (vCt) vCt.textContent = p.contrast.toFixed(2); }
+      const sSat = document.getElementById("sliderMaskSaturation");
+      const vSat = document.getElementById("valMaskSaturation");
+      if (sSat && p.saturation !== undefined) { sSat.value = p.saturation; if (vSat) vSat.textContent = p.saturation.toFixed(2); }
+      const sW = document.getElementById("sliderMaskWarmth");
+      const vW = document.getElementById("valMaskWarmth");
+      if (sW && p.warmth !== undefined) { sW.value = p.warmth; if (vW) vW.textContent = p.warmth.toFixed(2); }
+      const sF = document.getElementById("sliderMaskFeather");
+      const vF = document.getElementById("valMaskFeather");
+      if (sF && p.feather !== undefined) { sF.value = p.feather; if (vF) vF.textContent = p.feather.toFixed(2); }
+      const sBl = document.getElementById("sliderMaskBlur");
+      const vBl = document.getElementById("valMaskBlur");
+      if (sBl && p.blur_radius !== undefined) { sBl.value = p.blur_radius; if (vBl) vBl.textContent = p.blur_radius; }
+    }
+
+    function ensureMaskStep() {
+      let step = activeSteps.find(s => s.op === "selective_adjust");
+      if (!step) {
+        const id = stepCounter++;
+        step = {
+          id,
+          op: "selective_adjust",
+          name: `katman_${id}_mask`,
+          params: { ...EFFECT_DEFS.selective_adjust.defaults }
+        };
+        activeSteps.push(step);
+        selectedStepId = id;
+      }
+      return step;
+    }
+
+    function setMaskShape(shape) {
+      const step = ensureMaskStep();
+      step.params.shape = shape;
+      ["radial", "linear", "box"].forEach(s => {
+        const b = document.getElementById("btnMask" + s.charAt(0).toUpperCase() + s.slice(1));
+        if (b) b.classList.toggle("active", s === shape);
+      });
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+    }
+
+    function toggleMaskInvert(val) {
+      const step = ensureMaskStep();
+      step.params.invert = val;
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+    }
+
+    function updateMaskParam(paramKey, val, valSpanId) {
+      const span = document.getElementById(valSpanId);
+      if (span) {
+        span.textContent = typeof val === "number" && !Number.isInteger(val) ? (val > 0 && paramKey === "exposure" ? "+" : "") + val.toFixed(2) : val;
+      }
+      const step = ensureMaskStep();
+      step.params[paramKey] = val;
+      scheduleRender();
+    }
+
+    const colorWheelsState = {
+      lift: [0.0, 0.0, 0.0],
+      gamma: [1.0, 1.0, 1.0],
+      gain: [1.0, 1.0, 1.0],
+      lift_master: 0.0,
+      gamma_master: 1.0,
+      gain_master: 1.0
+    };
+
+    function ensureColorWheelsStep() {
+      let step = activeSteps.find(s => s.op === "color_wheels");
+      if (!step) {
+        const id = stepCounter++;
+        step = {
+          id,
+          op: "color_wheels",
+          name: `katman_${id}_color_wheels`,
+          params: JSON.parse(JSON.stringify(colorWheelsState))
+        };
+        activeSteps.push(step);
+        selectedStepId = id;
+      }
+      return step;
+    }
+
+    function resetAllColorWheels() {
+      colorWheelsState.lift = [0.0, 0.0, 0.0];
+      colorWheelsState.gamma = [1.0, 1.0, 1.0];
+      colorWheelsState.gain = [1.0, 1.0, 1.0];
+      colorWheelsState.lift_master = 0.0;
+      colorWheelsState.gamma_master = 1.0;
+      colorWheelsState.gain_master = 1.0;
+      ["Lift", "Gamma", "Gain"].forEach(w => {
+        const puck = document.getElementById("wheel" + w + "Puck");
+        if (puck) { puck.style.left = "50%"; puck.style.top = "50%"; }
+      });
+      const sL = document.getElementById("sliderWheelLiftMaster"); if (sL) sL.value = "0.0";
+      const sGm = document.getElementById("sliderWheelGammaMaster"); if (sGm) sGm.value = "1.0";
+      const sGn = document.getElementById("sliderWheelGainMaster"); if (sGn) sGn.value = "1.0";
+      const vL = document.getElementById("valWheelLiftMaster"); if (vL) vL.textContent = "0.00";
+      const vGm = document.getElementById("valWheelGammaMaster"); if (vGm) vGm.textContent = "1.00";
+      const vGn = document.getElementById("valWheelGainMaster"); if (vGn) vGn.textContent = "1.00";
+      let step = activeSteps.find(s => s.op === "color_wheels");
+      if (step) {
+        step.params = JSON.parse(JSON.stringify(colorWheelsState));
+        pushHistory();
+        renderStepsUI();
+        scheduleRender();
+      }
+    }
+
+    function handleWheelMaster(wheelType, val) {
+      const step = ensureColorWheelsStep();
+      if (wheelType === "lift") {
+        colorWheelsState.lift_master = val;
+        step.params.lift_master = val;
+        const v = document.getElementById("valWheelLiftMaster");
+        if (v) v.textContent = (val > 0 ? "+" : "") + val.toFixed(2);
+      } else if (wheelType === "gamma") {
+        colorWheelsState.gamma_master = val;
+        step.params.gamma_master = val;
+        const v = document.getElementById("valWheelGammaMaster");
+        if (v) v.textContent = val.toFixed(2);
+      } else if (wheelType === "gain") {
+        colorWheelsState.gain_master = val;
+        step.params.gain_master = val;
+        const v = document.getElementById("valWheelGainMaster");
+        if (v) v.textContent = val.toFixed(2);
+      }
+      scheduleRender();
+    }
+
+    function setupColorWheels() {
+      const wheelConfigs = [
+        { key: "lift", id: "wheelLiftWrap", puckId: "wheelLiftPuck", base: 0.0, scale: 0.35 },
+        { key: "gamma", id: "wheelGammaWrap", puckId: "wheelGammaPuck", base: 1.0, scale: 0.5 },
+        { key: "gain", id: "wheelGainWrap", puckId: "wheelGainPuck", base: 1.0, scale: 0.5 }
+      ];
+
+      wheelConfigs.forEach(cfg => {
+        const wrap = document.getElementById(cfg.id);
+        const puck = document.getElementById(cfg.puckId);
+        if (!wrap || !puck) return;
+
+        let dragging = false;
+        function updatePuck(e) {
+          const rect = wrap.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const radius = rect.width / 2;
+          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+          let dx = (clientX - cx) / radius;
+          let dy = (clientY - cy) / radius;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist > 1.0) { dx /= dist; dy /= dist; }
+
+          puck.style.left = (50 + dx * 45) + "%";
+          puck.style.top = (50 + dy * 45) + "%";
+
+          const rOffset = dx * cfg.scale;
+          const bOffset = -dx * cfg.scale;
+          const gOffset = -dy * cfg.scale;
+
+          const step = ensureColorWheelsStep();
+          if (cfg.key === "lift") {
+            colorWheelsState.lift = [rOffset, gOffset, bOffset];
+            step.params.lift = [rOffset, gOffset, bOffset];
+          } else if (cfg.key === "gamma") {
+            colorWheelsState.gamma = [cfg.base + rOffset, cfg.base + gOffset, cfg.base + bOffset];
+            step.params.gamma = [cfg.base + rOffset, cfg.base + gOffset, cfg.base + bOffset];
+          } else if (cfg.key === "gain") {
+            colorWheelsState.gain = [cfg.base + rOffset, cfg.base + gOffset, cfg.base + bOffset];
+            step.params.gain = [cfg.base + rOffset, cfg.base + gOffset, cfg.base + bOffset];
+          }
+          scheduleRender();
+        }
+
+        wrap.addEventListener("mousedown", e => {
+          dragging = true;
+          updatePuck(e);
+          const onMove = ev => { if (dragging) updatePuck(ev); };
+          const onUp = () => {
+            if (dragging) {
+              dragging = false;
+              pushHistory();
+              renderStepsUI();
+            }
+            window.removeEventListener("mousemove", onMove);
+            window.removeEventListener("mouseup", onUp);
+          };
+          window.addEventListener("mousemove", onMove);
+          window.addEventListener("mouseup", onUp);
+        });
+
+        wrap.addEventListener("dblclick", () => {
+          puck.style.left = "50%";
+          puck.style.top = "50%";
+          const step = ensureColorWheelsStep();
+          if (cfg.key === "lift") {
+            colorWheelsState.lift = [0.0, 0.0, 0.0];
+            step.params.lift = [0.0, 0.0, 0.0];
+          } else {
+            colorWheelsState[cfg.key] = [cfg.base, cfg.base, cfg.base];
+            step.params[cfg.key] = [cfg.base, cfg.base, cfg.base];
+          }
+          pushHistory();
+          renderStepsUI();
+          scheduleRender();
+        });
+      });
+    }
+
     function switchLeftTab(tabKey) {
-      const tabs = ["presets", "crop", "palette", "stamps", "artfx", "frames", "docs", "history"];
+      const tabs = ["presets", "crop", "palette", "stamps", "artfx", "frames", "mask", "docs", "history"];
       tabs.forEach(t => {
         const btn = document.getElementById("segTab" + t.charAt(0).toUpperCase() + t.slice(1));
         const content = document.getElementById("tabContent" + t.charAt(0).toUpperCase() + t.slice(1));
@@ -6814,6 +7314,7 @@
       if (tabKey === "stamps") renderStampsVitrin();
       if (tabKey === "artfx") renderArtfxVitrin();
       if (tabKey === "frames") renderFramesVitrin();
+      if (tabKey === "mask") renderMaskVitrin();
       if (tabKey === "history") updateHistoryStackUI();
     }
 
@@ -7074,6 +7575,7 @@
       catch (e) { return "tokyo"; }
     })();
     setStudioTheme(savedTheme);
+    setupColorWheels();
   </script>
 </body>
 
