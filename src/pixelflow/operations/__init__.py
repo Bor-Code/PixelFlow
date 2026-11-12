@@ -22,6 +22,10 @@ from pixelflow.operations.color_splash import (
     ColorSplashOperation,
     ColorSplashParams,
 )
+from pixelflow.operations.color_wheels import (
+    ColorWheelsOperation,
+    ColorWheelsParams,
+)
 from pixelflow.operations.curves import (
     CurvesOperation,
     CurvesParams,
@@ -118,6 +122,10 @@ from pixelflow.operations.redact import (
     StampOperation,
     StampParams,
 )
+from pixelflow.operations.selective_adjust import (
+    SelectiveAdjustOperation,
+    SelectiveAdjustParams,
+)
 from pixelflow.operations.signature import (
     SignatureExtractOperation,
     SignatureExtractParams,
@@ -158,6 +166,8 @@ __all__ = [
     "CannyParams",
     "ColorSplashOperation",
     "ColorSplashParams",
+    "ColorWheelsOperation",
+    "ColorWheelsParams",
     "CropOperation",
     "CropParams",
     "CurvesOperation",
@@ -208,6 +218,8 @@ __all__ = [
     "ResizeParams",
     "RotateOperation",
     "RotateParams",
+    "SelectiveAdjustOperation",
+    "SelectiveAdjustParams",
     "ShadowRemovalOperation",
     "ShadowRemovalParams",
     "SharpenOperation",
