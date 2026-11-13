@@ -4911,6 +4911,7 @@
         canvasDims.textContent = `${imgBefore.naturalWidth} × ${imgBefore.naturalHeight} px`;
         const imgCurtain = document.getElementById("imgCurtainBefore");
         if (imgCurtain) imgCurtain.src = url;
+        generateLivePresetThumbnails(imgBefore);
       };
       imgBefore.src = url;
       imgBefore.style.display = "block";
@@ -6601,15 +6602,114 @@
       { id: "a4_doc", name: "A4 Standart Evrak", nameEn: "A4 ISO Document", ratioStr: "1:1.41", w: 1000, h: 1414, desc: "ISO 216 Resmi Belge Oranı", descEn: "ISO 216 Official Document", boxW: 16, boxH: 23 }
     ];
 
+    let livePresetThumbnails = {};
+
+    function generateLivePresetThumbnails(sourceImg) {
+      if (!sourceImg || !sourceImg.naturalWidth) return;
+      try {
+        const thumbCanvas = document.createElement("canvas");
+        thumbCanvas.width = 60;
+        thumbCanvas.height = 60;
+        const ctx = thumbCanvas.getContext("2d", { willReadFrequently: true });
+        if (!ctx) return;
+
+        const w = sourceImg.naturalWidth;
+        const h = sourceImg.naturalHeight;
+        const minDim = Math.min(w, h);
+        const sx = (w - minDim) / 2;
+        const sy = (h - minDim) / 2;
+        ctx.drawImage(sourceImg, sx, sy, minDim, minDim, 0, 0, 60, 60);
+        const baseData = ctx.getImageData(0, 0, 60, 60);
+
+        PRO_PRESETS.forEach(p => {
+          const imgData = new ImageData(new Uint8ClampedArray(baseData.data), 60, 60);
+          const d = imgData.data;
+
+          if (p.preset === "teal_orange") {
+            for (let i = 0; i < d.length; i += 4) {
+              const lum = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
+              if (lum < 128) {
+                d[i] = d[i] * 0.7;
+                d[i+1] = Math.min(255, d[i+1] * 1.05 + 15);
+                d[i+2] = Math.min(255, d[i+2] * 1.25 + 25);
+              } else {
+                d[i] = Math.min(255, d[i] * 1.2 + 25);
+                d[i+1] = Math.min(255, d[i+1] * 1.05 + 10);
+                d[i+2] = d[i+2] * 0.7;
+              }
+            }
+          } else if (p.preset === "vintage") {
+            for (let i = 0; i < d.length; i += 4) {
+              d[i] = Math.min(255, d[i] * 1.15 + 20);
+              d[i+1] = Math.min(255, d[i+1] * 1.05 + 12);
+              d[i+2] = Math.max(15, d[i+2] * 0.8 + 10);
+            }
+          } else if (p.preset === "cyberpunk") {
+            for (let i = 0; i < d.length; i += 4) {
+              const lum = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
+              if (lum < 128) {
+                d[i] = Math.min(255, d[i] * 1.35 + 35);
+                d[i+1] = d[i+1] * 0.6;
+                d[i+2] = Math.min(255, d[i+2] * 1.45 + 35);
+              } else {
+                d[i] = d[i] * 0.6;
+                d[i+1] = Math.min(255, d[i+1] * 1.25 + 25);
+                d[i+2] = Math.min(255, d[i+2] * 1.45 + 35);
+              }
+            }
+          } else if (p.preset === "bw_contrast") {
+            for (let i = 0; i < d.length; i += 4) {
+              const lum = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
+              const val = lum < 128 ? Math.max(0, lum * 0.75 - 10) : Math.min(255, lum * 1.25 + 10);
+              d[i] = val; d[i+1] = val; d[i+2] = val;
+            }
+          } else if (p.preset === "warm") {
+            for (let i = 0; i < d.length; i += 4) {
+              d[i] = Math.min(255, d[i] * 1.2 + 20);
+              d[i+1] = Math.min(255, d[i+1] * 1.05 + 10);
+              d[i+2] = d[i+2] * 0.8;
+            }
+          } else if (p.preset === "cold") {
+            for (let i = 0; i < d.length; i += 4) {
+              d[i] = d[i] * 0.8;
+              d[i+1] = Math.min(255, d[i+1] * 0.95 + 5);
+              d[i+2] = Math.min(255, d[i+2] * 1.25 + 25);
+            }
+          } else if (p.preset === "cinematic") {
+            for (let i = 0; i < d.length; i += 4) {
+              d[i] = Math.max(0, Math.min(255, (d[i] - 128) * 1.2 + 128 + 5));
+              d[i+1] = Math.max(0, Math.min(255, (d[i+1] - 128) * 1.2 + 128 + 2));
+              d[i+2] = Math.max(0, Math.min(255, (d[i+2] - 128) * 1.2 + 128 - 5));
+            }
+          }
+
+          ctx.putImageData(imgData, 0, 0);
+          livePresetThumbnails[p.preset] = thumbCanvas.toDataURL("image/jpeg", 0.85);
+        });
+        renderPresetVitrin();
+      } catch (e) {
+        console.warn("Live thumbnail error:", e);
+      }
+    }
+
     function renderPresetVitrin() {
       const grid = document.getElementById("presetVitrinGrid");
       if (!grid) return;
       grid.innerHTML = PRO_PRESETS.map(p => {
         const title = currentLang === "en" ? p.nameEn : p.name;
         const sub = currentLang === "en" ? p.descEn : p.desc;
+        const thumbUrl = livePresetThumbnails[p.preset];
+        const swatchContent = thumbUrl
+          ? `<img src="${thumbUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;display:block;" alt="${title}"/>`
+          : "";
+        const swatchStyle = thumbUrl
+          ? `background:#0b0f19;border:1px solid rgba(56,189,248,0.45);overflow:hidden;padding:0;box-shadow:0 0 8px rgba(56,189,248,0.25);`
+          : `background:${p.grad};`;
         return `
           <div class="preset-vitrin-card" onclick="applyPresetDirect('${p.preset}')">
-            <div class="preset-swatch" style="background:${p.grad};"></div>
+            <div class="preset-swatch" id="presetSwatch_${p.preset}" style="${swatchStyle}">
+              ${swatchContent}
+            </div>
             <div>
               <div class="preset-card-title">${title}</div>
               <div class="preset-card-sub">${sub}</div>
