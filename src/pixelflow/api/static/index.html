@@ -964,6 +964,63 @@
       color: #fff;
     }
 
+    .layer-stack-box {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 12px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .layer-stack-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      padding: 0 2px 4px 2px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .layer-stack-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .layer-stack-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #101520;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      padding: 6px 8px;
+      cursor: pointer;
+      transition: all 0.14s ease;
+      user-select: none;
+    }
+
+    .layer-stack-item:hover {
+      background: #171f2e;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .layer-stack-item.selected {
+      background: #152238;
+      border-color: var(--pf-accent);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+    }
+
+    .layer-stack-item.disabled {
+      opacity: 0.45;
+      border-style: dashed;
+    }
+
     .active-step-card {
       background: #111622;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -4286,6 +4343,43 @@
       }
     }
 
+    let soloStepId = null;
+    let savedEnabledStates = {};
+
+    function soloStep(id) {
+      if (soloStepId === id) {
+        soloStepId = null;
+        activeSteps.forEach(s => {
+          if (savedEnabledStates[s.id] !== undefined) {
+            s.enabled = savedEnabledStates[s.id];
+          }
+        });
+        statusMessage.textContent = (currentLang === "en") ? "Solo mode disabled" : "Solo mod kapatıldı";
+      } else {
+        soloStepId = id;
+        savedEnabledStates = {};
+        activeSteps.forEach(s => {
+          savedEnabledStates[s.id] = (s.enabled !== false);
+          s.enabled = (s.id === id);
+        });
+        statusMessage.textContent = (currentLang === "en") ? "Solo mode active" : "Solo mod aktif";
+      }
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+    }
+
+    function clearAllLayers() {
+      if (activeSteps.length === 0) return;
+      activeSteps = [];
+      selectedStepId = null;
+      soloStepId = null;
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+      statusMessage.textContent = (currentLang === "en") ? "All layers cleared" : "Tüm katmanlar temizlendi";
+    }
+
     function toggleStepVisibility(id) {
       const step = activeSteps.find(s => s.id === id);
       if (step) {
@@ -4372,35 +4466,55 @@
 
       const activeStep = activeSteps.find(s => s.id === selectedStepId) || activeSteps[activeSteps.length - 1];
 
-      // Birden fazla araç aktifse, aralarında tek tıkla geçiş sağlayan kompakt chip/pill barı
-      if (activeSteps.length > 1) {
-        const pillsRow = document.createElement("div");
-        pillsRow.className = "tool-pills-row";
-        pillsRow.style.display = "flex";
-        pillsRow.style.flexWrap = "wrap";
-        pillsRow.style.gap = "6px";
-        pillsRow.style.marginBottom = "4px";
+      // Aktif Katman Yığını Stüdyosu (Active Layer Stack Studio)
+      const stackBox = document.createElement("div");
+      stackBox.className = "layer-stack-box";
 
-        activeSteps.forEach(s => {
-          const sDef = EFFECT_DEFS[s.op] || { title: s.op };
-          const sTitle = (currentLang === "en" && EFFECT_TITLE_EN[s.op]) ? EFFECT_TITLE_EN[s.op] : sDef.title;
-          const isCur = (s.id === activeStep.id);
-          const isHidden = (s.enabled === false);
-          const pill = document.createElement("div");
-          pill.className = `tool-pill ${isCur ? "active" : ""}`;
-          if (isHidden) {
-            pill.style.opacity = "0.5";
-            pill.style.border = "1px dashed rgba(255,255,255,0.2)";
-          }
-          pill.innerHTML = `
-            <span onclick="event.stopPropagation();toggleStepVisibility(${s.id})" title="${isHidden ? (currentLang === 'en' ? 'Show Layer' : 'Katmanı Aç') : (currentLang === 'en' ? 'Hide Layer' : 'Katmanı Gizle')}" style="cursor:pointer;margin-right:3px;font-size:10px;">${isHidden ? '🚫' : '👁️'}</span>
-            <span onclick="selectStep(${s.id})" style="cursor:pointer;${isHidden ? 'text-decoration:line-through;' : ''}">${sTitle}</span>
-            <span class="pill-close" onclick="event.stopPropagation();deleteStep(${s.id});" title="${currentLang === 'en' ? 'Remove' : 'Kaldır'}">×</span>
-          `;
-          pillsRow.appendChild(pill);
-        });
-        stepsList.appendChild(pillsRow);
-      }
+      const stackHeader = document.createElement("div");
+      stackHeader.className = "layer-stack-header";
+      stackHeader.innerHTML = `
+        <span class="layer-stack-title">${currentLang === "en" ? "ACTIVE LAYER STACK" : "KATMAN YIĞINI & SIRASI"}</span>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <button type="button" class="btn-icon-tiny" onclick="clearAllLayers()" style="font-size:9.5px;padding:1px 6px;background:rgba(239,68,68,0.15);color:#fca5a5;border-radius:3px;border:none;cursor:pointer;" title="${currentLang === "en" ? "Clear All Layers" : "Tüm Katmanları Temizle"}">
+            ${currentLang === "en" ? "Clear" : "Temizle"}
+          </button>
+        </div>
+      `;
+      stackBox.appendChild(stackHeader);
+
+      activeSteps.forEach((s, idx) => {
+        const sDef = EFFECT_DEFS[s.op] || { title: s.op, tag: "Katman" };
+        const sTitle = (currentLang === "en" && EFFECT_TITLE_EN[s.op]) ? EFFECT_TITLE_EN[s.op] : sDef.title;
+        const isCur = (s.id === activeStep.id);
+        const isHidden = (s.enabled === false);
+        const isSolo = (soloStepId === s.id);
+
+        const item = document.createElement("div");
+        item.className = `layer-stack-item ${isCur ? "selected" : ""} ${isHidden ? "disabled" : ""}`;
+        item.onclick = () => selectStep(s.id);
+
+        item.innerHTML = `
+          <div style="display:flex;align-items:center;gap:6px;overflow:hidden;">
+            <button type="button" onclick="event.stopPropagation();toggleStepVisibility(${s.id})" title="${isHidden ? (currentLang === 'en' ? 'Show' : 'Aç') : (currentLang === 'en' ? 'Hide' : 'Gizle')}" style="background:transparent;border:none;cursor:pointer;font-size:11px;color:${isHidden ? '#64748b' : '#38bdf8'};padding:0;">
+              ${isHidden ? '🚫' : '👁️'}
+            </button>
+            <button type="button" onclick="event.stopPropagation();soloStep(${s.id})" title="${isSolo ? (currentLang === 'en' ? 'Unsolo' : 'Solo Kapat') : (currentLang === 'en' ? 'Solo Layer' : 'Solo Yap')}" style="background:${isSolo ? 'var(--pf-accent)' : 'transparent'};color:${isSolo ? '#05070a' : '#64748b'};border:1px solid ${isSolo ? 'var(--pf-accent)' : 'rgba(255,255,255,0.12)'};border-radius:3px;font-size:9px;font-weight:700;padding:1px 4px;cursor:pointer;">
+              S
+            </button>
+            <span style="font-size:9.5px;color:var(--pf-accent);font-weight:700;">#${idx+1}</span>
+            <span style="font-size:11px;font-weight:600;color:${isCur ? '#fff' : '#cbd5e1'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;${isHidden ? 'text-decoration:line-through;color:#64748b;' : ''}">
+              ${sTitle}
+            </span>
+          </div>
+          <div style="display:flex;align-items:center;gap:3px;flex-shrink:0;">
+            <button type="button" class="btn-icon-tiny" onclick="event.stopPropagation();moveStepUp(${s.id})" title="Yukarı" ${idx === 0 ? 'disabled style="opacity:0.25;cursor:not-allowed;"' : 'style="cursor:pointer;"'}>▲</button>
+            <button type="button" class="btn-icon-tiny" onclick="event.stopPropagation();moveStepDown(${s.id})" title="Aşağı" ${idx === activeSteps.length - 1 ? 'disabled style="opacity:0.25;cursor:not-allowed;"' : 'style="cursor:pointer;"'}>▼</button>
+            <button type="button" class="btn-icon-tiny" onclick="event.stopPropagation();deleteStep(${s.id})" title="Kaldır" style="color:#ef4444;cursor:pointer;">×</button>
+          </div>
+        `;
+        stackBox.appendChild(item);
+      });
+      stepsList.appendChild(stackBox);
 
       // Tek aktif aracın ayar paneli (artık katman katman alt alta sıralanmaz!)
       const def = EFFECT_DEFS[activeStep.op] || { title: activeStep.op, tag: "Özel", fields: [] };
