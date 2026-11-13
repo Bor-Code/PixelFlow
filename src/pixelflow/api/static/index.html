@@ -1788,6 +1788,122 @@
       border-color: #ffffff;
     }
 
+    /* Interactive On-Canvas Transform Gizmo & Drag Handles */
+    .transform-gizmo {
+      position: absolute;
+      z-index: 36;
+      box-sizing: border-box;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .gizmo-bounds {
+      position: absolute;
+      inset: 0;
+      border: 1.5px dashed var(--pf-accent, #38bdf8);
+      background: rgba(56, 189, 248, 0.08);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25), inset 0 0 8px rgba(56, 189, 248, 0.08);
+      border-radius: 4px;
+      cursor: grab;
+      pointer-events: auto;
+      transition: background 0.12s ease, border-color 0.12s ease;
+    }
+
+    .gizmo-bounds:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #7dd3fc;
+    }
+
+    .gizmo-bounds:active,
+    .transform-gizmo.dragging .gizmo-bounds {
+      cursor: grabbing;
+      background: rgba(56, 189, 248, 0.24);
+      border-color: #ffffff;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.55);
+    }
+
+    .gizmo-handle {
+      position: absolute;
+      width: 11px;
+      height: 11px;
+      background: #ffffff;
+      border: 2px solid var(--pf-accent, #38bdf8);
+      border-radius: 2px;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+      pointer-events: auto;
+      z-index: 38;
+      box-sizing: border-box;
+      transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.15s ease;
+    }
+
+    .gizmo-handle:hover,
+    .transform-gizmo.resizing .gizmo-handle {
+      background: var(--pf-accent, #38bdf8);
+      border-color: #ffffff;
+      transform: translate(-50%, -50%) scale(1.35) !important;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.85);
+    }
+
+    .gizmo-handle-nw {
+      top: 0;
+      left: 0;
+      transform: translate(-50%, -50%);
+      cursor: nwse-resize;
+    }
+
+    .gizmo-handle-ne {
+      top: 0;
+      left: 100%;
+      transform: translate(-50%, -50%);
+      cursor: nesw-resize;
+    }
+
+    .gizmo-handle-se {
+      top: 100%;
+      left: 100%;
+      transform: translate(-50%, -50%);
+      cursor: nwse-resize;
+    }
+
+    .gizmo-handle-sw {
+      top: 100%;
+      left: 0;
+      transform: translate(-50%, -50%);
+      cursor: nesw-resize;
+    }
+
+    .gizmo-badge {
+      position: absolute;
+      top: -26px;
+      left: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(5, 7, 10, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #gizmoTitle {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--pf-accent, #38bdf8);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    #gizmoCoords {
+      font-size: 10px;
+      font-family: var(--pf-font-mono, monospace);
+      color: #94a3b8;
+    }
+
     /* Modallar */
     .pf-modal {
       display: none;
@@ -2389,6 +2505,19 @@
             <div class="corner-pin" id="pin_br" title="Sağ Alt Köşe" style="display:none;"></div>
             <div class="corner-pin" id="pin_bl" title="Sol Alt Köşe" style="display:none;"></div>
             <div class="selection-marquee" id="selectionMarquee"></div>
+
+            <!-- İnteraktif Transform Gizmo & Tutamaçlar (Interactive Transform Gizmo) -->
+            <div id="transformGizmo" class="transform-gizmo" style="display:none;">
+              <div class="gizmo-bounds" id="gizmoBounds" title="Taşımak için sürükleyin"></div>
+              <div class="gizmo-handle gizmo-handle-nw" data-handle="nw" title="Yeniden Boyutlandır (Sol Üst)"></div>
+              <div class="gizmo-handle gizmo-handle-ne" data-handle="ne" title="Yeniden Boyutlandır (Sağ Üst)"></div>
+              <div class="gizmo-handle gizmo-handle-se" data-handle="se" title="Yeniden Boyutlandır (Sağ Alt)"></div>
+              <div class="gizmo-handle gizmo-handle-sw" data-handle="sw" title="Yeniden Boyutlandır (Sol Alt)"></div>
+              <div class="gizmo-badge" id="gizmoBadge">
+                <span id="gizmoTitle">ÖĞE</span>
+                <span id="gizmoCoords">0, 0</span>
+              </div>
+            </div>
 
             <!-- 800% Piksel Büyüteç HUD -->
             <div id="pixelLoupe" style="position:absolute;width:150px;height:150px;border-radius:50%;border:2.5px solid var(--pf-accent);box-shadow:0 0 25px rgba(0,0,0,0.85), inset 0 0 10px rgba(0,0,0,0.6);overflow:hidden;pointer-events:none;display:none;z-index:45;background:#05070a;transform:translate(-50%, -50%);">
@@ -4797,6 +4926,7 @@
           activeStep.params[f.key] = val;
           const lbl = document.getElementById(`lbl_${activeStep.id}_${f.key}`);
           if (lbl) lbl.textContent = val;
+          if (typeof syncTransformGizmo === "function") syncTransformGizmo();
           scheduleRender();
         });
         row.appendChild(range);
@@ -4894,6 +5024,7 @@
       const indicator = document.getElementById("zoomLevelIndicator");
       if (indicator) indicator.textContent = `${Math.round(currentZoom * 100)}%`;
       if (currentViewMode === "curtain") setTimeout(updateCurtain, 10);
+      if (typeof syncPerspectivePins === "function") syncPerspectivePins();
     }
 
     function zoomCanvas(delta) {
@@ -5053,12 +5184,14 @@
       if (!box) return null;
       const imgRect = targetImg.getBoundingClientRect();
       const viewRect = box.getBoundingClientRect();
+      const zoom = (typeof currentZoom === "number" && currentZoom > 0) ? currentZoom : 1.0;
       return {
-        offsetX: imgRect.left - viewRect.left,
-        offsetY: imgRect.top - viewRect.top,
-        scaleX: imgRect.width / targetImg.naturalWidth,
-        scaleY: imgRect.height / targetImg.naturalHeight,
-        img: targetImg
+        offsetX: (imgRect.left - viewRect.left) / zoom,
+        offsetY: (imgRect.top - viewRect.top) / zoom,
+        scaleX: ((imgRect.width / zoom) / targetImg.naturalWidth),
+        scaleY: ((imgRect.height / zoom) / targetImg.naturalHeight),
+        img: targetImg,
+        zoom: zoom
       };
     }
 
@@ -5068,10 +5201,14 @@
       if (!step || !targetImg || !targetImg.naturalWidth) {
         if (perspectiveSvg) perspectiveSvg.style.display = "none";
         pins.forEach(p => { if (p) p.style.display = "none"; });
+        syncTransformGizmo();
         return;
       }
       const m = getImgMetrics();
-      if (!m) return;
+      if (!m) {
+        syncTransformGizmo();
+        return;
+      }
       const w = targetImg.naturalWidth;
       const h = targetImg.naturalHeight;
       if (!step.params.src_points || !Array.isArray(step.params.src_points) || step.params.src_points.length !== 4) {
@@ -5094,6 +5231,7 @@
         pin.style.top = `${screenPts[i].y}px`;
       });
       polyCorners.setAttribute("points", screenPts.map(p => `${p.x},${p.y}`).join(" "));
+      syncTransformGizmo();
     }
 
     pins.forEach((pin, pinIdx) => {
@@ -5143,6 +5281,259 @@
       scheduleRender();
     });
 
+    // İnteraktif Transform Gizmo & Tutamaçlar (Interactive Transform Gizmo)
+    const transformGizmo = document.getElementById("transformGizmo");
+    const gizmoBounds = document.getElementById("gizmoBounds");
+    const gizmoBadge = document.getElementById("gizmoBadge");
+    const gizmoTitle = document.getElementById("gizmoTitle");
+    const gizmoCoords = document.getElementById("gizmoCoords");
+    let isDraggingGizmo = false;
+    let isResizingGizmo = null;
+    let gizmoDragStartX = 0, gizmoDragStartY = 0;
+    let gizmoInitialParams = null;
+
+    function getSpatialActiveStep() {
+      if (!activeSteps || activeSteps.length === 0) return null;
+      const step = activeSteps.find(s => s.id === selectedStepId) || activeSteps[activeSteps.length - 1];
+      if (!step || step.enabled === false) return null;
+      const isSpatial = ["stamp", "redact", "inpaint", "markup"].includes(step.op) ||
+                        (step.params && typeof step.params.x === "number" && typeof step.params.y === "number");
+      return isSpatial ? step : null;
+    }
+
+    function getStepBounds(step, m) {
+      if (!step || !m) return null;
+      let x = 0, y = 0, w = 80, h = 80;
+
+      if (step.op === "stamp") {
+        const textLen = (step.params.text || "ASLI GİBİDİR").length;
+        const scale = Number(step.params.scale) || 0.9;
+        w = Math.max(80, Math.round((textLen * 18 + 32) * scale));
+        h = Math.round(56 * scale);
+        x = Number(step.params.x) || 0;
+        y = Number(step.params.y) || 0;
+      } else if (step.op === "markup") {
+        const x1 = Number(step.params.x1) || 0;
+        const x2 = Number(step.params.x2) || 100;
+        const y1 = Number(step.params.y1) || 0;
+        const y2 = Number(step.params.y2) || 100;
+        x = Math.min(x1, x2);
+        y = Math.min(y1, y2);
+        w = Math.max(12, Math.abs(x2 - x1));
+        h = Math.max(12, Math.abs(y2 - y1));
+      } else if (step.params && typeof step.params.width === "number" && typeof step.params.height === "number") {
+        x = Number(step.params.x) || 0;
+        y = Number(step.params.y) || 0;
+        w = Math.max(12, Number(step.params.width));
+        h = Math.max(12, Number(step.params.height));
+      } else if (step.params && typeof step.params.x === "number" && typeof step.params.y === "number") {
+        x = Number(step.params.x) || 0;
+        y = Number(step.params.y) || 0;
+        w = 100;
+        h = 100;
+      } else {
+        return null;
+      }
+
+      return { x, y, w, h };
+    }
+
+    function syncTransformGizmo() {
+      if (!transformGizmo) return;
+      const step = getSpatialActiveStep();
+      if (!step) {
+        transformGizmo.style.display = "none";
+        return;
+      }
+      const m = getImgMetrics();
+      if (!m || !m.img) {
+        transformGizmo.style.display = "none";
+        return;
+      }
+      const b = getStepBounds(step, m);
+      if (!b) {
+        transformGizmo.style.display = "none";
+        return;
+      }
+
+      const screenX = m.offsetX + (b.x * m.scaleX);
+      const screenY = m.offsetY + (b.y * m.scaleY);
+      const screenW = b.w * m.scaleX;
+      const screenH = b.h * m.scaleY;
+
+      transformGizmo.style.display = "block";
+      transformGizmo.style.left = `${screenX}px`;
+      transformGizmo.style.top = `${screenY}px`;
+      transformGizmo.style.width = `${screenW}px`;
+      transformGizmo.style.height = `${screenH}px`;
+
+      const def = EFFECT_DEFS[step.op] || {};
+      const title = (currentLang === "en" && EFFECT_TITLE_EN[step.op]) ? EFFECT_TITLE_EN[step.op] : (def.title || step.op);
+      gizmoTitle.textContent = title.split(" ")[0].toUpperCase();
+      if (step.op === "stamp") {
+        gizmoCoords.textContent = `${Math.round(b.x)}, ${Math.round(b.y)} • Scale: ${(step.params.scale || 0.9).toFixed(2)}x`;
+      } else {
+        gizmoCoords.textContent = `${Math.round(b.x)}, ${Math.round(b.y)} • ${Math.round(b.w)}×${Math.round(b.h)} px`;
+      }
+    }
+
+    if (gizmoBounds) {
+      gizmoBounds.addEventListener("mousedown", (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const step = getSpatialActiveStep();
+        const m = getImgMetrics();
+        if (!step || !m) return;
+        isDraggingGizmo = true;
+        gizmoDragStartX = e.clientX;
+        gizmoDragStartY = e.clientY;
+        gizmoInitialParams = JSON.parse(JSON.stringify(step.params));
+        transformGizmo.classList.add("dragging");
+      });
+      gizmoBounds.addEventListener("touchstart", (e) => {
+        if (!e.touches[0]) return;
+        const step = getSpatialActiveStep();
+        const m = getImgMetrics();
+        if (!step || !m) return;
+        isDraggingGizmo = true;
+        gizmoDragStartX = e.touches[0].clientX;
+        gizmoDragStartY = e.touches[0].clientY;
+        gizmoInitialParams = JSON.parse(JSON.stringify(step.params));
+        transformGizmo.classList.add("dragging");
+      }, { passive: true });
+    }
+
+    document.querySelectorAll(".gizmo-handle").forEach(h => {
+      h.addEventListener("mousedown", (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const step = getSpatialActiveStep();
+        const m = getImgMetrics();
+        if (!step || !m) return;
+        isResizingGizmo = h.getAttribute("data-handle");
+        gizmoDragStartX = e.clientX;
+        gizmoDragStartY = e.clientY;
+        gizmoInitialParams = JSON.parse(JSON.stringify(step.params));
+        transformGizmo.classList.add("resizing");
+      });
+      h.addEventListener("touchstart", (e) => {
+        if (!e.touches[0]) return;
+        const step = getSpatialActiveStep();
+        const m = getImgMetrics();
+        if (!step || !m) return;
+        isResizingGizmo = h.getAttribute("data-handle");
+        gizmoDragStartX = e.touches[0].clientX;
+        gizmoDragStartY = e.touches[0].clientY;
+        gizmoInitialParams = JSON.parse(JSON.stringify(step.params));
+        transformGizmo.classList.add("resizing");
+      }, { passive: true });
+    });
+
+    function handleGizmoPointerMove(clientX, clientY) {
+      if (!isDraggingGizmo && !isResizingGizmo) return;
+      const step = getSpatialActiveStep();
+      const m = getImgMetrics();
+      if (!step || !m || !gizmoInitialParams) return;
+
+      const deltaScreenX = (clientX - gizmoDragStartX) / (m.zoom || 1.0);
+      const deltaScreenY = (clientY - gizmoDragStartY) / (m.zoom || 1.0);
+      const deltaImgX = deltaScreenX / m.scaleX;
+      const deltaImgY = deltaScreenY / m.scaleY;
+
+      if (isDraggingGizmo) {
+        if (step.op === "markup") {
+          const origW = (gizmoInitialParams.x2 || 100) - (gizmoInitialParams.x1 || 0);
+          const origH = (gizmoInitialParams.y2 || 100) - (gizmoInitialParams.y1 || 0);
+          let newX1 = Math.round((gizmoInitialParams.x1 || 0) + deltaImgX);
+          let newY1 = Math.round((gizmoInitialParams.y1 || 0) + deltaImgY);
+          newX1 = Math.max(0, Math.min(m.img.naturalWidth - origW, newX1));
+          newY1 = Math.max(0, Math.min(m.img.naturalHeight - origH, newY1));
+          step.params.x1 = newX1;
+          step.params.y1 = newY1;
+          step.params.x2 = newX1 + origW;
+          step.params.y2 = newY1 + origH;
+        } else {
+          let newX = Math.round((gizmoInitialParams.x || 0) + deltaImgX);
+          let newY = Math.round((gizmoInitialParams.y || 0) + deltaImgY);
+          const boundW = Number(step.params.width) || 80;
+          const boundH = Number(step.params.height) || 80;
+          newX = Math.max(0, Math.min(m.img.naturalWidth - boundW, newX));
+          newY = Math.max(0, Math.min(m.img.naturalHeight - boundH, newY));
+          step.params.x = newX;
+          step.params.y = newY;
+        }
+        syncTransformGizmo();
+      } else if (isResizingGizmo) {
+        if (step.op === "stamp") {
+          const initScale = Number(gizmoInitialParams.scale) || 0.9;
+          const factor = (isResizingGizmo === "se" || isResizingGizmo === "ne") ? 1 : -1;
+          const newScale = Math.max(0.3, Math.min(2.8, initScale + (deltaImgX * 0.005 * factor)));
+          step.params.scale = Math.round(newScale * 100) / 100;
+        } else if (step.op === "markup") {
+          if (isResizingGizmo.includes("e")) step.params.x2 = Math.round(Math.max(step.params.x1 + 10, (gizmoInitialParams.x2 || 100) + deltaImgX));
+          if (isResizingGizmo.includes("s")) step.params.y2 = Math.round(Math.max(step.params.y1 + 10, (gizmoInitialParams.y2 || 100) + deltaImgY));
+          if (isResizingGizmo.includes("w")) step.params.x1 = Math.round(Math.min(step.params.x2 - 10, (gizmoInitialParams.x1 || 0) + deltaImgX));
+          if (isResizingGizmo.includes("n")) step.params.y1 = Math.round(Math.min(step.params.y2 - 10, (gizmoInitialParams.y1 || 0) + deltaImgY));
+        } else if (typeof step.params.width === "number" && typeof step.params.height === "number") {
+          let nx = gizmoInitialParams.x || 0;
+          let ny = gizmoInitialParams.y || 0;
+          let nw = gizmoInitialParams.width || 80;
+          let nh = gizmoInitialParams.height || 80;
+
+          if (isResizingGizmo.includes("e")) {
+            nw = Math.max(15, Math.min(m.img.naturalWidth - nx, Math.round(gizmoInitialParams.width + deltaImgX)));
+          }
+          if (isResizingGizmo.includes("s")) {
+            nh = Math.max(15, Math.min(m.img.naturalHeight - ny, Math.round(gizmoInitialParams.height + deltaImgY)));
+          }
+          if (isResizingGizmo.includes("w")) {
+            const desiredX = Math.round(gizmoInitialParams.x + deltaImgX);
+            const clampedX = Math.max(0, Math.min(gizmoInitialParams.x + gizmoInitialParams.width - 15, desiredX));
+            nw = (gizmoInitialParams.x + gizmoInitialParams.width) - clampedX;
+            nx = clampedX;
+          }
+          if (isResizingGizmo.includes("n")) {
+            const desiredY = Math.round(gizmoInitialParams.y + deltaImgY);
+            const clampedY = Math.max(0, Math.min(gizmoInitialParams.y + gizmoInitialParams.height - 15, desiredY));
+            nh = (gizmoInitialParams.y + gizmoInitialParams.height) - clampedY;
+            ny = clampedY;
+          }
+
+          step.params.x = nx;
+          step.params.y = ny;
+          step.params.width = nw;
+          step.params.height = nh;
+        }
+        syncTransformGizmo();
+      }
+    }
+
+    window.addEventListener("mousemove", (e) => {
+      handleGizmoPointerMove(e.clientX, e.clientY);
+    });
+
+    window.addEventListener("touchmove", (e) => {
+      if (e.touches[0]) handleGizmoPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    function handleGizmoPointerUp() {
+      if (!isDraggingGizmo && !isResizingGizmo) return;
+      isDraggingGizmo = false;
+      isResizingGizmo = null;
+      if (transformGizmo) transformGizmo.classList.remove("dragging", "resizing");
+      pushHistory();
+      renderStepsUI();
+      scheduleRender();
+    }
+
+    window.addEventListener("mouseup", handleGizmoPointerUp);
+    window.addEventListener("touchend", handleGizmoPointerUp);
+
+    window.addEventListener("resize", () => {
+      syncPerspectivePins();
+      syncTransformGizmo();
+    });
+
     // İnteraktif Kanvas Seçimi & Çizim (Marquee / Sansür / Kaşe)
     const boxAfter = document.getElementById("boxAfter");
     const selectionMarquee = document.getElementById("selectionMarquee");
@@ -5154,6 +5545,9 @@
       if (currentViewMode === "curtain") {
         isDraggingCurtain = true;
         handleCurtainDrag(e.clientX);
+        return;
+      }
+      if (e.target && (e.target.closest("#transformGizmo") || e.target.closest(".gizmo-handle"))) {
         return;
       }
       const rect = imgAfter.getBoundingClientRect();
