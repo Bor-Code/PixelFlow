@@ -9,13 +9,13 @@
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
     :root {
-      --pf-bg-base: #07090e;
-      --pf-bg-sidebar: #0d1117;
-      --pf-bg-drawer: #10151f;
-      --pf-bg-card: #151b27;
-      --pf-bg-card-hover: #1e2637;
+      --pf-bg-base: #04060b;
+      --pf-bg-sidebar: #070a12;
+      --pf-bg-drawer: #0b101b;
+      --pf-bg-card: #111726;
+      --pf-bg-card-hover: #192236;
       --pf-border: rgba(255, 255, 255, 0.08);
-      --pf-border-light: rgba(56, 189, 248, 0.35);
+      --pf-border-light: rgba(56, 189, 248, 0.38);
       --pf-accent: #38bdf8;
       --pf-accent-hover: #0ea5e9;
       --pf-accent-soft: rgba(56, 189, 248, 0.14);
@@ -33,15 +33,15 @@
       --radius-lg: 16px;
     }
 
-    /* 1. Tokyo Night (Oceanic Cyan - Varsayılan) */
+    /* 1. Tokyo Night (OLED Abyss & Oceanic Cyan - Varsayılan) */
     body.theme-tokyo {
-      --pf-bg-base: #07090e;
-      --pf-bg-sidebar: #0d1117;
-      --pf-bg-drawer: #10151f;
-      --pf-bg-card: #151b27;
-      --pf-bg-card-hover: #1e2637;
+      --pf-bg-base: #04060b;
+      --pf-bg-sidebar: #070a12;
+      --pf-bg-drawer: #0b101b;
+      --pf-bg-card: #111726;
+      --pf-bg-card-hover: #192236;
       --pf-border: rgba(255, 255, 255, 0.08);
-      --pf-border-light: rgba(56, 189, 248, 0.35);
+      --pf-border-light: rgba(56, 189, 248, 0.38);
       --pf-accent: #38bdf8;
       --pf-accent-hover: #0ea5e9;
       --pf-accent-soft: rgba(56, 189, 248, 0.14);
@@ -539,17 +539,21 @@
       background: #07090e;
     }
 
-    /* 1. SOL PANEL: PRESET VİTRİNİ & GEÇMİŞ */
+    /* 1. SOL PANEL: DİKEY AKTİVİTE RAYI + AÇILIR BAĞLAMSAL ÇEKMECE (Figma / Linear Architecture) */
     .pro-left-panel {
-      width: 280px;
-      background: #0a0d14;
+      width: 328px;
+      background: #060911;
       border-right: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       flex-shrink: 0;
       z-index: 40;
-      transition: width 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition: width 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
       overflow: hidden;
+    }
+
+    .pro-left-panel.drawer-collapsed {
+      width: 66px !important;
     }
 
     .pro-left-panel.collapsed {
@@ -557,54 +561,87 @@
       border-right: none;
     }
 
-    /* Sol Panel Altı: Hızlı Yardımcı Araçlar (Utility Tools) */
+    /* Sol Dikey Aktivite Rayı (Vertical Activity Rail - 66px) */
+    .pro-activity-rail {
+      width: 66px;
+      background: #04070d;
+      border-right: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      padding: 6px 5px;
+      z-index: 2;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .pro-activity-rail::-webkit-scrollbar {
+      width: 0px;
+    }
+
+    /* Sol Bağlamsal Çekmece (Contextual Slide-Out Drawer - 262px) */
+    .pro-left-drawer {
+      width: 262px;
+      flex: 1;
+      background: #080c15;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: opacity 0.18s ease, transform 0.22s ease;
+    }
+
+    .pro-left-panel.drawer-collapsed .pro-left-drawer {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-12px);
+    }
+
+    /* Sol Ray Altı: Hızlı Yardımcı Araçlar (PDF / ZIP / EXIF) */
     .pro-left-quick-tools {
       flex-shrink: 0;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
-      background: #090d15;
-      padding: 10px 12px;
+      padding-top: 6px;
+      margin-top: 6px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
 
     .quick-tools-header {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--pf-text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 2px;
+      display: none;
     }
 
     .quick-tools-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .btn-quick-util {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 6px;
-      padding: 6px 10px;
-      color: #cbd5e1;
-      font-size: 11px;
-      font-weight: 500;
+      justify-content: center;
+      gap: 3px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      padding: 6px 2px;
+      color: #94a3b8;
+      font-size: 9px;
+      font-weight: 600;
       cursor: pointer;
-      text-align: left;
+      text-align: center;
       transition: all 0.15s ease;
       width: 100%;
     }
 
     .btn-quick-util:hover {
-      background: rgba(56, 189, 248, 0.12);
-      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(56, 189, 248, 0.14);
+      border-color: rgba(56, 189, 248, 0.45);
       color: #ffffff;
-      transform: translateX(2px);
+      box-shadow: 0 2px 10px rgba(56, 189, 248, 0.2);
     }
 
     .btn-quick-util svg {
@@ -648,16 +685,16 @@
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      background: #0d111a;
+      background: #0b101b;
       flex-shrink: 0;
     }
 
     .pro-panel-title {
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       color: #f1f5f9;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
     }
 
     .btn-icon-tiny {
@@ -677,26 +714,25 @@
     }
 
     .pro-segmented-tabs {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      padding: 6px;
+      display: flex;
+      flex-direction: column;
       gap: 4px;
-      background: #090c13;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      background: transparent;
       flex-shrink: 0;
     }
 
     .seg-tab {
+      position: relative;
       background: transparent;
       border: 1px solid transparent;
       color: #718096;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 600;
-      padding: 5px 2px;
-      border-radius: 6px;
+      padding: 7px 2px;
+      border-radius: 9px;
       cursor: pointer;
       text-align: center;
-      transition: all 0.14s ease;
+      transition: all 0.16s ease;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -704,23 +740,42 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 3px;
+      gap: 4px;
     }
 
     .seg-tab svg {
+      width: 15px !important;
+      height: 15px !important;
       margin-right: 0 !important;
+      transition: transform 0.16s ease;
     }
 
     .seg-tab:hover {
-      color: #cbd5e1;
-      background: rgba(255, 255, 255, 0.04);
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .seg-tab:hover svg {
+      transform: scale(1.1);
     }
 
     .seg-tab.active {
-      background: #161c28;
-      border-color: rgba(56, 189, 248, 0.35);
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.18) 0%, rgba(56, 189, 248, 0.06) 100%);
+      border-color: rgba(56, 189, 248, 0.42);
       color: var(--pf-accent);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .seg-tab.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 22%;
+      bottom: 22%;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--pf-accent);
+      box-shadow: 0 0 8px var(--pf-accent);
     }
 
     .tab-content-pro {
@@ -815,13 +870,22 @@
     /* 3. SAĞ PANEL: LIGHTROOM PRO DEVELOP & ADJUSTMENTS INSPECTOR */
     .pro-right-panel {
       width: 340px;
-      background: #0c1018;
+      background: #080c15;
       border-left: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
       z-index: 40;
       overflow-y: auto;
+      transition: width 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.22s ease;
+    }
+
+    body.no-image-loaded .pro-right-panel {
+      width: 0 !important;
+      border-left: none !important;
+      opacity: 0;
+      pointer-events: none;
+      overflow: hidden !important;
     }
 
     .pro-right-panel::-webkit-scrollbar {
@@ -904,29 +968,96 @@
     .pro-quick-btn-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      gap: 7px;
     }
 
     .pro-tool-btn {
       display: flex;
       align-items: center;
-      gap: 7px;
-      background: #131823;
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 7px;
-      padding: 7px 9px;
+      gap: 8px;
+      background: #0f1522;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9px;
+      padding: 8px 10px;
       color: #cbd5e1;
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.14s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
 
     .pro-tool-btn:hover {
-      background: #1a2232;
+      background: #172033;
       border-color: var(--pf-accent);
       color: #fff;
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    /* Bento Grid Hero Kartı (2 Sütun Genişliğinde Birincil Araç) */
+    .pro-tool-btn.bento-hero-btn {
+      grid-column: span 2;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.16) 0%, rgba(168, 85, 247, 0.14) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.38);
+      padding: 10px 12px;
+      border-radius: 10px;
+      justify-content: space-between;
+    }
+
+    .pro-tool-btn.bento-hero-btn:hover {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(168, 85, 247, 0.22) 100%);
+      border-color: var(--pf-accent);
+      box-shadow: 0 6px 18px rgba(56, 189, 248, 0.3);
+    }
+
+    .bento-hero-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .bento-hero-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: rgba(56, 189, 248, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--pf-accent);
+      flex-shrink: 0;
+    }
+
+    .bento-hero-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .bento-hero-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .bento-hero-sub {
+      font-size: 9.5px;
+      font-weight: 500;
+      color: #94a3b8;
+    }
+
+    .bento-hero-badge {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 99px;
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--pf-accent);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
 
     .pro-tool-btn .btn-icon-wrap {
@@ -946,7 +1077,17 @@
     }
 
     .pro-slider-row {
-      margin-bottom: 11px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.055);
+      border-radius: 9px;
+      padding: 7px 10px 9px;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .pro-slider-row:hover {
+      background: rgba(255, 255, 255, 0.045);
+      border-color: rgba(56, 189, 248, 0.25);
     }
 
     .pro-slider-row:last-child {
@@ -958,9 +1099,9 @@
       justify-content: space-between;
       align-items: center;
       font-size: 11px;
-      color: var(--pf-text-muted);
-      font-weight: 500;
-      margin-bottom: 4px;
+      color: #cbd5e1;
+      font-weight: 600;
+      margin-bottom: 6px;
     }
 
     .slider-meta span.val {
@@ -1134,56 +1275,57 @@
     /* Spring Physics & Micro-Interactions (Tatmin Edici Buton & Kart Yaylanması) */
     .btn, .btn-primary, .btn-secondary, .btn-big-upload,
     .pro-tool-btn, .hud-btn, .seg-tab, .preset-vitrin-card,
-    .sample-photo-chip, .btn-filter-pill, .mode-tab, .zoom-btn, .btn-reopen-panel {
+    .sample-photo-chip, .btn-filter-pill, .mode-tab, .zoom-btn, .btn-reopen-panel, .launchpad-card {
       transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
     }
     .btn:active, .btn-primary:active, .btn-secondary:active, .btn-big-upload:active,
     .pro-tool-btn:active, .hud-btn:active, .seg-tab:active, .preset-vitrin-card:active,
-    .sample-photo-chip:active, .btn-filter-pill:active, .mode-tab:active, .zoom-btn:active, .btn-reopen-panel:active {
+    .sample-photo-chip:active, .btn-filter-pill:active, .mode-tab:active, .zoom-btn:active, .btn-reopen-panel:active, .launchpad-card:active {
       transform: scale(0.96) !important;
     }
 
     /* Subtle Glass Highlights */
     .topbar, .pro-left-panel, .pro-right-panel, .empty-drop-card,
-    .canvas-hud-island, .pf-modal-box, .preset-vitrin-card, .acc-header {
+    .canvas-hud-island, .pf-modal-box, .preset-vitrin-card, .acc-header, .launchpad-card {
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
-    /* Modern Glowing Slider Track & Thumb */
+    /* Tactile Filled-Track Capsule Slider (iPadOS / Lightroom Pro Style) */
     input[type="range"] {
       -webkit-appearance: none;
       width: 100%;
-      height: 5px;
-      border-radius: 3px;
-      background: linear-gradient(90deg, #19202e, #0e131d);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--pf-accent) 0%, #818cf8 var(--slider-fill, 50%), rgba(255, 255, 255, 0.09) var(--slider-fill, 50%));
+      border: 1px solid rgba(255, 255, 255, 0.08);
       outline: none;
       cursor: pointer;
       position: relative;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
     }
 
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 15px;
-      height: 15px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
-      background: var(--pf-accent);
+      background: #ffffff;
       cursor: grab;
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
-      border: 2px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 10px rgba(56, 189, 248, 0.75);
+      border: 2.5px solid var(--pf-accent);
       transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
     }
 
     input[type="range"]::-webkit-slider-thumb:hover {
-      transform: scale(1.35);
+      transform: scale(1.28);
       box-shadow: 0 0 14px rgba(56, 189, 248, 0.95);
     }
 
     input[type="range"]:active::-webkit-slider-thumb {
       cursor: grabbing;
-      transform: scale(1.45);
-      background: #ffffff;
-      border-color: var(--pf-accent);
+      transform: scale(1.38);
+      background: var(--pf-accent);
+      border-color: #ffffff;
       box-shadow: 0 0 18px rgba(56, 189, 248, 1);
     }
 
@@ -1224,17 +1366,64 @@
       transform: translate(-50%, -100%) translateY(-8px);
     }
 
-    /* ORTA KANVAS ALANI (Center Canvas Workspace) */
+    /* ORTA KANVAS ALANI (OLED Abyss Center Canvas Workspace) */
     .canvas-workspace {
       flex: 1;
-      background: radial-gradient(circle at 50% 45%, #101524 0%, #07090e 85%);
+      background:
+        radial-gradient(circle at 50% 38%, rgba(56, 189, 248, 0.06) 0%, rgba(168, 85, 247, 0.03) 35%, transparent 70%),
+        radial-gradient(circle at 50% 50%, #0b101d 0%, #030509 90%);
       position: relative;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
-    /* 2. Resimdeki Fotor Tarzı Boş Durum (Empty State Dropzone) */
+    /* Zero-UI Sinema Odak Modu (Tab Tuşu ile %100 Kanvas Deneyimi) */
+    body.zero-ui-mode .topbar {
+      height: 0 !important;
+      min-height: 0 !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      border-bottom: none !important;
+      overflow: hidden !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    body.zero-ui-mode .pro-left-panel,
+    body.zero-ui-mode .pro-right-panel {
+      width: 0 !important;
+      border: none !important;
+      overflow: hidden !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .zero-ui-exit-pill {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      z-index: 120;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: rgba(8, 12, 21, 0.88);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: #f1f5f9;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 14px rgba(56, 189, 248, 0.25);
+    }
+
+    body.zero-ui-mode .zero-ui-exit-pill {
+      display: inline-flex;
+    }
+
+    /* 2. Next-Gen Studio Launchpad Boş Durum (Empty State + 4-Card Bento Grid) */
     .empty-state-view {
       position: absolute;
       top: 0;
@@ -1245,91 +1434,100 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 30px;
+      padding: 20px;
       z-index: 30;
+      overflow-y: auto;
     }
 
     .empty-drop-card {
-      background: rgba(22, 26, 34, 0.7);
-      border: 2px dashed #2c3445;
-      border-radius: var(--radius-lg);
-      padding: 44px 50px;
+      background: linear-gradient(180deg, rgba(16, 22, 35, 0.85) 0%, rgba(10, 14, 24, 0.92) 100%);
+      backdrop-filter: blur(16px);
+      border: 1.5px dashed rgba(56, 189, 248, 0.35);
+      border-radius: 20px;
+      padding: 28px 36px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      max-width: 560px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      max-width: 640px;
+      width: 100%;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(56, 189, 248, 0.07);
     }
 
     .empty-icon-circle {
-      width: 76px;
-      height: 76px;
-      border-radius: 50%;
-      background: rgba(56, 189, 248, 0.14);
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(168, 85, 247, 0.2));
+      border: 1px solid rgba(56, 189, 248, 0.35);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--pf-accent);
-      margin-bottom: 20px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.2);
     }
 
     .empty-icon-circle svg {
-      width: 38px;
-      height: 38px;
+      width: 30px;
+      height: 30px;
     }
 
     .empty-headline {
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 19px;
+      font-weight: 800;
       color: var(--pf-text-white);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
     }
 
     .empty-sub {
-      font-size: 13.5px;
+      font-size: 12.5px;
       color: var(--pf-text-muted);
-      margin-bottom: 26px;
-      line-height: 1.5;
+      margin-bottom: 18px;
+      line-height: 1.45;
+      max-width: 480px;
     }
 
     .btn-big-upload {
-      background: var(--pf-accent);
-      color: #061826;
+      background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 60%, #6366f1 100%);
+      color: #04101c;
       border: none;
-      font-size: 15px;
-      font-weight: 700;
-      padding: 13px 32px;
-      border-radius: 24px;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 11px 28px;
+      border-radius: 999px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 9px;
-      box-shadow: 0 6px 22px rgba(56, 189, 248, 0.4);
+      box-shadow: 0 6px 24px rgba(56, 189, 248, 0.45);
       transition: all 0.15s ease;
     }
 
     .btn-big-upload:hover {
-      background: var(--pf-accent-hover);
       transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(56, 189, 248, 0.65);
     }
 
     .sample-photos-row {
       display: flex;
-      gap: 12px;
-      margin-top: 26px;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .sample-photo-chip {
       background: var(--pf-bg-card);
       border: 1px solid var(--pf-border);
       border-radius: var(--radius-sm);
-      padding: 9px 14px;
+      padding: 7px 13px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       cursor: pointer;
-      font-size: 12.5px;
+      font-size: 11.5px;
       font-weight: 600;
       color: var(--pf-text);
       transition: all 0.15s ease;
@@ -1339,6 +1537,76 @@
       border-color: var(--pf-accent);
       color: var(--pf-accent);
       background: var(--pf-bg-card-hover);
+    }
+
+    /* Studio Launchpad 4-Card Bento Workflow Grid */
+    .launchpad-bento-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 640px;
+      margin-top: 14px;
+    }
+
+    .launchpad-card {
+      background: rgba(13, 18, 30, 0.82);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .launchpad-card:hover {
+      background: rgba(20, 28, 46, 0.95);
+      border-color: rgba(56, 189, 248, 0.45);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(56, 189, 248, 0.15);
+    }
+
+    .launchpad-card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .launchpad-card-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .launchpad-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .launchpad-card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .launchpad-card-desc {
+      font-size: 10.5px;
+      color: #8492a6;
+      line-height: 1.35;
     }
 
     /* Görsel Yüklü Durum (Active Canvas View) */
@@ -2027,7 +2295,7 @@
   </style>
 </head>
 
-<body>
+<body class="no-image-loaded">
   <!-- PRO TOPBAR (Adobe Lightroom / DaVinci Resolve Pro Stüdyo Çubuğu) -->
   <header class="topbar">
     <div class="topbar-left">
@@ -2159,6 +2427,12 @@
         </button>
       </div>
 
+      <button type="button" class="btn-top-capsule" id="btnZeroUiMode" onclick="toggleZeroUiMode()" title="Zero-UI Sinema Odak Modu (Tab)">
+        <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.1;" viewBox="0 0 24 24">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+        </svg>
+        <span data-tr="Sinema Modu" data-en="Cinema Focus">Sinema Modu</span>
+      </button>
       <button type="button" class="btn-top-capsule" id="btnOpenExportOptimizer" onclick="openExportOptimizerModal()" title="Squoosh Tarzı Dışa Aktarma &amp; Sıkıştırma (Ctrl+E)" style="background:linear-gradient(135deg, rgba(56,189,248,0.18), rgba(168,85,247,0.18));border:1px solid rgba(56,189,248,0.4);color:#38bdf8;font-weight:600;">
         <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;" viewBox="0 0 24 24">
           <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
@@ -2183,88 +2457,126 @@
 
   <!-- LIGHTROOM & DAVINCI RESOLVE PRO 3-SÜTUNLU ÇALIŞMA ALANI -->
   <main class="app-main lightroom-layout">
-    <!-- 1. SOL PANEL: PRESET VİTRİNİ & GEÇMİŞ (Lightroom Preset Browser) -->
+    <!-- 1. SOL PANEL: DİKEY AKTİVİTE RAYI + AÇILIR BAĞLAMSAL ÇEKMECE -->
     <aside class="pro-left-panel" id="proLeftPanel">
-      <div class="panel-header-pro">
-        <div class="pro-panel-title">
-          <span data-tr="Preset Vitrini &amp; Şablonlar" data-en="Presets &amp; Templates">Preset Vitrini &amp; Şablonlar</span>
+      <!-- Sol Dikey Aktivite Rayı (66px) -->
+      <div class="pro-activity-rail" id="proActivityRail">
+        <div class="pro-segmented-tabs">
+          <button type="button" class="seg-tab active" id="segTabPresets" onclick="switchLeftTab('presets', true)">
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" opacity="0.4" />
+            </svg>
+            <span data-tr="Sinematik" data-en="Presets">Sinematik</span>
+          </button>
+          <button type="button" class="seg-tab" id="segTabCrop" onclick="switchLeftTab('crop', true)">
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <path d="M6 2v14a2 2 0 0 0 2 2h14" />
+              <path d="M18 22V8a2 2 0 0 0-2-2H2" />
+            </svg>
+            <span data-tr="Kırpma" data-en="Crop">Kırpma</span>
+          </button>
+          <button type="button" class="seg-tab" id="segTabPalette" onclick="switchLeftTab('palette', true)">
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.6-.7 1.6-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1a1.6 1.6 0 0 1 1.7-1.7h2c3 0 5.5-2.5 5.5-5.5C21.5 6.4 17.5 2 12 2z" />
+            </svg>
+            <span data-tr="Palet" data-en="Palette">Palet</span>
+          </button>
+          <button type="button" class="seg-tab" id="segTabStamps" onclick="switchLeftTab('stamps', true)">
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <circle cx="12" cy="12" r="5" />
+              <path d="M12 7v2m0 6v2m-5-5h2m6 0h2" />
+            </svg>
+            <span data-tr="Damga" data-en="Stamps">Damga</span>
+          </button>
+          <button type="button" class="seg-tab" id="segTabArtfx" onclick="switchLeftTab('artfx', true)">
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+            <span data-tr="Sanat FX" data-en="Art FX">Sanat FX</span>
+          </button>
+          <button type="button" class="seg-tab" id="segTabFrames" onclick="switchLeftTab('frames', true)">
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <rect x="7" y="7" width="10" height="10" />
+            </svg>
+            <span data-tr="Çerçeve" data-en="Frames">Çerçeve</span>
+          </button>
+          <button type="button" class="seg-tab" id="segTabMask" onclick="switchLeftTab('mask', true)">
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" stroke-dasharray="3 3" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <span data-tr="Maske" data-en="Mask">Maske</span>
+          </button>
+          <button type="button" class="seg-tab" id="segTabBiometric" onclick="switchLeftTab('biometric', true)">
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="12" cy="10" r="3" />
+              <path d="M7 21v-2a5 5 0 0 1 10 0v2" />
+            </svg>
+            <span data-tr="Vesikalık" data-en="ID Photo">Vesikalık</span>
+          </button>
+          <button type="button" class="seg-tab" id="segTabDocs" onclick="switchLeftTab('docs', true)">
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+            <span data-tr="Evrak" data-en="Docs">Evrak</span>
+          </button>
+          <button type="button" class="seg-tab" id="segTabHistory" onclick="switchLeftTab('history', true)">
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span data-tr="Katman" data-en="Layers">Katman</span>
+          </button>
         </div>
-        <button type="button" class="btn-icon-tiny" onclick="toggleLeftPanel()" title="Sol Paneli Gizle (Ctrl+[)">◀</button>
+
+        <!-- Sol Ray Altı: Hızlı Yardımcı Araçlar (PDF / ZIP / EXIF) -->
+        <div class="pro-left-quick-tools" id="proLeftQuickTools">
+          <div class="quick-tools-header">
+            <span data-tr="Yardımcı Araçlar" data-en="Utility Tools">Yardımcı Araçlar</span>
+          </div>
+          <div class="quick-tools-grid">
+            <button type="button" class="btn-quick-util" onclick="openMultipageModal()" title="Çok Sayfalı PDF Birleştirici (Ctrl+M)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+              </svg>
+              <span data-tr="PDF" data-en="PDF">PDF</span>
+            </button>
+            <button type="button" class="btn-quick-util" onclick="openBatchModal()" title="Toplu İşlem &amp; ZIP İndirme (Ctrl+B)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                <line x1="12" y1="22.08" x2="12" y2="12" />
+              </svg>
+              <span data-tr="ZIP" data-en="ZIP">ZIP</span>
+            </button>
+            <button type="button" class="btn-quick-util" onclick="openExifModal()" title="Görsel Meta Verisi &amp; EXIF Denetçisi (Ctrl+I)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+              <span data-tr="EXIF" data-en="EXIF">EXIF</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      <!-- Segmented Tabs for Left Panel -->
-      <div class="pro-segmented-tabs">
-        <button type="button" class="seg-tab active" id="segTabPresets" onclick="switchLeftTab('presets')">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" opacity="0.4" />
-          </svg>
-          <span data-tr="Sinematik" data-en="Presets">Sinematik</span>
-        </button>
-        <button type="button" class="seg-tab" id="segTabCrop" onclick="switchLeftTab('crop')">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
-            <path d="M6 2v14a2 2 0 0 0 2 2h14" />
-            <path d="M18 22V8a2 2 0 0 0-2-2H2" />
-          </svg>
-          <span data-tr="Kırpma" data-en="Crop">Kırpma</span>
-        </button>
-        <button type="button" class="seg-tab" id="segTabPalette" onclick="switchLeftTab('palette')">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
-            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.6-.7 1.6-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1a1.6 1.6 0 0 1 1.7-1.7h2c3 0 5.5-2.5 5.5-5.5C21.5 6.4 17.5 2 12 2z" />
-          </svg>
-          <span data-tr="Palet" data-en="Palette">Palet</span>
-        </button>
-        <button type="button" class="seg-tab" id="segTabStamps" onclick="switchLeftTab('stamps')">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="9" />
-            <circle cx="12" cy="12" r="5" />
-            <path d="M12 7v2m0 6v2m-5-5h2m6 0h2" />
-          </svg>
-          <span data-tr="Tipografi &amp; Damga" data-en="Type &amp; Stamp">Tipografi &amp; Damga</span>
-        </button>
-        <button type="button" class="seg-tab" id="segTabArtfx" onclick="switchLeftTab('artfx')">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
-          <span data-tr="Sanat & FX" data-en="Art & FX">Sanat & FX</span>
-        </button>
-        <button type="button" class="seg-tab" id="segTabFrames" onclick="switchLeftTab('frames')">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-            <rect x="7" y="7" width="10" height="10" />
-          </svg>
-          <span data-tr="Çerçeve" data-en="Frames">Çerçeve</span>
-        </button>
-        <button type="button" class="seg-tab" id="segTabMask" onclick="switchLeftTab('mask')">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="9" stroke-dasharray="3 3" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-          <span data-tr="Yerel Rötuş" data-en="Local Mask">Yerel Rötuş</span>
-        </button>
-        <button type="button" class="seg-tab" id="segTabBiometric" onclick="switchLeftTab('biometric')">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <circle cx="12" cy="10" r="3" />
-            <path d="M7 21v-2a5 5 0 0 1 10 0v2" />
-          </svg>
-          <span data-tr="Vesikalık" data-en="Biometric">Vesikalık</span>
-        </button>
-        <button type="button" class="seg-tab" id="segTabDocs" onclick="switchLeftTab('docs')">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-          </svg>
-          <span data-tr="Belge Modu" data-en="Doc Modes">Belge Modu</span>
-        </button>
-        <button type="button" class="seg-tab" id="segTabHistory" onclick="switchLeftTab('history')">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
-          <span data-tr="Geçmiş" data-en="History">Geçmiş</span>
-        </button>
-      </div>
+      <!-- Sol Bağlamsal Çekmece (Contextual Slide-Out Drawer) -->
+      <div class="pro-left-drawer" id="proLeftDrawer">
+        <div class="panel-header-pro">
+          <div class="pro-panel-title" id="leftDrawerTitle">
+            <span data-tr="Sinematik LUT &amp; Preset" data-en="Cinematic LUT Presets">Sinematik LUT &amp; Preset</span>
+          </div>
+          <button type="button" class="btn-icon-tiny" onclick="toggleLeftPanel()" title="Çekmeceyi Daralt / Aç (Ctrl+[)">◀</button>
+        </div>
 
       <!-- Tab 1: Sinematik LUT Presetleri -->
       <div class="tab-content-pro" id="tabContentPresets">
@@ -2470,44 +2782,19 @@
           <!-- JS tarafından doldurulur -->
         </div>
       </div>
-
-      <!-- Sol Panel Altı: Hızlı Yardımcı Araçlar (Utility Tools) -->
-      <div class="pro-left-quick-tools" id="proLeftQuickTools">
-        <div class="quick-tools-header">
-          <span data-tr="Yardımcı Araçlar" data-en="Utility Tools">Yardımcı Araçlar</span>
-        </div>
-        <div class="quick-tools-grid">
-          <button type="button" class="btn-quick-util" onclick="openMultipageModal()" title="Çok Sayfalı PDF Birleştirici (Ctrl+M)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-              <line x1="16" y1="13" x2="8" y2="13" />
-              <line x1="16" y1="17" x2="8" y2="17" />
-            </svg>
-            <span data-tr="Çok Sayfalı PDF" data-en="Multi-Page PDF">Çok Sayfalı PDF</span>
-          </button>
-          <button type="button" class="btn-quick-util" onclick="openBatchModal()" title="Toplu İşlem &amp; ZIP İndirme (Ctrl+B)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-              <line x1="12" y1="22.08" x2="12" y2="12" />
-            </svg>
-            <span data-tr="Toplu İşlem (ZIP)" data-en="Batch (ZIP)">Toplu İşlem (ZIP)</span>
-          </button>
-          <button type="button" class="btn-quick-util" onclick="openExifModal()" title="Görsel Meta Verisi &amp; EXIF Denetçisi (Ctrl+I)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="16" x2="12" y2="12" />
-              <line x1="12" y1="8" x2="12.01" y2="8" />
-            </svg>
-            <span data-tr="EXIF &amp; Bilgi" data-en="EXIF &amp; Info">EXIF &amp; Bilgi</span>
-          </button>
-        </div>
       </div>
     </aside>
 
     <!-- 2. ORTA KANVAS ÇALIŞMA ALANI (SİNEMATİK STÜDYO) -->
     <section class="canvas-workspace" id="canvasWorkspace">
+      <!-- Zero-UI Sinema Odak Modu Çıkış Kapsülü (Tab) -->
+      <button type="button" class="zero-ui-exit-pill" id="zeroUiExitPill" onclick="toggleZeroUiMode()" title="Sinema Odak Modundan Çık (Tab)">
+        <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--pf-accent);fill:none;stroke-width:2.2;">
+          <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+        </svg>
+        <span data-tr="Sinema Modundan Çık [Tab]" data-en="Exit Cinema Mode [Tab]">Sinema Modundan Çık [Tab]</span>
+      </button>
+
       <!-- Sol Panel Yeniden Açma Butonu (Gizlendiğinde Görünür) -->
       <button type="button" class="btn-reopen-panel" id="btnReopenLeftPanel" onclick="toggleLeftPanel()" title="Sol Paneli Aç (Ctrl+[)">
         <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;vertical-align:middle;">
@@ -2516,7 +2803,7 @@
         <span data-tr="Sol Paneli Aç" data-en="Open Left Panel">Sol Paneli Aç</span>
       </button>
 
-      <!-- Fotor / Lightroom Boş Durum (Empty State Dropzone) -->
+      <!-- Next-Gen Studio Launchpad Boş Durum (Empty State + 4-Card Bento Workflow Grid) -->
       <div class="empty-state-view" id="emptyStateView">
         <div class="empty-drop-card">
           <div class="empty-icon-circle">
@@ -2526,38 +2813,87 @@
               <polyline points="21 15 16 10 5 21" />
             </svg>
           </div>
-          <h2 class="empty-headline" data-tr="Fotoğrafınızı veya Belgenizi Yükleyin"
-            data-en="Upload Your Photo or Document">Fotoğrafınızı veya Belgenizi Yükleyin</h2>
+          <h2 class="empty-headline" data-tr="Fotoğrafınızı veya Belgenizi Stüdyoya Sürükleyin"
+            data-en="Drop Your Photo or Document into the Studio">Fotoğrafınızı veya Belgenizi Stüdyoya Sürükleyin</h2>
           <p class="empty-sub"
-            data-tr="Profesyonel yapay zeka araçlarıyla her detayı anında iyileştirin, rötuşlayın veya temizleyin."
-            data-en="Enhance, retouch, and clean every detail instantly with professional AI tools.">Profesyonel yapay
-            zeka araçlarıyla her detayı anında iyileştirin, rötuşlayın veya temizleyin.</p>
+            data-tr="Yapay zeka destekli rötuş, sinematik renk derecelendirme, CamScanner belge tarama ve biyometrik vesikalık araçlarıyla çalışmaya başlayın."
+            data-en="Start editing with AI retouching, cinematic color grading, CamScanner document scanning, and biometric ID tools.">Yapay zeka destekli rötuş, sinematik renk derecelendirme, CamScanner belge tarama ve biyometrik vesikalık araçlarıyla çalışmaya başlayın.</p>
           <button type="button" class="btn-big-upload" id="btnBigUpload">
-            <svg style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2" viewBox="0 0 24 24">
+            <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.3" viewBox="0 0 24 24">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="17 8 12 3 7 8" />
               <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
-            <span data-tr="Görsel Seç / Yükle" data-en="Select / Open Image">Görsel Seç / Yükle</span>
+            <span data-tr="Görsel veya PDF Seç / Yükle" data-en="Select / Upload Image or PDF">Görsel veya PDF Seç / Yükle</span>
           </button>
 
-          <div style="font-size:12px;color:var(--pf-text-muted);margin-top:24px;"
-            data-tr="veya hazır örneklerden birini deneyin:" data-en="or try one of the ready samples:">veya hazır
-            örneklerden birini deneyin:</div>
-          <div class="sample-photos-row" style="display:flex;gap:8px;margin-top:10px;">
+          <div style="font-size:11px;color:var(--pf-text-muted);margin-top:14px;"
+            data-tr="veya tek tıkla hazır örnek sahneleri yükleyin:" data-en="or load a ready sample scene with one click:">veya tek tıkla hazır örnek sahneleri yükleyin:</div>
+          <div class="sample-photos-row">
             <div class="sample-photo-chip" id="btnSamplePhoto" style="padding:6px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:18px;cursor:pointer;display:flex;align-items:center;gap:6px;">
-              <svg style="width:15px;height:15px;color:#38bdf8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg style="width:14px;height:14px;color:#38bdf8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="5" />
                 <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
               </svg>
               <span data-tr="Canlı Manzara" data-en="Vivid Landscape">Canlı Manzara</span>
             </div>
             <div class="sample-photo-chip" id="btnSampleDoc" style="padding:6px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:18px;cursor:pointer;display:flex;align-items:center;gap:6px;">
-              <svg style="width:15px;height:15px;color:#f59e0b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg style="width:14px;height:14px;color:#f59e0b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
               </svg>
               <span data-tr="Taranmış Fatura / Evrak" data-en="Scanned Invoice / Doc">Taranmış Fatura / Evrak</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4-Kartlı Hızlı Stüdyo İş Akışı Başlatıcı (Bento Workflow Launcher) -->
+        <div class="launchpad-bento-grid">
+          <div class="launchpad-card" onclick="setWorkspaceMode('photo'); document.getElementById('btnSamplePhoto').click();">
+            <div class="launchpad-card-icon" style="background:rgba(56,189,248,0.16);color:#38bdf8;border:1px solid rgba(56,189,248,0.35);">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2" /></svg>
+            </div>
+            <div class="launchpad-card-body">
+              <div class="launchpad-card-title">
+                <span data-tr="AI Fotoğraf &amp; Renk Stüdyosu" data-en="AI Photo &amp; Color Studio">AI Fotoğraf &amp; Renk Stüdyosu</span>
+              </div>
+              <div class="launchpad-card-desc" data-tr="Sinematik LUT, 3-yollu renk çarkları, arka plan silme ve sihirli silgi." data-en="Cinematic LUTs, 3-way color wheels, AI cutout, and magic eraser.">Sinematik LUT, 3-yollu renk çarkları, arka plan silme ve sihirli silgi.</div>
+            </div>
+          </div>
+
+          <div class="launchpad-card" onclick="setWorkspaceMode('doc'); document.getElementById('btnSampleDoc').click();">
+            <div class="launchpad-card-icon" style="background:rgba(245,158,11,0.16);color:#f59e0b;border:1px solid rgba(245,158,11,0.35);">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+            </div>
+            <div class="launchpad-card-body">
+              <div class="launchpad-card-title">
+                <span data-tr="CamScanner Evrak &amp; Fatura" data-en="CamScanner Document &amp; OCR">CamScanner Evrak &amp; Fatura</span>
+              </div>
+              <div class="launchpad-card-desc" data-tr="Perspektif köşe düzeltme, gölge temizleme, OCR metin ve ıslak imza." data-en="Perspective deskew, shadow removal, OCR text, and wet signature.">Perspektif köşe düzeltme, gölge temizleme, OCR metin ve ıslak imza.</div>
+            </div>
+          </div>
+
+          <div class="launchpad-card" onclick="switchLeftTab('biometric'); document.getElementById('btnSamplePhoto').click();">
+            <div class="launchpad-card-icon" style="background:rgba(168,85,247,0.16);color:#a855f7;border:1px solid rgba(168,85,247,0.35);">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="12" cy="10" r="3" /><path d="M7 21v-2a5 5 0 0 1 10 0v2" /></svg>
+            </div>
+            <div class="launchpad-card-body">
+              <div class="launchpad-card-title">
+                <span data-tr="Biyometrik Vesikalık &amp; Vize" data-en="Biometric ID &amp; Visa Sheet">Biyometrik Vesikalık &amp; Vize</span>
+              </div>
+              <div class="launchpad-card-desc" data-tr="ICAO pasaport, ABD vizesi ve 10×15cm çoklu kesim baskı şablonları." data-en="ICAO passport, US Visa, and 10×15cm multi-up print sheet layouts.">ICAO pasaport, ABD vizesi ve 10×15cm çoklu kesim baskı şablonları.</div>
+            </div>
+          </div>
+
+          <div class="launchpad-card" onclick="openMultipageModal()">
+            <div class="launchpad-card-icon" style="background:rgba(16,185,129,0.16);color:#10b981;border:1px solid rgba(16,185,129,0.35);">
+              <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /></svg>
+            </div>
+            <div class="launchpad-card-body">
+              <div class="launchpad-card-title">
+                <span data-tr="Çok Sayfalı PDF &amp; Toplu ZIP" data-en="Multi-Page PDF &amp; Batch ZIP">Çok Sayfalı PDF &amp; Toplu ZIP</span>
+              </div>
+              <div class="launchpad-card-desc" data-tr="Birden fazla sayfayı tek PDF'te birleştirin veya toplu filtre uygulayın." data-en="Merge multiple pages into one PDF or batch process image folders.">Birden fazla sayfayı tek PDF'te birleştirin veya toplu filtre uygulayın.</div>
             </div>
           </div>
         </div>
@@ -2783,11 +3119,17 @@
           </div>
           <div class="acc-body">
             <div class="pro-quick-btn-grid">
-              <button type="button" class="pro-tool-btn" onclick="quickAdd('auto_enhance')">
-                <span class="btn-icon-wrap">
-                  <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+              <button type="button" class="pro-tool-btn bento-hero-btn" onclick="quickAdd('auto_enhance')">
+                <span class="bento-hero-left">
+                  <span class="bento-hero-icon">
+                    <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+                  </span>
+                  <span class="bento-hero-text">
+                    <span class="bento-hero-title" data-tr="Auto-Enhance (Akıllı Rötuş)" data-en="Auto-Enhance (Smart AI)">Auto-Enhance (Akıllı Rötuş)</span>
+                    <span class="bento-hero-sub" data-tr="1-tıkla ışık, kontrast ve renk dengesini optimize et" data-en="Optimize exposure, contrast &amp; color in 1 click">1-tıkla ışık, kontrast ve renk dengesini optimize et</span>
+                  </span>
                 </span>
-                <span data-tr="Auto-Enhance" data-en="Auto-Enhance">Auto-Enhance</span>
+                <span class="bento-hero-badge">AI PRO</span>
               </button>
               <button type="button" class="pro-tool-btn" onclick="quickAdd('background_removal')">
                 <span class="btn-icon-wrap">
@@ -2885,11 +3227,17 @@
           </div>
           <div class="acc-body">
             <div class="pro-quick-btn-grid">
-              <button type="button" class="pro-tool-btn" onclick="quickAdd('magic_color')">
-                <span class="btn-icon-wrap">
-                  <svg viewBox="0 0 24 24"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2" /></svg>
+              <button type="button" class="pro-tool-btn bento-hero-btn" onclick="quickAdd('magic_color')">
+                <span class="bento-hero-left">
+                  <span class="bento-hero-icon" style="background:rgba(245,158,11,0.2);border-color:rgba(245,158,11,0.45);color:#f59e0b;">
+                    <svg style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><polygon points="12 2 15 8 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 8 12 2" /></svg>
+                  </span>
+                  <span class="bento-hero-text">
+                    <span class="bento-hero-title" data-tr="CamScanner Sihirli Renk" data-en="CamScanner Magic Color">CamScanner Sihirli Renk</span>
+                    <span class="bento-hero-sub" data-tr="Gölgeleri sil, kağıdı beyazlat ve mürekkebi keskinleştir" data-en="Remove shadows, whiten paper &amp; sharpen ink">Gölgeleri sil, kağıdı beyazlat ve mürekkebi keskinleştir</span>
+                  </span>
                 </span>
-                <span data-tr="Sihirli Renk" data-en="Magic Color">Sihirli Renk</span>
+                <span class="bento-hero-badge" style="background:rgba(245,158,11,0.2);color:#fbbf24;border-color:rgba(245,158,11,0.4);">DOC HD</span>
               </button>
               <button type="button" class="pro-tool-btn" onclick="quickAdd('perspective_warp')">
                 <span class="btn-icon-wrap">
@@ -4278,10 +4626,14 @@
 
     const imgBefore = document.getElementById("imgBefore");
     const imgAfter = document.getElementById("imgAfter");
+    const originalImage = imgBefore;
+    const previewImage = imgAfter;
+    let currentFile = null;
+    let canvasZoom = 1.0;
     const emptyStateView = document.getElementById("emptyStateView");
     const activeCanvasContainer = document.getElementById("activeCanvasContainer");
     const timingBadge = document.getElementById("timingBadge") || { textContent: "" };
-    const statusMessage = document.getElementById("statusMessage") || { textContent: "" };
+    const statusMessage = document.getElementById("sbStatusText") || document.getElementById("statusMessage") || { textContent: "" };
     const canvasDims = document.getElementById("canvasDims");
     const fileSizeBadge = document.getElementById("fileSizeBadge");
 
@@ -5052,26 +5404,40 @@
       syncPerspectivePins();
     }
 
-    function scheduleRender() {
+    let activePipelineAbortController = null;
+
+    function scheduleRender(delay = 130) {
       clearTimeout(renderTimer);
-      renderTimer = setTimeout(executePipeline, 130);
+      renderTimer = setTimeout(executePipeline, delay);
     }
 
     async function executePipeline() {
       if (!currentBlob) return;
       const enabledSteps = activeSteps.filter(s => s.enabled !== false);
       if (enabledSteps.length === 0) {
+        if (activePipelineAbortController) {
+          activePipelineAbortController.abort();
+          activePipelineAbortController = null;
+        }
         const url = URL.createObjectURL(currentBlob);
         lastProcessedUrl = url;
         imgAfter.src = url;
+        imgAfter.style.filter = "none";
         imgAfter.style.display = "block";
         timingBadge.textContent = "Orijinal";
         statusMessage.textContent = activeSteps.length > 0 ? "Katmanlar devre dışı • Orijinal gösteriliyor" : "Görsel hazır • Düzenlemeye başlayabilirsiniz";
         updateImageInfoBadge(originalFileSize, originalFileSize);
         if (currentViewMode === "curtain") setTimeout(updateCurtain, 10);
         syncPerspectivePins();
+        updateStatusbarInfo();
         return;
       }
+
+      if (activePipelineAbortController) {
+        activePipelineAbortController.abort();
+      }
+      activePipelineAbortController = new AbortController();
+      const currentSignal = activePipelineAbortController.signal;
 
       statusMessage.textContent = "PixelFlow işleniyor...";
       const t0 = performance.now();
@@ -5090,10 +5456,14 @@
       formData.append("pipeline", JSON.stringify(payload));
 
       try {
-        const resp = await fetch("/v1/process", { method: "POST", body: formData });
+        const resp = await fetch("/v1/process", {
+          method: "POST",
+          body: formData,
+          signal: currentSignal
+        });
         const ms = Math.round(performance.now() - t0);
         if (!resp.ok) {
-          const err = await resp.json();
+          const err = await resp.json().catch(() => ({}));
           statusMessage.textContent = "Hata: " + (err.message || "İşlem uygulanamadı");
           return;
         }
@@ -5103,6 +5473,7 @@
         const outUrl = URL.createObjectURL(outBlob);
         lastProcessedUrl = outUrl;
         imgAfter.onload = () => {
+          imgAfter.style.filter = "none";
           canvasDims.textContent = `${imgAfter.naturalWidth} × ${imgAfter.naturalHeight} px`;
           if (currentViewMode === "curtain") setTimeout(updateCurtain, 10);
           syncPerspectivePins();
@@ -5111,8 +5482,16 @@
         imgAfter.style.display = "block";
         timingBadge.textContent = `İşlendi: ${ms} ms`;
         statusMessage.textContent = `Başarılı • ${activeSteps.length} katman uygulandı (${ms} ms)`;
+        updateStatusbarInfo();
       } catch (err) {
+        if (err.name === "AbortError") {
+          return;
+        }
         statusMessage.textContent = "Bağlantı hatası: " + err;
+      } finally {
+        if (activePipelineAbortController?.signal === currentSignal) {
+          activePipelineAbortController = null;
+        }
       }
     }
 
@@ -5247,19 +5626,24 @@
     function setSourceImage(blob, filename) {
       currentBlob = blob;
       currentFileName = filename;
+      currentFile = blob;
+      if (currentFile) currentFile.name = filename;
       originalFileSize = blob ? blob.size : 0;
       processedFileSize = originalFileSize;
       updateImageInfoBadge(originalFileSize, originalFileSize);
+      document.body.classList.remove("no-image-loaded");
       emptyStateView.style.display = "none";
       activeCanvasContainer.style.display = "flex";
 
       const url = URL.createObjectURL(blob);
       lastProcessedUrl = url;
+      imgAfter.style.filter = "none";
       imgBefore.onload = () => {
         canvasDims.textContent = `${imgBefore.naturalWidth} × ${imgBefore.naturalHeight} px`;
         const imgCurtain = document.getElementById("imgCurtainBefore");
         if (imgCurtain) imgCurtain.src = url;
         generateLivePresetThumbnails(imgBefore);
+        updateStatusbarInfo();
       };
       imgBefore.src = url;
       imgBefore.style.display = "block";
@@ -6404,8 +6788,9 @@
       if (!modal) return;
       modal.style.display = "flex";
       const origSize = document.getElementById("optOrigSize");
-      if (origSize && currentFile) {
-        origSize.textContent = formatBytes(currentFile.size);
+      const effectiveSize = (currentFile ? currentFile.size : (currentBlob ? currentBlob.size : originalFileSize)) || 0;
+      if (origSize && effectiveSize > 0) {
+        origSize.textContent = formatBytes(effectiveSize);
       } else if (origSize) {
         origSize.textContent = "—";
       }
@@ -6467,7 +6852,7 @@
         const savingsEl = document.getElementById("optSavingsBadge");
         if (newSizeEl) newSizeEl.textContent = formatBytes(blob.size);
 
-        const refSize = currentFile ? currentFile.size : (img.src.length * 0.75);
+        const refSize = (currentFile ? currentFile.size : (currentBlob ? currentBlob.size : originalFileSize)) || (img.src ? img.src.length * 0.75 : 0);
         if (refSize > 0 && savingsEl) {
           const ratio = Math.round(((refSize - blob.size) / refSize) * 100);
           if (ratio >= 0) {
@@ -6488,7 +6873,7 @@
       const a = document.createElement("a");
       a.href = url;
       const ext = optFormat.toLowerCase();
-      const baseName = (currentFile?.name || "pixelflow_export").replace(/\.[^/.]+$/, "");
+      const baseName = (currentFile?.name || currentFileName || "pixelflow_export").replace(/\.[^/.]+$/, "");
       a.download = `${baseName}_optimized.${ext === "jpeg" ? "jpg" : ext}`;
       document.body.appendChild(a);
       a.click();
@@ -8688,7 +9073,38 @@
       statusMessage.textContent = currentLang === "en" ? `✓ Markup added: ${kind}` : `✓ Vektör işaretleme eklendi: ${kind}`;
     }
 
-    function switchLeftTab(tabKey) {
+    let currentActiveLeftTab = "presets";
+    const LEFT_DRAWER_TITLES = {
+      presets: { tr: "Sinematik LUT & Preset", en: "Cinematic LUT Presets" },
+      crop: { tr: "Kırpma & En-Boy Oranı", en: "Crop & Aspect Ratios" },
+      palette: { tr: "Akıllı Renk Paleti", en: "Smart Color Palette" },
+      stamps: { tr: "Tipografi & Damgalar", en: "Typography & Stamps" },
+      artfx: { tr: "Yaratıcı Sanat & FX", en: "Creative Art & FX" },
+      frames: { tr: "Çerçeve & Paspartu", en: "Frames & Borders" },
+      mask: { tr: "Bölgesel Maske & Rötuş", en: "Local Mask & Retouch" },
+      biometric: { tr: "Biyometrik Vesikalık", en: "Biometric ID Studio" },
+      docs: { tr: "Belge & Evrak Modları", en: "Document Scan Modes" },
+      history: { tr: "Katmanlar & Geçmiş", en: "Layers & History" }
+    };
+
+    function switchLeftTab(tabKey, toggleIfSame = false) {
+      const p = document.getElementById("proLeftPanel");
+      const btnReopen = document.getElementById("btnReopenLeftPanel");
+      const topBtn = document.getElementById("topbarToggleLeftBtn");
+
+      if (p) {
+        p.classList.remove("collapsed");
+        if (btnReopen) btnReopen.style.display = "none";
+        if (toggleIfSame && currentActiveLeftTab === tabKey && !p.classList.contains("drawer-collapsed")) {
+          p.classList.add("drawer-collapsed");
+          if (topBtn) topBtn.classList.remove("active");
+          return;
+        }
+        p.classList.remove("drawer-collapsed");
+        if (topBtn) topBtn.classList.add("active");
+      }
+
+      currentActiveLeftTab = tabKey;
       const tabs = ["presets", "crop", "palette", "stamps", "artfx", "frames", "mask", "biometric", "docs", "history"];
       tabs.forEach(t => {
         const btn = document.getElementById("segTab" + t.charAt(0).toUpperCase() + t.slice(1));
@@ -8696,6 +9112,13 @@
         if (btn) btn.classList.toggle("active", t === tabKey);
         if (content) content.style.display = (t === tabKey) ? "block" : "none";
       });
+
+      const titleEl = document.getElementById("leftDrawerTitle");
+      if (titleEl && LEFT_DRAWER_TITLES[tabKey]) {
+        const tObj = LEFT_DRAWER_TITLES[tabKey];
+        titleEl.innerHTML = `<span data-tr="${tObj.tr}" data-en="${tObj.en}">${currentLang === "en" ? tObj.en : tObj.tr}</span>`;
+      }
+
       if (tabKey === "crop") renderCropRatioVitrin();
       if (tabKey === "palette") {
         if (!currentExtractedPalette || currentExtractedPalette.length === 0) extractImageColorPalette();
@@ -8719,9 +9142,10 @@
       const btn = document.getElementById("btnReopenLeftPanel");
       const topBtn = document.getElementById("topbarToggleLeftBtn");
       if (p) {
-        const isCollapsed = p.classList.toggle("collapsed");
-        if (btn) btn.style.display = isCollapsed ? "inline-flex" : "none";
-        if (topBtn) topBtn.classList.toggle("active", !isCollapsed);
+        p.classList.remove("collapsed");
+        const isDrawerCollapsed = p.classList.toggle("drawer-collapsed");
+        if (btn) btn.style.display = "none";
+        if (topBtn) topBtn.classList.toggle("active", !isDrawerCollapsed);
       }
     }
 
@@ -8801,6 +9225,29 @@
       }
     }
 
+    function applyInstantTonePreview() {
+      if (!imgAfter) return;
+      const sB = document.getElementById("sliderToneBrightness");
+      const sC = document.getElementById("sliderToneContrast");
+      const sV = document.getElementById("sliderToneVibrance");
+      const sS = document.getElementById("sliderToneSaturation");
+
+      const bVal = sB ? parseFloat(sB.value || 0) : 0;
+      const cVal = sC ? parseFloat(sC.value || 1.0) : 1.0;
+      const vVal = sV ? parseFloat(sV.value || 0) : 0;
+      const sVal = sS ? parseFloat(sS.value || 0) : 0;
+
+      if (bVal === 0 && cVal === 1.0 && vVal === 0 && sVal === 0) {
+        imgAfter.style.filter = "none";
+        return;
+      }
+
+      const cssB = Math.max(0.1, 1 + bVal);
+      const cssC = Math.max(0.1, cVal);
+      const cssS = Math.max(0, 1 + sVal + vVal * 0.7);
+      imgAfter.style.filter = `brightness(${cssB.toFixed(3)}) contrast(${cssC.toFixed(3)}) saturate(${cssS.toFixed(3)})`;
+    }
+
     function handleDirectSlider(opKey, paramKey, val, badgeId) {
       const numVal = parseFloat(val);
       const badge = document.getElementById(badgeId);
@@ -8811,6 +9258,17 @@
         const id = stepCounter++;
         const def = EFFECT_DEFS[opKey] || {};
         const params = JSON.parse(JSON.stringify(def.defaults || {}));
+        if (opKey === "brightness_contrast") {
+          const curB = document.getElementById("sliderToneBrightness");
+          const curC = document.getElementById("sliderToneContrast");
+          params.brightness = curB ? parseFloat(curB.value || 0) : 0;
+          params.contrast = curC ? parseFloat(curC.value || 1.0) : 1.0;
+        } else if (opKey === "vibrance") {
+          const curV = document.getElementById("sliderToneVibrance");
+          const curS = document.getElementById("sliderToneSaturation");
+          params.vibrance = curV ? parseFloat(curV.value || 0) : 0;
+          params.saturation = curS ? parseFloat(curS.value || 0) : 0;
+        }
         params[paramKey] = numVal;
         step = { id, op: opKey, name: `katman_${id}_${opKey}`, params };
         activeSteps.push(step);
@@ -8822,7 +9280,8 @@
 
       updateProActiveDots();
       updateStatusbarInfo();
-      scheduleRender();
+      applyInstantTonePreview();
+      scheduleRender(220);
       if (!handleDirectSlider._timer) {
         handleDirectSlider._timer = setTimeout(() => {
           pushHistory();
@@ -8927,6 +9386,26 @@
 
       updateProActiveDots();
       updateStatusbarInfo();
+      syncAllSliderFills();
+    }
+
+    function syncSliderFill(slider) {
+      if (!slider || slider.type !== "range") return;
+      const min = parseFloat(slider.min !== "" ? slider.min : 0);
+      const max = parseFloat(slider.max !== "" ? slider.max : 100);
+      const val = parseFloat(slider.value !== "" ? slider.value : 0);
+      const pct = max > min ? Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100)) : 50;
+      slider.style.setProperty("--slider-fill", `${pct.toFixed(1)}%`);
+    }
+
+    function syncAllSliderFills() {
+      document.querySelectorAll('input[type="range"]').forEach(syncSliderFill);
+    }
+
+    function toggleZeroUiMode() {
+      const isZero = document.body.classList.toggle("zero-ui-mode");
+      const btn = document.getElementById("btnZeroUiMode");
+      if (btn) btn.classList.toggle("active", isZero);
     }
 
     function updateStatusbarInfo() {
@@ -8937,7 +9416,7 @@
         sbDims.textContent = canvasDims.textContent;
       }
       if (sbZoom) {
-        sbZoom.textContent = Math.round(canvasZoom * 100) + "%";
+        sbZoom.textContent = Math.round(currentZoom * 100) + "%";
       }
       if (sbStatus && statusMessage && statusMessage.textContent) {
         sbStatus.textContent = statusMessage.textContent;
@@ -9013,12 +9492,14 @@
       }
 
       window.addEventListener("keydown", (e) => {
-        if (e.code === "Space" && !e.repeat) {
-          const tag = document.activeElement ? document.activeElement.tagName : "";
-          if (tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
-            e.preventDefault();
-            startPeekOriginal();
-          }
+        const tag = document.activeElement ? document.activeElement.tagName : "";
+        const inInput = (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT");
+        if (e.code === "Space" && !e.repeat && !inInput) {
+          e.preventDefault();
+          startPeekOriginal();
+        } else if (e.code === "Tab" && !e.repeat && !inInput && !e.ctrlKey && !e.altKey && !e.metaKey) {
+          e.preventDefault();
+          toggleZeroUiMode();
         }
       });
 
@@ -9047,6 +9528,7 @@
 
       function updateTooltip(slider) {
         if (!slider) return;
+        syncSliderFill(slider);
         const min = parseFloat(slider.min !== "" ? slider.min : 0);
         const max = parseFloat(slider.max !== "" ? slider.max : 100);
         const val = parseFloat(slider.value !== "" ? slider.value : 0);
@@ -9137,6 +9619,7 @@
     initLoupeInspector();
     initFloatingQuickDock();
     initSliderTooltips();
+    syncAllSliderFills();
   </script>
 </body>
 
