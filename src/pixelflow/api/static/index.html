@@ -6964,26 +6964,7 @@
       }
     }
 
-    // Workspace Modu Yönetimi (Fotoğraf Stüdyosu vs Belge & Evrak Stüdyosu)
-    let currentWorkspaceMode = "photo";
-    function switchWorkspaceMode(mode) {
-      currentWorkspaceMode = mode;
-      const tabPhoto = document.getElementById("modeTabPhoto");
-      const tabDoc = document.getElementById("modeTabDoc");
-      if (tabPhoto) tabPhoto.classList.toggle("active", mode === "photo");
-      if (tabDoc) tabDoc.classList.toggle("active", mode === "doc");
 
-      const sidebarTitle = document.querySelector(".sidebar-header-toggle span");
-      if (mode === "doc") {
-        if (sidebarTitle) sidebarTitle.textContent = currentLang === "en" ? "Document Studio" : "Belge & Evrak Stüdyosu";
-        switchCategory("docs");
-        if (statusMessage) statusMessage.textContent = currentLang === "en" ? "Document Studio Active" : "Belge & Evrak Stüdyosu Aktif";
-      } else {
-        if (sidebarTitle) sidebarTitle.textContent = currentLang === "en" ? "Photo Studio" : "Fotoğraf Stüdyosu";
-        switchCategory("ai");
-        if (statusMessage) statusMessage.textContent = currentLang === "en" ? "Photo Studio Active" : "Fotoğraf Stüdyosu Aktif";
-      }
-    }
 
     function getCommandSvg(id) {
       const svgs = {
