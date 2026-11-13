@@ -986,28 +986,116 @@
       font-size: 12px;
     }
 
+    /* Evrensel Ultra-Sleek Stüdyo Scrollbar */
+    *::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    *::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    *::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 9999px;
+      border: 1px solid transparent;
+      background-clip: padding-box;
+      transition: background 0.2s ease;
+    }
+    *::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.45);
+    }
+
+    /* Spring Physics & Micro-Interactions (Tatmin Edici Buton & Kart Yaylanması) */
+    .btn, .btn-primary, .btn-secondary, .btn-big-upload,
+    .pro-tool-btn, .hud-btn, .seg-tab, .preset-vitrin-card,
+    .sample-photo-chip, .btn-filter-pill, .mode-tab, .zoom-btn, .btn-reopen-panel {
+      transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+    }
+    .btn:active, .btn-primary:active, .btn-secondary:active, .btn-big-upload:active,
+    .pro-tool-btn:active, .hud-btn:active, .seg-tab:active, .preset-vitrin-card:active,
+    .sample-photo-chip:active, .btn-filter-pill:active, .mode-tab:active, .zoom-btn:active, .btn-reopen-panel:active {
+      transform: scale(0.96) !important;
+    }
+
+    /* Subtle Glass Highlights */
+    .topbar, .pro-left-panel, .pro-right-panel, .empty-drop-card,
+    .canvas-hud-island, .pf-modal-box, .preset-vitrin-card, .acc-header {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    /* Modern Glowing Slider Track & Thumb */
     input[type="range"] {
       -webkit-appearance: none;
       width: 100%;
-      height: 4px;
-      border-radius: 2px;
-      background: #232a39;
+      height: 5px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #19202e, #0e131d);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       outline: none;
+      cursor: pointer;
+      position: relative;
     }
 
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 14px;
-      height: 14px;
+      width: 15px;
+      height: 15px;
       border-radius: 50%;
       background: var(--pf-accent);
-      cursor: pointer;
-      box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
-      transition: transform 0.1s;
+      cursor: grab;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+      border: 2px solid #ffffff;
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
     }
 
     input[type="range"]::-webkit-slider-thumb:hover {
-      transform: scale(1.25);
+      transform: scale(1.35);
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.95);
+    }
+
+    input[type="range"]:active::-webkit-slider-thumb {
+      cursor: grabbing;
+      transform: scale(1.45);
+      background: #ffffff;
+      border-color: var(--pf-accent);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 1);
+    }
+
+    /* Kayan Sayısal Slider Tooltip Baloncuğu */
+    .slider-floating-tooltip {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99999;
+      background: rgba(13, 17, 26, 0.96);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--pf-accent);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7), 0 0 12px rgba(56, 189, 248, 0.4);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      padding: 3px 8px;
+      border-radius: 6px;
+      transform: translate(-50%, -100%) translateY(-10px);
+      transition: opacity 0.12s ease, transform 0.12s ease;
+      opacity: 0;
+      white-space: nowrap;
+    }
+
+    .slider-floating-tooltip::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 4px 4px 0 4px;
+      border-style: solid;
+      border-color: var(--pf-accent) transparent transparent transparent;
+    }
+
+    .slider-floating-tooltip.visible {
+      opacity: 1;
+      transform: translate(-50%, -100%) translateY(-8px);
     }
 
     /* ORTA KANVAS ALANI (Center Canvas Workspace) */
@@ -8207,6 +8295,61 @@
       });
     }
 
+    // Kayan Sayısal Slider Tooltip Baloncuğu Yöneticisi
+    function initSliderTooltips() {
+      let tooltip = document.getElementById("globalSliderTooltip");
+      if (!tooltip) {
+        tooltip = document.createElement("div");
+        tooltip.id = "globalSliderTooltip";
+        tooltip.className = "slider-floating-tooltip";
+        document.body.appendChild(tooltip);
+      }
+
+      let hideTimer = null;
+
+      function updateTooltip(slider) {
+        if (!slider) return;
+        const min = parseFloat(slider.min !== "" ? slider.min : 0);
+        const max = parseFloat(slider.max !== "" ? slider.max : 100);
+        const val = parseFloat(slider.value !== "" ? slider.value : 0);
+        const range = max - min;
+        const pct = range > 0 ? (val - min) / range : 0.5;
+        const rect = slider.getBoundingClientRect();
+        const thumbX = rect.left + pct * rect.width;
+        const thumbY = rect.top;
+
+        const displayVal = Number.isInteger(val) ? val.toString() : val.toFixed(2);
+        tooltip.textContent = displayVal;
+        tooltip.style.left = `${thumbX}px`;
+        tooltip.style.top = `${thumbY}px`;
+        tooltip.classList.add("visible");
+
+        if (hideTimer) clearTimeout(hideTimer);
+      }
+
+      function scheduleHide() {
+        if (hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => {
+          tooltip.classList.remove("visible");
+        }, 220);
+      }
+
+      document.addEventListener("input", (e) => {
+        if (e.target && e.target.type === "range") {
+          updateTooltip(e.target);
+        }
+      }, { passive: true });
+
+      document.addEventListener("pointerdown", (e) => {
+        if (e.target && e.target.type === "range") {
+          updateTooltip(e.target);
+        }
+      }, { passive: true });
+
+      document.addEventListener("pointerup", scheduleHide, { passive: true });
+      document.addEventListener("pointercancel", scheduleHide, { passive: true });
+    }
+
     // Başlangıç Yüklemesi (Dil Tercihi, Tema ve Çekmece)
     setLanguage(currentLang);
     const savedTheme = (() => {
@@ -8217,6 +8360,7 @@
     setupColorWheels();
     initLoupeInspector();
     initFloatingQuickDock();
+    initSliderTooltips();
   </script>
 </body>
 
